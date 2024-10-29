@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+		<title>Admin-Mode</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
+		
+		<script >
+            const logout = () => {
+				Swal.fire({
+                    title: 'Cerrar Sesion',
+                    text: "¿Está Seguro De Querer Cerrar La Sesión?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si',
+                    toast: true,
+                    cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/logout";
+                    }
+                    })
+            }
+        </script>
+
+        <script>
+        let count = 3599;
+        const timer = setInterval(function() {
+        //console.log(count);
+        var counth = count /3600;
+        var hour = Math.trunc(counth);
+        var countm = count /60;
+        var minute = Math.trunc(countm);
+        var counts = Math.floor( count%(60) );
+        var second = Math.trunc(counts);
+        //document.getElementById("countdown").innerHTML =days + ":" + hours + ":" + minutes + ":" + seconds;
+        document.getElementById("countdown").innerHTML = hour + ":" + minute + ":" + second;
+        count--;
+        if (count === 0) {
+        clearInterval(timer);
+        Swal.fire({
+            title: 'Sesion Caducada',
+            'icon':'error',
+            toast: true
+            }).then((result) => {
+            if (result.isConfirmed) {
+            window.location.href = "/";
+        }
+        })
+        }
+        }, 1000);
+        </script>
+    </head>
+    <body >
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <div  class="vh-100 d-flex justify-content-center ">
+            <div class="container-fluid">		
+                <nav class="navbar navbar-expand-lg" style="background-color: rgb(138, 138, 138);">
+                    <div id="ten-countdown"></div>
+                      <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <div class="navbar-nav" align="center">
+                                <a class="nav-link text-center text-white" href="/adminn">Listado de Productos</a>
+                                <a class="nav-link text-center text-white" href="/ShowRegistrarP">Agregar Producto</a>
+                                <a class="nav-link text-center text-white" href="/ShowListU">Listado de Usuarios</a>
+                                <a class="nav-link text-center text-white" href="/ShowRegistrarU">Agregar Usuario</a>
+                                <button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
+                                <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
+                                    <input
+                                    class="form-check-input p-2"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="2"
+                                    onclick="myFunction()"
+                                    />
+                                </div></a>				
+                            </div>
+                        </div>
+                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
+                      </div>
+                </nav>
+
+            {% if r2 %}
+               <script>
+                    Swal.fire({
+                    'title':'Error',
+                    'text':"{{r2}}",
+                    toast: true,
+                    'icon':'error'
+                    })</script>
+            {% endif %}
+            
+            {% if r %}
+            <script>
+                Swal.fire({
+                position: 'top',
+                icon: 'success',
+                title: '{{r}}',
+                toast: true,
+                showConfirmButton: false,
+                timer: 1500
+                })</script>
+            {% endif %}
+            <div style="background-color:#a0b976; padding-top:10px; padding-bottom:10px;">
+                <center>
+                    <h1>Registrar Producto</h1>
+                </center> 
+                <form action="/RegistrarP" method="post" style="margin-top: 30px;margin-left: 50px;">
+                    {% csrf_token %}
+                        <div class="row row-cols-1 row-cols-md-3 g-4 justify">
+                            <div class="row">
+                                <label for="txtnom" class="form-label">Nombre del Producto</label>
+                                <div class="col-sm-9">        
+                                <input type="text" name="txtnombre" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label for="txtdes" class=" form-label">Descripcion del Producto</label>
+                                <div class="col-sm-9">     
+                                <input type="text" name="txtdescipcion" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label for="txtnhot" class=" form-label">Tipo de Producto</label>
+                                <div class="col-sm-9">     
+                                <input type="text" name="txttipo" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="txtnban" class="form-label">Cantidad de Producto</label>
+                                <div class="col-sm-9">     
+                                <input type="number" name="cantidad" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="txtnban" class="form-label">Precio del Producto (Unitario)</label>
+                                <div class="col-sm-9">     
+                                <input type="number" name="precio" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="" class=" form-label"></label>
+                                <label for="" class=" form-label"></label>
+                                <label for="" class=" form-label"></label>
+                                <div class="col-sm-9">  
+                                <input type="submit" value="Registrar" class="btn btn-primary btn-lg" style="width:100%"/>
+                                </div>
+                            </div>    
+                        </div>
+                </form>
+            </div>  
+
+        </div>
+        <script>
+			var element = document.body;
+			var a = localStorage.getItem('isDarkMode');
+			console.log(a)
+				if (a==="true"){
+					element.dataset.bsTheme = "dark"
+					document.getElementById("2").checked = true;
+					console.log('b')
+				}
+				if(a==="false"){
+					element.dataset.bsTheme = "light";
+				}
+				console.log("c")
+			</script>
+        <script>
+            function myFunction() {
+			var element = document.body;
+			var darkcheck = document.getElementById("2");
+			console.log(darkcheck)
+			if (darkcheck.checked){
+				element.dataset.bsTheme = "dark"
+				localStorage.setItem('isDarkMode', true);
+			}
+			else{
+				element.dataset.bsTheme = "light"
+				localStorage.setItem('isDarkMode', false);
+			}
+			
+			//element.dataset.bsTheme = 
+			//element.dataset.bsTheme == "light" ? "dark" : "light";
+		}
+            </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+        
+    </body>
+</html>
