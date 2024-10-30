@@ -14,6 +14,9 @@ from datetime import datetime
 
 # Create your views here.
 
+def test(request):
+    return render(request, 'agregar_alu.html')
+
 def showLogin(request):
     return render(request, 'login.html')
 

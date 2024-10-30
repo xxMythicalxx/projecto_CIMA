@@ -20,6 +20,8 @@ from web import views
 from django.views.generic import TemplateView
 
 urlpatterns = [
+    # test
+    path('test', views.test),
     path('admin/', admin.site.urls),
     # incio de session
     path('',views.showLogin),
