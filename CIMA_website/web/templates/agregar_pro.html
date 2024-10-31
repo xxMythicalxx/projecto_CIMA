@@ -26,6 +26,381 @@
             }
         </script>
 
+        {% csrf_token %} 
+        <script>
+        const createalumno = () => {
+            console.log('{{opalumno}}')
+            Swal.fire({
+            title: "creando un Alumno",
+            toast: true,
+            html: `
+                <div class="row">
+                    <label for="txtnom" class="form-label">Rut</label>
+                    <div class="col-sm-9">        
+                    <input type="text" id="txtrut"  required oninput="checkRut(this)" maxlength="10" class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Nombres</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtnoms"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Apellidos</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtapes"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Curso</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtcur"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Salon</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtsal"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            preConfirm: () => {
+            let test = false;
+            var rut = document.getElementById("txtrut").value;
+            var noms = document.getElementById("txtnoms").value;
+            var apes = document.getElementById("txtapes").value;
+            var cur = document.getElementById("txtcur").value;
+            var sal = document.getElementById("txtsal").value;
+            {% for i in opalumno %}
+                console.log(rut)
+                console.log('{{i.rut}}')
+                if (rut == '{{i.rut}}'){test=true;}
+                console.log(test) 
+                
+            {% endfor %} 
+            if(test==true){
+                console.log('hola')   
+                Swal.fire({
+                'title':'Error',
+                'text':"Error El Alumno ya existe",
+                toast: true,
+                'icon':'error'})
+                }
+            else{
+            if (rut && noms && apes && cur && sal) {
+                //console.log(rut+noms+apes)
+                fetch('http://127.0.0.1:8000/RegistrarA2',{method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                    rut_: rut,
+                    noms_: noms,
+                    apes_: apes,
+                    cur_: cur,
+                    sal_: sal,
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data));
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Alumno Registrado Correctamente',
+                    toast: true,
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/ShowRegistrarP";
+                    }
+                })
+            }else{
+                Swal.fire({
+                'title':'Error',
+                'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                toast: true,
+                'icon':'error'
+            })}}}})
+        }
+        </script>
+        <script>
+        const updatealumno = () => {
+            var a = '';
+            var b = '';
+            var c = '';
+            var d = '';
+            var e = '';
+            var id = document.getElementById("txtruts").value;
+            {% for i in opalumno %}
+                if (j == '{{i.id}}'){
+                    a='{{i.rut}}';
+                    b='{{i.nombres}}';
+                    c='{{i.lastnombre}}';
+                    d='{{i.curso}}';
+                    e='{{i.salon}}';}  
+            {% endfor %}   
+            Swal.fire({
+            title: "Actualizando un Alumno",
+            toast: true,
+            html: `
+                <div class="row">
+                    <label for="txtnom" class="form-label">Rut</label>
+                    <div class="col-sm-9">        
+                    <input type="text" id="txtrut" value=${a} required oninput="checkRut(this)" maxlength="10" class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Nombres</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtnoms" value=${b} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Apellidos</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtapes" value=${c} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Curso</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtcur" value=${d} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Salon</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtsal" value=${e} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+
+            `,
+            showCancelButton: true,
+            preConfirm: () => {
+            let test = false;
+            var rut = document.getElementById("txtrut").value;
+            var noms = document.getElementById("txtnoms").value;
+            var apes = document.getElementById("txtapes").value;
+            var cur = document.getElementById("txtcur").value;
+            var sal = document.getElementById("txtsal").value;
+            {% for i in opalumno %}
+                if (rut == '{{i.rut}}'){test=true;}
+            {% endfor %} 
+            if(test==true){ 
+                Swal.fire({
+                'title':'Error',
+                'text':"Error El Alumno ya existe",
+                toast: true,
+                'icon':'error'})
+                }
+            else{
+            if (rut && noms && apes && cur && sal) {
+                //console.log(rut+noms+apes)
+                fetch('http://127.0.0.1:8000/RegistrarA2',{method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                    id_: id,
+                    rut_: rut,
+                    noms_: noms,
+                    apes_: apes,
+                    cur_: cur,
+                    sal_: sal,
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data));
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Alumno Registrado Correctamente',
+                    toast: true,
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/ShowRegistrarP";
+                    }
+                })
+            }else{
+                Swal.fire({
+                'title':'Error',
+                'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                toast: true,
+                'icon':'error'
+            })}}}})
+        }
+        </script>
+
+        <script>
+            const createestado = () => {
+                console.log('{{opesta}}')
+                Swal.fire({
+                title: "creando un estado de producto",
+                toast: true,
+                html: `
+                    <div class="row">
+                        <label for="txtnom" class="form-label">Estado</label>
+                        <div class="col-sm-9">        
+                        <input type="text" id="txtestado"  required class="form-control form-control-lg" />
+                        </div>
+                    </div>
+
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                preConfirm: () => {
+                let test = false;
+                var estado = document.getElementById("txtestado").value;
+                {% for i in opesta %}
+                    console.log(rut)
+                    console.log('{{i.estado}}')
+                    if (rut == '{{i.estado}}'){test=true;}
+                    console.log(test)   
+                {% endfor %} 
+                if(test==true){
+                    console.log('hola')   
+                    Swal.fire({
+                    'title':'Error',
+                    'text':"Error El Estado ya existe",
+                    toast: true,
+                    'icon':'error'})
+                    }
+                else{
+                if (estado) {
+                    //console.log(rut+noms+apes)
+                    fetch('http://127.0.0.1:8000/RegistrarE',{method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                      },
+                      body: JSON.stringify({
+                        estado_: estado,
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log(data));
+                    Swal.fire({
+                        position: 'top',
+                        icon: 'success',
+                        title: 'Estado Registrado Correctamente',
+                        toast: true,
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/ShowRegistrarP";
+                        }
+                    })
+                }else{
+                    Swal.fire({
+                    'title':'Error',
+                    'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                    toast: true,
+                    'icon':'error'
+                })}}}})
+            }
+            </script>
+
+            <script>
+                const createcategoria = () => {
+                    console.log('{{opcategoria}}')
+                    Swal.fire({
+                    title: "creando un categoria de producto",
+                    toast: true,
+                    html: `
+                        <div class="row">
+                            <label for="txtnom" class="form-label">Categoria</label>
+                            <div class="col-sm-9">        
+                            <input type="text" id="txtcategoria"  required class="form-control form-control-lg" />
+                            </div>
+                        </div>
+
+                    `,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    preConfirm: () => {
+                    let test = false;
+                    var categoria = document.getElementById("txtcategoria").value;
+                    {% for i in opcategoria %}
+                        console.log(rut)
+                        console.log('{{i.tipo}}')
+                        if (rut == '{{i.tipo}}'){test=true;}
+                        console.log(test)   
+                    {% endfor %} 
+                    if(test==true){
+                        console.log('hola')   
+                        Swal.fire({
+                        'title':'Error',
+                        'text':"Error La Categoria ya existe",
+                        toast: true,
+                        'icon':'error'})
+                        }
+                    else{
+                    if (categoria) {
+                        //console.log(rut+noms+apes)
+                        fetch('http://127.0.0.1:8000/RegistrarC',{method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            categoria_: categoria,
+                        })
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log(data));
+                        Swal.fire({
+                            position: 'top',
+                            icon: 'success',
+                            title: 'Categoria Registrada Correctamente',
+                            toast: true,
+                            }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/ShowRegistrarP";
+                            }
+                        })
+                    }else{
+                        Swal.fire({
+                        'title':'Error',
+                        'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                        toast: true,
+                        'icon':'error'
+                    })}}}})
+                }
+                </script>
+        <script>
+        function checkRut(rut) {
+        //limipar rut
+        var rutlimpio = rut.value.replace(/[^0-9kK]/g, '');
+        // Despejar Puntos
+        var valor = rutlimpio.replace('.','');
+        // Despejar Guión
+        valor = valor.replace('-','');
+
+        // Aislar Cuerpo y Dígito Verificador
+        cuerpo = valor.slice(0,-1);
+        dv = valor.slice(-1).toUpperCase();
+
+        // Formatear RUN
+        if(cuerpo.length<1 && dv.length<1){rut.value=''}
+        else{rut.value = cuerpo + '-' + dv}
+
+
+        }
+        </script>
         <script>
         let count = 3599;
         const timer = setInterval(function() {
@@ -70,6 +445,8 @@
                                 <a class="nav-link text-center text-white" href="/ShowRegistrarP">Agregar Producto</a>
                                 <a class="nav-link text-center text-white" href="/ShowListU">Listado de Usuarios</a>
                                 <a class="nav-link text-center text-white" href="/ShowRegistrarU">Agregar Usuario</a>
+                                <a class="nav-link text-center text-white" href="/ShowListA">Listado de Alumnos</a>
+                                <a class="nav-link text-center text-white" href="/ShowRegistrarA">Agregar Alumnos</a>
                                 <button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
                                 <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
                                     <input
@@ -129,23 +506,90 @@
                             </div>
 
                             <div class="row">
-                                <label for="txtnhot" class=" form-label">Tipo de Producto</label>
-                                <div class="col-sm-9">     
-                                <input type="text" name="txttipo" required class="form-control form-control-lg" />
+                                <label for="txtcat" class=" form-label">Categoria de Producto</label>
+                                <div class="col-sm-9">    
+                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                        <select name="txtcategoria" required class="form-select form-select-lg">
+                                            {% for x in opcategoria %}
+                                                <option value="{{ x.id }}">{{ x.tipo }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="button" onClick="createcategoria()" class="btn btn-outline-success">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="row">
-                                <label for="txtnban" class="form-label">Cantidad de Producto</label>
+                                <label for="txtcan" class="form-label">Cantidad de Producto</label>
                                 <div class="col-sm-9">     
                                 <input type="number" name="cantidad" required class="form-control form-control-lg" />
                                 </div>
                             </div>
+
                             <div class="row">
-                                <label for="txtnban" class="form-label">Precio del Producto (Unitario)</label>
+                                <label for="txtpre" class="form-label">Precio del Producto (Unitario)</label>
                                 <div class="col-sm-9">     
                                 <input type="number" name="precio" required class="form-control form-control-lg" />
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <label for="txtraz" class="form-label">Razon de Ingreso</label>
+                                <div class="col-sm-9">     
+                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                        <input class="form-check-input h6" type="radio" id="op1" name="opt" value="comprado" checked>
+                                        <label class="form-check-label h6" for="op1">comprado</label>
+
+                                        &nbsp;&nbsp;&nbsp;
+
+                                        <input class="form-check-input h6" type="radio" id="op2" name="opt" value="donado">
+                                        <label class="form-check-label h6" for="op2">donado</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label for="txtestado" class=" form-label">estado de Producto</label>
+                                <div class="col-sm-9">     
+                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                    <select name="txtestado" required class="form-select form-select-lg">
+                                        {% for x in opesta %}
+                                            <option value="{{ x.id }}">{{ x.estado }}</option>
+                                            
+                                        {% endfor %}
+                                    </select>
+                                    <button type="button" onClick="createestado()" class="btn btn-outline-success">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label for="txtrutl" class=" form-label">Rut asociado</label>
+                                <div class="col-sm-9">     
+                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                        <select name="txtrutss" id="txtruts" required class="form-select form-select-lg">
+                                        {% for x in opalumno %}
+                                            <option value="{{ x.id }}">{{ x.rut }}</option>
+                                        {% endfor %}
+                                        </select>
+                                        <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        <button type="button" onClick="updatealumno()" class="btn btn-outline-success">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <label for="" class=" form-label"></label>
                                 <label for="" class=" form-label"></label>
@@ -162,16 +606,16 @@
         <script>
 			var element = document.body;
 			var a = localStorage.getItem('isDarkMode');
-			console.log(a)
+			//console.log(a)
 				if (a==="true"){
 					element.dataset.bsTheme = "dark"
 					document.getElementById("2").checked = true;
-					console.log('b')
+					//console.log('b')
 				}
 				if(a==="false"){
 					element.dataset.bsTheme = "light";
 				}
-				console.log("c")
+				//console.log("c")
 			</script>
         <script>
             function myFunction() {

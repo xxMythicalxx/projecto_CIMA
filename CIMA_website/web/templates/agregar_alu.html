@@ -71,6 +71,7 @@
                                 <a class="nav-link text-center text-white" href="/ShowRegistrarP">Agregar Producto</a>
                                 <a class="nav-link text-center text-white" href="/ShowListU">Listado de Usuarios</a>
                                 <a class="nav-link text-center text-white" href="/ShowRegistrarU">Agregar Usuario</a>
+                                <a class="nav-link text-center text-white" href="/ShowListA">Listado de Alumnos</a>
                                 <a class="nav-link text-center text-white" href="/ShowRegistrarA">Agregar Alumnos</a>
                                 <button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
                                 <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
@@ -113,27 +114,39 @@
                 <center>
                     <h1>Registrar Alumno</h1>
                 </center> 
-                <form action="/RegistrarU" method="post" style="margin-top: 30px;margin-left: 50px;">
+                <form action="/RegistrarA" method="post" style="margin-top: 30px;margin-left: 50px;">
                     {% csrf_token %}
                         <div class="row row-cols-1 row-cols-md-3 g-4 justify">
                             <div class="row">
                                 <label for="txtnom" class="form-label">Rut</label>
                                 <div class="col-sm-9">        
-                                <input type="text" name="rut" required class="form-control form-control-lg" required oninput="checkRut(this)"placeholder="Ingrese RUT" maxlength="10"/>
+                                <input type="text" name="rut" required class="form-control form-control-lg" required oninput="checkRut(this)" maxlength="10"/>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <label for="txtdes" class=" form-label">Contraseña</label>
+                                <label for="txtdes" class=" form-label">Nombres</label>
                                 <div class="col-sm-9">     
-                                <input type="password" name="txtpass1" required class="form-control form-control-lg" />
+                                <input type="text" name="textnoms" required class="form-control form-control-lg" />
                                 </div>
                             </div>
 
                             <div class="row">
-                                <label for="txtdes" class=" form-label">Repita la Contraseña</label>
+                                <label for="txtdes" class=" form-label">Apellidos</label>
                                 <div class="col-sm-9">     
-                                <input type="password" name="txtpass2" required class="form-control form-control-lg" />
+                                <input type="text" name="textapes" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="txtdes" class=" form-label">Curso</label>
+                                <div class="col-sm-9">     
+                                <input type="text" name="textcur" required class="form-control form-control-lg" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="txtdes" class=" form-label">Salon</label>
+                                <div class="col-sm-9">     
+                                <input type="text" name="textsal" required class="form-control form-control-lg" />
                                 </div>
                             </div>
                             <div class="row">
@@ -166,40 +179,7 @@
             if(cuerpo.length<1 && dv.length<1){rut.value=''}
             else{rut.value = cuerpo + '-' + dv}
             
-            
-            // Si no cumple con el mínimo ej. (n.nnn.nnn)
-            //if(cuerpo.length < 7) { rut.setCustomValidity("RUT Incompleto"); return false;}
-            
-            // Calcular Dígito Verificador
-            //suma = 0;
-            //multiplo = 2;
-            
-            // Para cada dígito del Cuerpo
-            //for(i=1;i<=cuerpo.length;i++) {
-            
-                // Obtener su Producto con el Múltiplo Correspondiente
-                //index = multiplo * valor.charAt(cuerpo.length - i);
-                
-                // Sumar al Contador General
-                //suma = suma + index;
-                
-                // Consolidar Múltiplo dentro del rango [2,7]
-                //if(multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
-        
-            //}
-            
-            // Calcular Dígito Verificador en base al Módulo 11
-            //dvEsperado = 11 - (suma % 11);
-            
-            // Casos Especiales (0 y K)
-            //dv = (dv == 'K')?10:dv;
-            //dv = (dv == 0)?11:dv;
-            
-            // Validar que el Cuerpo coincide con su Dígito Verificador
-            //if(dvEsperado != dv) { rut.setCustomValidity("RUT Inválido"); return false; }
-            
-            // Si todo sale bien, eliminar errores (decretar que es válido)
-            //rut.setCustomValidity('');
+
         }
         </script>
         <script>

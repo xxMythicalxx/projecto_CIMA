@@ -32,25 +32,52 @@
         const update = (nombre) => {
             var id = nombre.id;
             console.log(nombre.id);
-            var a = nombre.correo;
-            console.log(nombre.correo);
-            var b = nombre.password;
-            console.log(nombre.password);
+            var a = nombre.rut;
+            console.log(nombre.rut);
+            var b = nombre.nombres;
+            console.log(nombre.nombres);
+            var c = nombre.lastnombre;
+            console.log(nombre.lastnombre);
+            var d = nombre.curso;
+            console.log(nombre.curso);
+            var e = nombre.salon;
+            console.log(nombre.salon);
             Swal.fire({
             title: "Modificando a " + a,
             toast: true,
             html: `
                 <div class="row">
-                    <label for="txtnom" class="form-label">Correo</label>
+                    <label for="txtnom" class="form-label">Rut</label>
                     <div class="col-sm-9">        
-                    <input type="email" id="txtcorreo" value=${a} required class="form-control form-control-lg" />
+                    <input type="text" id="txtrut" value=${a} required oninput="checkRut(this)" maxlength="10" class="form-control form-control-lg" />
                     </div>
                 </div>
 
                 <div class="row">
-                    <label for="txtdes" class=" form-label">Contraseña</label>
+                    <label for="txtdes" class=" form-label">Nombres</label>
                     <div class="col-sm-9">     
-                    <input type="password" id="txtpass" required class="form-control form-control-lg" />
+                    <input type="text" id="txtnoms" value=${b} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Apellidos</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtapes" value=${c} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Curso</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtcur" value=${d} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Salon</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtsal" value=${e} required class="form-control form-control-lg" />
                     </div>
                 </div>
 
@@ -59,36 +86,30 @@
             focusConfirm: false,
             showCancelButton: true,
             preConfirm: () => {
-            var cor = document.getElementById("txtcorreo").value;
-            var pas = document.getElementById("txtpass").value;
+            var rut = document.getElementById("txtrut").value;
+            var noms = document.getElementById("txtnoms").value;
+            var apes = document.getElementById("txtapes").value;
+            var cur = document.getElementById("txtcur").value;
+            var sal = document.getElementById("txtsal").value;
     
-            if (cor && pas) {
-                //console.log(cor+pas+a)
-                fetch('http://127.0.0.1:8000/UpdateU',{method: 'POST',
+            if (rut && noms && apes && cur && sal) {
+                console.log(rut+noms+apes)
+                fetch('http://127.0.0.1:8000/UpdateA',{method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'
                   },
                   body: JSON.stringify({
                     id_: id,
-                    cor_: cor,
-                    pas_: pas,
+                    rut_: rut,
+                    noms_: noms,
+                    apes_: apes,
+                    cur_: cur,
+                    sal_: sal,
                   })
                 })
                 .then(response => response.json())
                 .then(data => console.log(data));
-                //let dato = {};
-                //dato.id = id;
-                //dato.nom = nom;
-                //dato.des = des;
-                //dato.tip = tip;
-                //dato.can = can;
-                //dato.pre = pre;
-                //const  dat = btoa(JSON.stringify(dato)); 
-                //"id": id, "nom":nom,"des":des , "tip":tip, "can":can , "pre":pre
-                //const dato = JSON.parse(text);
-                //console.log(dat)
-                //window.location.href = "/UpdateP"+dat
                 Swal.fire({
                     position: 'top',
                     icon: 'success',
@@ -96,7 +117,7 @@
                     toast: true,
                     }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "/ShowListU";
+                        window.location.href = "/ShowListA";
                     }
                 })
             }else{
@@ -106,6 +127,26 @@
                 toast: true,
                 'icon':'error'
             })}}})
+        }
+        </script>
+        <script>
+            function checkRut(rut) {
+            //limipar rut
+            var rutlimpio = rut.value.replace(/[^0-9kK]/g, '');
+            // Despejar Puntos
+            var valor = rutlimpio.replace('.','');
+            // Despejar Guión
+            valor = valor.replace('-','');
+            
+            // Aislar Cuerpo y Dígito Verificador
+            cuerpo = valor.slice(0,-1);
+            dv = valor.slice(-1).toUpperCase();
+            
+            // Formatear RUN
+            if(cuerpo.length<1 && dv.length<1){rut.value=''}
+            else{rut.value = cuerpo + '-' + dv}
+            
+
         }
         </script>
         <script>
@@ -217,8 +258,11 @@
                         <div class="table-responsive">
                             <table class="table table-hover" style="margin: 0 auto;float: none;">
                                 <tr style="background-color: lightgrey;">
-                                    <th style="text-align: center;">CORREO</th>
-                                    <th style="text-align: center;">CONTRASEÑA</th>
+                                    <th style="text-align: center;">RUT</th>
+                                    <th style="text-align: center;">NOMBRES</th>
+                                    <th style="text-align: center;">APELLIDOS</th>
+                                    <th style="text-align: center;">CURSO</th>
+                                    <th style="text-align: center;">SALON</th>
                                     <th style="text-align: center;">EDITAR</th>
                                     <th style="text-align: center;">ELIMINAR</th>
                                 </tr>
@@ -226,8 +270,11 @@
                                 {% for x in u %}
                                 
                                 <tr class="align-middle">
-                                    <td style="text-align: center;">{{x.correo}}</td>
-                                    <td style="text-align: center;">***</td>
+                                    <td style="text-align: center;">{{x.rut}}</td>
+                                    <td style="text-align: center;">{{x.nombres}}</td>
+                                    <td style="text-align: center;">{{x.lastnombre}}</td>
+                                    <td style="text-align: center;">{{x.curso}}</td>
+                                    <td style="text-align: center;">{{x.salon}}</td>
                                     <td style="text-align: center;">
                                         <button type="button" onClick="update({{x}})" class="btn btn-lg">
                                             <i class="bi bi-pencil-fill" ></i>

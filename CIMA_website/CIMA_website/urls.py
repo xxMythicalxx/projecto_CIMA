@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from web import views
-from django.views.generic import TemplateView
 
 urlpatterns = [
     # test
@@ -39,6 +38,17 @@ urlpatterns = [
     path('RegistrarU', views.RegisterUsuario),
     path('UpdateU', views.UpdateU),
     path('DeleteU/<int:id>', views.DeleteU),
+    # admin Alumnos
+    path('ShowListA', views.ShowAlumno),
+    path('ShowRegistrarA', views.ShowRegisterAlumno),
+    path('RegistrarA', views.RegisterAlumno),
+    path('RegistrarA2', views.RegisterAlumno2),
+    path('UpdateA', views.UpdateA),
+    path('DeleteA/<int:id>', views.DeleteA),
+    #admin Estado Producto
+    path('RegistrarE', views.RegisterEstado_Producto),
+    #admin Estado Producto
+    path('RegistrarC', views.RegisterCategoria),
     # usuario menu
     path('usumenu', views.ShowUsuarioMenu),
 ]

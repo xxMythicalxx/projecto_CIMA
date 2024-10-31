@@ -11,7 +11,7 @@ class HisAdmin(admin.ModelAdmin):
     list_display=['id', 'usuario', 'descripcion', 'tableinfo', 'hour']
 
 class productoAdmin(admin.ModelAdmin):
-    list_display=['id','nombre', 'descripcion', 'tipo', 'categoria', 'cantidad', 'precio', 'estado_producto', 'estado_habil', 'fecha_ingreso', 'fecha_egreso', 'rut_alumno']
+    list_display=['id','nombre', 'descripcion', 'categoria', 'cantidad', 'precio','razon_ingreso', 'estado_producto', 'estado_habil', 'fecha_ingreso', 'fecha_egreso', 'rut_alumno']
     
 class usuarioAdmin(admin.ModelAdmin):
     list_display=['id', 'correo', 'password']

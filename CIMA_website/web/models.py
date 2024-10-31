@@ -28,12 +28,16 @@ class Producto(models.Model):
     ("activo", "activo"),
     ("desactivo", "desactivo"),
     ]
+    razon_ingreso = [
+    ("comprado", "comprado"),
+    ("donado", "donado"),
+    ]
     nombre = models.TextField(max_length=15)
     descripcion = models.TextField(max_length=100)
-    tipo = models.TextField(max_length=15)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
     precio = models.IntegerField()
+    razon_ingreso = models.TextField(max_length=20, choices=razon_ingreso)
     estado_producto = models.ForeignKey(Estado_Producto, on_delete=models.CASCADE)
     estado_habil = models.TextField(max_length=20, choices=estado_ha)
     fecha_ingreso = models.DateTimeField()
