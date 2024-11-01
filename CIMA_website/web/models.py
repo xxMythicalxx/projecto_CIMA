@@ -41,7 +41,9 @@ class Producto(models.Model):
     estado_producto = models.ForeignKey(Estado_Producto, on_delete=models.CASCADE)
     estado_habil = models.TextField(max_length=20, choices=estado_ha)
     fecha_ingreso = models.DateTimeField()
-    fecha_egreso = models.DateTimeField()
+    #fecha_modificacion = models.DateTimeField()
+    fecha_egreso = models.DateTimeField(null=True, blank=True)
+    #razon_egreso = models.TextField(max_length=100)
     rut_alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -264,17 +264,23 @@
                             </div>
                           </div>
                         <div class="table-responsive">
-                            <table class="table table-hover" style="margin: 0 auto;float: none;">
+                            <table class="table table-hover sortable" style="margin: 0 auto;float: none;"  id="sortTable" >
                                 <thead>
                                 <tr style="background-color: lightgrey;">
-                                    <th style="text-align: center;">NOMBRE</th>
-                                    <th style="text-align: center;">DESCRIPCION</th>
-                                    <th style="text-align: center;">TIPO DE PRODUCTO</th>
-                                    <th style="text-align: center;">CANTIDAD</th>
-                                    <th style="text-align: center;">PRECIO</th>
-                                    <th style="text-align: center;">TOTAL</th>
-                                    <th style="text-align: center;">EDITAR</th>
-                                    <th style="text-align: center;">ELIMINAR</th>
+                                    <th style="text-align: center;" data-sortable="true">NOMBRE</th>
+                                    <th style="text-align: center;" data-sortable="true">DESCRIPCION</th>
+                                    <th style="text-align: center;" data-sortable="true">CATEGORIA</th>
+                                    <th style="text-align: center;" data-sortable="true">CANTIDAD</th>
+                                    <th style="text-align: center;" data-sortable="true">PRECIO</th>
+                                    <th style="text-align: center;" data-sortable="true">TOTAL</th>
+                                    <th style="text-align: center;" data-sortable="true">RAZON DE INGRESO</th>
+                                    <th style="text-align: center;" data-sortable="true">ESTADO DEL PRODUCTO</th>
+                                    <th style="text-align: center;" data-sortable="true">HABILITADO</th>
+                                    <th style="text-align: center;" data-sortable="true">FECHA DE INGRESO</th>
+                                    <th style="text-align: center;" data-sortable="true">FECHA DE EGRESO</th>
+                                    <th style="text-align: center;" data-sortable="true">ALUMNO ASOCIADO</th>
+                                    <th style="text-align: center;" data-sortable="true">EDITAR</th>
+                                    <th style="text-align: center;" data-sortable="true">ELIMINAR</th>
                                 </tr>
                                 </thead>
                                 {% for x in p %}
@@ -282,10 +288,16 @@
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.nombre}}</td>
                                     <td style="text-align: center;">{{x.descripcion}}</td>
-                                    <td style="text-align: center;">{{x.tipo}}</td>
+                                    <td style="text-align: center;">{{x.categoria}}</td>
                                     <td style="text-align: center;">{{x.cantidad}}</td>
                                     <td style="text-align: center;">{{x.precio}}</td>
                                     <td style="text-align: center;">${% widthratio x.precio 1 x.cantidad %}</td>
+                                    <td style="text-align: center;">{{x.razon_ingreso}}</td>
+                                    <td style="text-align: center;">{{x.estado_producto}}</td>
+                                    <td style="text-align: center;">{{x.estado_habil}}</td>
+                                    <td style="text-align: center;">{{x.fecha_ingreso}}</td>
+                                    <td style="text-align: center;">{{x.fecha_egreso}}</td>
+                                    <td style="text-align: center;">{{x.rut_alumno}}</td>
                                     <td style="text-align: center;">
                                         <button type="button" onClick="update({{x}})" class="btn btn-lg">
                                             <i class="bi bi-pencil-fill" ></i>
@@ -300,10 +312,11 @@
                                 {% endfor %}
                             </tbody>    
                             </table>
+                            <script>
+                                $('#sortTable').DataTable();
+                                </script>
                         </div>
                             {% else %}  
-    
-    
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <h5>No Hay Registros</h5>
                             </div>

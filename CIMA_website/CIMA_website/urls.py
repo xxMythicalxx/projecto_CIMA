@@ -45,10 +45,15 @@ urlpatterns = [
     path('RegistrarA2', views.RegisterAlumno2),
     path('UpdateA', views.UpdateA),
     path('DeleteA/<int:id>', views.DeleteA),
+    path('DeleteA2/<int:id>', views.DeleteA2),
     #admin Estado Producto
     path('RegistrarE', views.RegisterEstado_Producto),
-    #admin Estado Producto
+    path('UpdateE', views.UpdateE),
+    path('DeleteE/<int:id>', views.DeleteE),
+    #admin Categoria Producto
     path('RegistrarC', views.RegisterCategoria),
+    path('UpdateC', views.UpdateC),
+    path('DeleteC/<int:id>', views.DeleteC),
     # usuario menu
     path('usumenu', views.ShowUsuarioMenu),
 ]

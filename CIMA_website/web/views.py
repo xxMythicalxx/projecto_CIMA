@@ -101,7 +101,7 @@ def ShowAdmin(request):
         except User.DoesNotExist:
             u = None
         if u is not None:
-            p = Producto.objects.all().values().order_by("nombre")
+            p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
             dato = {'p': p,'correo' : request.session["correo"]}
             return render(request, 'admin.html',dato)
             
@@ -124,10 +124,13 @@ def RegisterProducto(request):
                 u = None
             if u is not None:
                 nom = request.POST['txtnombre']
-                des = request.POST['txtdescipcion']
-                tip = request.POST['txttipo']
+                desu = request.POST['txtdescipcion']
+                cat = request.POST['txtcategorias']
                 can = request.POST['cantidad']
                 pre = request.POST['precio']
+                raz = request.POST['opt']
+                est = request.POST['txtestados']
+                rut = request.POST['txtrutss']
                 test = Producto.objects.filter(nombre=nom)
                 if test:
                     dato = {'r2' : 'El Producto Llamado ( '+nom+' ) Ya Existe No Se puede Repetir'}
@@ -140,9 +143,9 @@ def RegisterProducto(request):
                     h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
                     h.save()
 
-                    p = Producto(nombre=nom, descripcion=des, tipo=tip, cantidad=can, precio=pre)
+                    p = Producto(nombre=nom, descripcion=desu, categoria_id=cat, cantidad=can, precio=pre, razon_ingreso=raz, estado_producto_id=est, estado_habil='activo', fecha_ingreso=datetime.now(),fecha_egreso=datetime.now(), rut_alumno_id=rut)
                     p.save()
-                    p = Producto.objects.all().values().order_by("nombre")
+                    p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
                     dato = {'p': p, 'r' : 'Registro Realizado Correctamente'}
                     return render(request, 'admin.html',dato)
             else:
@@ -195,7 +198,7 @@ def UpdateP(request):
                 try:
                     data = json.loads(request.body) 
                     nom = data.get("nom_")
-                    des = data.get("des_")
+                    desu = data.get("des_")
                     tip = data.get("tip_")
                     can = data.get("can_")
                     pre = data.get("pre_")
@@ -210,7 +213,7 @@ def UpdateP(request):
 
                     p = Producto.objects.get(id=id_)
                     p.nombre = nom
-                    p.descripcion = des
+                    p.descripcion = desu
                     p.tipo = tip
                     p.cantidad = can
                     p.precio = pre
@@ -224,7 +227,7 @@ def UpdateP(request):
                     dato = {'p' : p , 'r2' : "No Existen Datos" }
                     return render(request, 'admin.html', dato)
             else:
-                dato = {'p' : p , 'r2' : "No puedes acceder Por url" }
+                dato = {'r2' : "No puedes acceder Por url" }
                 return render(request, 'login.html', dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -262,7 +265,7 @@ def DeleteP(request, id):
             except:
                 p = Producto.objects.all().values().order_by("nombre")
 
-                dato = {'r2' : "El Producto No Existe", 'p': p}
+                dato = {'r2' : "El Producto No Existe"}
                 return render(request, 'admin.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -411,8 +414,7 @@ def UpdateU(request):
                     dato = {'u' : u , 'r2' : "No Existen Datos" }
                     return render(request, 'listado_usu.html', dato)
             else:
-                u = Usuario.objects.all().values().order_by("correo")
-                dato = {'u' : u , 'r2' : "No puedes acceder Por url" }
+                dato = { 'r2' : "No puedes acceder Por url" }
                 return render(request, 'login.html', dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -430,11 +432,6 @@ def DeleteU(request, id):
             u = User.objects.get(email=cor)
         except User.DoesNotExist:
             u = None
-        #user = authenticate(request,email="a@a.com", password=pas)
-        #if user is not None:
-        #    print('hola')
-        #print(user)
-        #print(u)
         if u is not None:
             try:
                 u = Usuario.objects.get(id=id)
@@ -447,7 +444,6 @@ def DeleteU(request, id):
                 return render(request, 'listado_usu.html',dato)
             except:
                 u = Usuario.objects.all().values().order_by("correo")
-
                 dato = {'r2' : "El Usuario No Existe", 'u': u}
                 return render(request, 'listado_usu.html',dato)
         else:
@@ -558,19 +554,15 @@ def RegisterAlumno2(request):
                         u = Alumno(rut=rut, nombres=noms,lastnombre=apes,curso=cur,salon=sal)
                         u.save()
 
-                        opcategoria = Categoria.objects.all().values().order_by("tipo")
-                        opesta = Estado_Producto.objects.all().values().order_by("estado")
-                        opalumno = Alumno.objects.all().values().order_by("rut")
-                        dato = {'opalumno' : opalumno,'opesta' : opesta,'opcategoria' : opcategoria,  'r':"Alumno Registrado Correctamente"}
+                        dato = {'r':"Alumno Registrado Correctamente"}
                         return render(request, 'agregar_pro.html', dato)
 
                 except:
                     u = Alumno.objects.all().values().order_by("nombres")
                     dato = {'u' : u , 'r2' : "No Existen Datos" }
-                    return render(request, 'listado_alu.html', dato)
+                    return render(request, 'agregar_pro.html', dato)
             else:
-                u = Usuario.objects.all().values().order_by("correo")
-                dato = {'u' : u , 'r2' : "No puedes acceder Por url" }
+                dato = { 'r2' : "No puedes acceder Por url" }
                 return render(request, 'login.html', dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -642,8 +634,7 @@ def UpdateA(request):
                     dato = {'u' : u , 'r2' : "No Existen Datos" }
                     return render(request, 'listado_alu.html', dato)
             else:
-                u = Usuario.objects.all().values().order_by("correo")
-                dato = {'u' : u , 'r2' : "No puedes acceder Por url" }
+                dato = {'r2' : "No puedes acceder Por url" }
                 return render(request, 'login.html', dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -661,26 +652,54 @@ def DeleteA(request, id):
             u = User.objects.get(email=cor)
         except User.DoesNotExist:
             u = None
-        #user = authenticate(request,email="a@a.com", password=pas)
-        #if user is not None:
-        #    print('hola')
-        #print(user)
-        #print(u)
         if u is not None:
             try:
-                u = Usuario.objects.get(id=id)
-                corr = u.correo
+                u = Alumno.objects.get(id=id)
+                rut = u.rut
                 u.delete()
 
-                u = Usuario.objects.all().values().order_by("correo")
+                u = Alumno.objects.all().values().order_by("nombres")
 
-                dato = {'r' : 'El Usuario '+ corr +' Fue Eliminado Correctamente', 'u': u}
-                return render(request, 'listado_usu.html',dato)
+                dato = {'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente', 'u': u}
+                return render(request, 'listado_alu.html',dato)
             except:
                 u = Usuario.objects.all().values().order_by("correo")
 
-                dato = {'r2' : "El Usuario No Existe", 'u': u}
-                return render(request, 'listado_usu.html',dato)
+                dato = {'r2' : "El Alumno No Existe", 'u': u}
+                return render(request, 'listado_alu.html',dato)
+        else:
+                dato = { 'r2' : 'No puedes acceder esa funcion' }
+                return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)
+
+def DeleteA2(request, id):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            try:
+                u = Alumno.objects.get(id=id)
+                rut = u.rut
+                u.delete()
+
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente'}
+                return render(request, 'agregar_pro.html',dato)
+            except:
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                return render(request, 'agregar_pro.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
                 return render(request, 'login.html', dato)
@@ -737,9 +756,49 @@ def RegisterEstado_Producto(request):
                         return render(request, 'agregar_pro.html', dato)
 
                 except:
-                    u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u' : u , 'r2' : "No Existen Datos" }
-                    return render(request, 'listado_alu.html', dato)
+                    dato = { 'r2' : "No Existen Datos" }
+                    return render(request, 'agregar_pro.html', dato)
+            else:
+                dato = {'r2' : "No puedes acceder Por url" }
+                return render(request, 'login.html', dato)
+        else:
+            dato = { 'r2' : 'No puedes acceder esa funcion' }
+            return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)
+
+def UpdateE(request):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            if request.method == 'POST':
+                try:
+                    data = json.loads(request.body) 
+                    estado = data.get("estado_")
+                    id_ = data.get("id_")
+                    des = "Modificacion del estado ("+estado+")"
+                    table = "Estado"
+                    date = datetime.now()
+                    usuario = cor.upper()
+                    h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
+                    h.save()
+                    
+                    u = Estado_Producto.objects.get(id=id_)
+                    u.estado = estado
+                    u.save()
+
+                    dato = {'r':"Datos Modificados Correctamente"}
+                    return render(request, 'agregar_pro.html', dato)
+
+                except:                
+                    dato = {'r2' : "No Existen Datos" }
+                    return render(request, 'agregar_pro.html', dato)
             else:
                 u = Usuario.objects.all().values().order_by("correo")
                 dato = {'u' : u , 'r2' : "No puedes acceder Por url" }
@@ -747,6 +806,39 @@ def RegisterEstado_Producto(request):
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
             return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)  
+
+def DeleteE(request, id):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            try:
+                u = Estado_Producto.objects.get(id=id)
+                estado = u.estado
+                u.delete()
+
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'El Estado : '+ estado +' Fue Eliminado Correctamente'}
+                return render(request, 'agregar_pro.html',dato)
+            except:
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                return render(request, 'agregar_pro.html',dato)
+        else:
+                dato = { 'r2' : 'No puedes acceder esa funcion' }
+                return render(request, 'login.html', dato)
     else:
         dato = { 'r2' : 'Debe estar logueado para acceder' }
         return render(request, 'login.html', dato)
@@ -796,6 +888,80 @@ def RegisterCategoria(request):
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
             return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)
+    
+def UpdateC(request):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            if request.method == 'POST':
+                try:
+                    data = json.loads(request.body) 
+                    categoria = data.get("tipo_")
+                    id_ = data.get("id_")
+                    des = "Modificacion del la Categoria ("+categoria+")"
+                    table = "Categoria"
+                    date = datetime.now()
+                    usuario = cor.upper()
+                    h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
+                    h.save()
+                    
+                    u = Categoria.objects.get(id=id_)
+                    u.tipo = categoria
+                    u.save()
+
+                    dato = {'r':"Datos Modificados Correctamente"}
+                    return render(request, 'agregar_pro.html', dato)
+
+                except:                
+                    dato = {'r2' : "No Existen Datos" }
+                    return render(request, 'agregar_pro.html', dato)
+            else:
+                dato = {'r2' : "No puedes acceder Por url" }
+                return render(request, 'login.html', dato)
+        else:
+            dato = { 'r2' : 'No puedes acceder esa funcion' }
+            return render(request, 'login.html', dato)
+    else:
+        dato = {'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)  
+
+def DeleteC(request, id):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            try:
+                u = Categoria.objects.get(id=id)
+                categoria = u.tipo
+                u.delete()
+
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'La Categoria : '+ categoria +' Fue Eliminado Correctamente'}
+                return render(request, 'agregar_pro.html',dato)
+            except:
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                return render(request, 'agregar_pro.html',dato)
+        else:
+                dato = { 'r2' : 'No puedes acceder esa funcion' }
+                return render(request, 'login.html', dato)
     else:
         dato = { 'r2' : 'Debe estar logueado para acceder' }
         return render(request, 'login.html', dato)
