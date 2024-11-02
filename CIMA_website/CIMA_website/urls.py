@@ -31,6 +31,8 @@ urlpatterns = [
     path('ShowRegistrarP', views.ShowRegisterProducto),
     path('RegistrarP', views.RegisterProducto),
     path('UpdateP', views.UpdateP),
+    path('EnableP', views.EnableP),
+    path('DisableP', views.DisableP),
     path('DeleteP/<int:id>', views.DeleteP),
     # admin Usuarios
     path('ShowListU', views.ShowUsuario),

@@ -102,7 +102,10 @@ def ShowAdmin(request):
             u = None
         if u is not None:
             p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
-            dato = {'p': p,'correo' : request.session["correo"]}
+            opcategoria = Categoria.objects.all().values().order_by("tipo")
+            opesta = Estado_Producto.objects.all().values().order_by("estado")
+            opalumno = Alumno.objects.all().values().order_by("rut")
+            dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p,'correo' : request.session["correo"]}
             return render(request, 'admin.html',dato)
             
         else:
@@ -143,10 +146,13 @@ def RegisterProducto(request):
                     h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
                     h.save()
 
-                    p = Producto(nombre=nom, descripcion=desu, categoria_id=cat, cantidad=can, precio=pre, razon_ingreso=raz, estado_producto_id=est, estado_habil='activo', fecha_ingreso=datetime.now(),fecha_egreso=datetime.now(), rut_alumno_id=rut)
+                    p = Producto(nombre=nom, descripcion=desu, categoria_id=cat, cantidad=can, precio=pre, razon_ingreso=raz, estado_producto_id=est, estado_habil='activo', fecha_ingreso=datetime.now(),fecha_modificacion=datetime.now(), rut_alumno_id=rut)
                     p.save()
                     p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
-                    dato = {'p': p, 'r' : 'Registro Realizado Correctamente'}
+                    opcategoria = Categoria.objects.all().values().order_by("tipo")
+                    opesta = Estado_Producto.objects.all().values().order_by("estado")
+                    opalumno = Alumno.objects.all().values().order_by("rut")
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'r' : 'Registro Realizado Correctamente'}
                     return render(request, 'admin.html',dato)
             else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -199,9 +205,12 @@ def UpdateP(request):
                     data = json.loads(request.body) 
                     nom = data.get("nom_")
                     desu = data.get("des_")
-                    tip = data.get("tip_")
+                    cat = data.get("cat_")
                     can = data.get("can_")
                     pre = data.get("pre_")
+                    raz = data.get("raz_")
+                    est = data.get("est_")
+                    rut = data.get("rut_")
                     id_ = data.get("id_")
 
                     des = "Modificacion del producto ("+nom.lower()+")"
@@ -214,17 +223,27 @@ def UpdateP(request):
                     p = Producto.objects.get(id=id_)
                     p.nombre = nom
                     p.descripcion = desu
-                    p.tipo = tip
+                    p.categoria_id = cat
                     p.cantidad = can
                     p.precio = pre
+                    p.razon_ingreso = raz
+                    p.estado_producto_id = est
+                    p.fecha_modificacion = datetime.now()
+                    p.rut_alumno_id = rut
                     p.save()
                     p = Producto.objects.all().values().order_by("nombre")
-                    dato = {'p' : p , 'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
+                    opcategoria = Categoria.objects.all().values().order_by("tipo")
+                    opesta = Estado_Producto.objects.all().values().order_by("estado")
+                    opalumno = Alumno.objects.all().values().order_by("rut")
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p , 'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'admin.html', dato)
 
                 except:
                     p = Producto.objects.all().values().order_by("nombre")
-                    dato = {'p' : p , 'r2' : "No Existen Datos" }
+                    opcategoria = Categoria.objects.all().values().order_by("tipo")
+                    opesta = Estado_Producto.objects.all().values().order_by("estado")
+                    opalumno = Alumno.objects.all().values().order_by("rut")
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p , 'r2' : "No Existen Datos" }
                     return render(request, 'admin.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -259,13 +278,114 @@ def DeleteP(request, id):
                 h.save()
 
                 p = Producto.objects.all().values().order_by("nombre")
-
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
                 dato = {'r' : 'El Producto '+ nom +' Fue Eliminado Correctamente', 'p': p}
                 return render(request, 'admin.html',dato)
             except:
                 p = Producto.objects.all().values().order_by("nombre")
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                return render(request, 'admin.html',dato)
+        else:
+            dato = { 'r2' : 'No puedes acceder esa funcion' }
+            return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)
 
-                dato = {'r2' : "El Producto No Existe"}
+def DisableP(request):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            try:
+                data = json.loads(request.body) 
+                id = data.get("id_")
+                raz = data.get("raz_")
+                p = Producto.objects.get(id=id)
+                nom = p.nombre
+                p.razon_egreso = raz
+                p.fecha_egreso = datetime.now()
+                p.estado_habil = 'desactivo'
+                p.save()
+
+                des = "Desactivado del producto ("+nom.lower()+")"
+                table = "Producto"
+                date = datetime.now()
+                usuario = cor.upper()
+                h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
+                h.save()
+
+                p = Producto.objects.all().values().order_by("nombre")
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'r' : 'El Producto '+ nom +' Fue Desactivado Correctamente', 'p': p}
+                return render(request, 'admin.html',dato)
+            except:
+                p = Producto.objects.all().values().order_by("nombre")
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                return render(request, 'admin.html',dato)
+        else:
+            dato = { 'r2' : 'No puedes acceder esa funcion' }
+            return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)
+    
+def EnableP(request):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            try:
+                data = json.loads(request.body) 
+                id = data.get("id_")
+                p = Producto.objects.get(id=id)
+                nom = p.nombre
+                print("a")
+                p.razon_egreso = ''
+                print("b")
+                p.fecha_egreso = None
+                print("c")
+                p.estado_habil = 'activo'
+                print("d")
+                p.save()
+                print("e")
+                des = "Desactivado del producto ("+nom.lower()+")"
+                table = "Producto"
+                date = datetime.now()
+                usuario = cor.upper()
+                h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
+                h.save()
+
+                p = Producto.objects.all().values().order_by("nombre")
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'r' : 'El Producto '+ nom +' Fue Activado Correctamente', 'p': p}
+                return render(request, 'admin.html',dato)
+            except:
+                p = Producto.objects.all().values().order_by("nombre")
+                opcategoria = Categoria.objects.all().values().order_by("tipo")
+                opesta = Estado_Producto.objects.all().values().order_by("estado")
+                opalumno = Alumno.objects.all().values().order_by("rut")
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
                 return render(request, 'admin.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
