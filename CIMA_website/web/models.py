@@ -49,16 +49,13 @@ class Producto(models.Model):
     def __str__(self):
         return str(self.nombre)
     
-class Tipo_usuario(models.Model):
-    tipo = models.TextField(max_length=15)
-
-    def __str__(self):
-        return str(self.tipo)
 
 class Usuario(models.Model):
     correo = models.TextField(max_length=15)
     password = models.TextField(max_length=20)
-    tipo = models.ForeignKey(Tipo_usuario, on_delete=models.CASCADE)
+    tipo = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    create_alumno = models.BooleanField()
+    create_estado = models.BooleanField()
 
     def __str__(self):
         return str(self.correo)

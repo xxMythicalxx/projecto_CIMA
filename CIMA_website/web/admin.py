@@ -14,7 +14,7 @@ class productoAdmin(admin.ModelAdmin):
     list_display=['id','nombre', 'descripcion', 'categoria', 'cantidad', 'precio','razon_ingreso', 'estado_producto', 'estado_habil', 'fecha_ingreso','fecha_modificacion','fecha_egreso', 'razon_egreso', 'rut_alumno']
     
 class usuarioAdmin(admin.ModelAdmin):
-    list_display=['id', 'correo', 'password']
+    list_display=['id', 'correo', 'password', 'tipo', 'create_alumno', 'create_estado']
 
 admin.site.register(Alumno, AlumnoAdmin)
 admin.site.register(His, HisAdmin)

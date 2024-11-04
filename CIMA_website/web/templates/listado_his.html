@@ -128,7 +128,11 @@
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.usuario}}</td>
                                     <td style="text-align: center;">{{x.descripcion}}</td>
+                                {% if x.tableinfo == '' %}
+                                    <td style="text-align: center;">Ninguna</td>
+                                {% else %}
                                     <td style="text-align: center;">{{x.tableinfo}}</td>
+                                {% endif %}    
                                     <td style="text-align: center;">{{x.hour}}</td>
                                 </tr>
                                 {% endfor %}

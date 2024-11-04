@@ -56,10 +56,25 @@ urlpatterns = [
     path('RegistrarC', views.RegisterCategoria),
     path('UpdateC', views.UpdateC),
     path('DeleteC/<int:id>', views.DeleteC),
+    path('DeleteC2/<int:id>', views.DeleteC2),
     #admin historial
     path('ShowHis', views.ShowHis),
     # usuario menu
     path('usumenu', views.ShowUsuarioMenu),
+    path('UpdatePusu', views.UpdateP2),
+    path('RegistrarPusu', views.RegisterProductoUsu),
+    path('ShowRegistrarPusu', views.ShowRegisterProductoUsu),
+    path('EnablePusu', views.EnableP2),
+    path('DisablePusu', views.DisableP2),
+    path('DeletePusu/<int:id>', views.DeleteP2),
+    #usuario Estado producto
+    path('RegistrarEusu', views.RegisterEstado_ProductoUsu),
+    path('UpdateEusu', views.UpdateEUsu),
+    path('DeleteEusu/<int:id>', views.DeleteEUsu),
+    # admin Alumnos
+    path('RegistrarAusu', views.RegisterAlumnoUsu),
+    path('UpdateAusu', views.UpdateAUsu),
+    path('DeleteAusu/<int:id>', views.DeleteAUsu),
 ]
 
 

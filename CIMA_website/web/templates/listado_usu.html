@@ -29,13 +29,12 @@
 
         {% csrf_token %} 
         <script>
-        const update = (nombre) => {
-            var id = nombre.id;
-            console.log(nombre.id);
-            var a = nombre.correo;
-            console.log(nombre.correo);
-            var b = nombre.password;
-            console.log(nombre.password);
+        const update = (id__) => {
+            var id = id__;
+            var a = '';
+            {% for i in u %}
+                if (id == '{{i.id}}'){a='{{i.correo}}'}   
+            {% endfor %}
             Swal.fire({
             title: "Modificando a " + a,
             toast: true,
@@ -54,15 +53,45 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <label for="txtcategorias" class=" form-label">Tipo Usuario</label>
+                    <div class="col-sm-9">    
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                            <select name="txtcategorias" id='txtcategoria' required class="form-select form-select-lg">
+                                {% for x in opcategoria %}
+                                    <option value="{{ x.id }}">{{ x.tipo }}</option>
+                                {% empty %}
+                                    <option value="">no hay categorias creados</option>
+                                {% endfor %}  
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="true" name="crearalumnos" id="crearalumno">
+                        <label class="form-check-label" for="flexCheckDefault">
+                        Puede Crear Alumnos
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="true" name="crearestados" id="crearestado">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Puede Crear Estados de Productos
+                        </label>
+                    </div>
+                </div>
             `,
             focusConfirm: false,
             showCancelButton: true,
             preConfirm: () => {
             var cor = document.getElementById("txtcorreo").value;
             var pas = document.getElementById("txtpass").value;
-    
-            if (cor && pas) {
+            var tip = document.getElementById("txtcategoria").value;
+            var creaalu = document.getElementById("crearalumno").checked;
+            var creaest = document.getElementById("crearestado").checked;
+            if (cor && pas && tip && tip && tip) {
                 //console.log(cor+pas+a)
                 fetch('http://127.0.0.1:8000/UpdateU',{method: 'POST',
                     headers: {
@@ -73,6 +102,9 @@
                     id_: id,
                     cor_: cor,
                     pas_: pas,
+                    tip_: tip,
+                    creaalu_: creaalu,
+                    creaest_: creaest,
                   })
                 })
                 .then(response => response.json())
@@ -208,6 +240,9 @@
                                 <tr style="background-color: lightgrey;">
                                     <th style="text-align: center;">CORREO</th>
                                     <th style="text-align: center;">CONTRASEÑA</th>
+                                    <th style="text-align: center;">TIPO</th>
+                                    <th style="text-align: center;">PUEDE CREAR ALUMNOS</th>
+                                    <th style="text-align: center;">PUEDE CREAR ESTADO DE PRODUCTO</th>
                                     <th style="text-align: center;">EDITAR</th>
                                     <th style="text-align: center;">ELIMINAR</th>
                                 </tr>
@@ -217,8 +252,19 @@
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.correo}}</td>
                                     <td style="text-align: center;">***</td>
+                                    <td style="text-align: center;">{{x.tipo}}</td>
+                                {% if x.create_alumno == 1 %}
+                                    <td style="text-align: center;">Si</td>
+                                {% else %}
+                                    <td style="text-align: center;">No</td>
+                                {% endif %}
+                                {% if x.create_estado == 1 %}
+                                    <td style="text-align: center;">Si</td>
+                                {% else %}
+                                    <td style="text-align: center;">No</td>
+                                {% endif %} 
                                     <td style="text-align: center;">
-                                        <button type="button" onClick="update({{x}})" class="btn btn-lg">
+                                        <button type="button" onClick="update({{x.id}})" class="btn btn-lg">
                                             <i class="bi bi-pencil-fill" ></i>
                                         </button>
                                     </td>

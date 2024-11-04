@@ -258,6 +258,7 @@
                         {% if u %}
                         <div class="table-responsive">
                             <table class="table table-hover" style="margin: 0 auto;float: none;">
+                                <thead>
                                 <tr style="background-color: lightgrey;">
                                     <th style="text-align: center;">RUT</th>
                                     <th style="text-align: center;">NOMBRES</th>
@@ -267,9 +268,9 @@
                                     <th style="text-align: center;">EDITAR</th>
                                     <th style="text-align: center;">ELIMINAR</th>
                                 </tr>
-                                
+                            </thead>
                                 {% for x in u %}
-                                
+                            <tbody id="myTable">    
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.rut}}</td>
                                     <td style="text-align: center;">{{x.nombres}}</td>
@@ -288,7 +289,7 @@
                                     </td>
                                 </tr>
                                 {% endfor %}
-                                
+                            </tbody>    
                             </table>
                         </div>
                             {% else %}  
