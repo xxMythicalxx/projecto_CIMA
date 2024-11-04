@@ -11,9 +11,6 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 
-
-
-
 # Create your views here.
 
 def test(request):
@@ -40,8 +37,11 @@ def Login(request):
             usuario = cor.upper()
             h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
             h.save()
-            p = Producto.objects.all().values().order_by("nombre")
-            dato = {'p': p, 'correo' : cor.upper()}
+            p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
+            opcategoria = Categoria.objects.all().values().order_by("tipo")
+            opesta = Estado_Producto.objects.all().values().order_by("estado")
+            opalumno = Alumno.objects.all().values().order_by("rut")
+            dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'correo' : cor.upper()}
             return render(request, 'admin.html',dato)
 
         else:
@@ -60,7 +60,7 @@ def Login(request):
                 usuario = cor.upper()
                 h = His(descripcion=des, tableinfo=table, hour=date, usuario=usuario)
                 h.save()
-                p = Producto.objects.all().values().order_by("nombre")
+                p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
                 dato = {'p': p,'correo' : cor.upper()}
                 return render(request, 'usuario.html',dato)
             else:
@@ -1082,6 +1082,28 @@ def DeleteC(request, id):
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
                 return render(request, 'login.html', dato)
+    else:
+        dato = { 'r2' : 'Debe estar logueado para acceder' }
+        return render(request, 'login.html', dato)
+
+# Historial
+def ShowHis(request):
+    check = request.session.get("status")
+    cor = request.session.get("correo")
+    
+    if check is True:
+        try:
+            u = User.objects.get(email=cor)
+        except User.DoesNotExist:
+            u = None
+        if u is not None:
+            h = His.objects.all().order_by("-hour")
+            dato = {'h': h,'correo' : request.session["correo"]}
+            return render(request, 'listado_his.html',dato)
+            
+        else:
+            dato = { 'r2' : 'No puedes acceder esa funcion' }
+            return render(request, 'login.html', dato)
     else:
         dato = { 'r2' : 'Debe estar logueado para acceder' }
         return render(request, 'login.html', dato)

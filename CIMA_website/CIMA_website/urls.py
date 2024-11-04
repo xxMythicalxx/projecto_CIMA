@@ -56,6 +56,8 @@ urlpatterns = [
     path('RegistrarC', views.RegisterCategoria),
     path('UpdateC', views.UpdateC),
     path('DeleteC/<int:id>', views.DeleteC),
+    #admin historial
+    path('ShowHis', views.ShowHis),
     # usuario menu
     path('usumenu', views.ShowUsuarioMenu),
 ]
