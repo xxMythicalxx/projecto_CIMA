@@ -18,6 +18,8 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si',
                     toast: true,
+                    background: back,
+                    color: text,
                     cancelButtonText: 'Cancelar'
                     }).then((result) => {
                     if (result.isConfirmed) {
@@ -38,6 +40,8 @@
             Swal.fire({
             title: "Modificando a " + a,
             toast: true,
+            background: back,
+            color: text,
             html: `
                 <div class="row">
                     <label for="txtnom" class="form-label">Correo</label>
@@ -114,6 +118,8 @@
                     icon: 'success',
                     title: 'Cambio Realizado Correctamente',
                     toast: true,
+                    background: back,
+                    color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/ShowListU";
@@ -124,6 +130,8 @@
                 'title':'Error',
                 'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
                 toast: true,
+                background: back,
+                color: text,
                 'icon':'error'
             })}}})
         }
@@ -137,6 +145,8 @@
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     toast: true,
+                    background: back,
+                    color: text,
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si, borralo',
                     cancelButtonText: 'Cancelar'
@@ -165,7 +175,9 @@
             Swal.fire({
                 title: 'Sesion Caducada',
                 'icon':'error',
-                toast: true
+                toast: true,
+                background: back,
+                color: text,
                 }).then((result) => {
                 if (result.isConfirmed) {
                 window.location.href = "/";
@@ -179,22 +191,26 @@
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div  class="vh-100 d-flex justify-content-center ">
 	<div class="container-fluid">		
-		<nav class="navbar navbar-expand-lg" style="background-color: rgb(138, 138, 138);">
-		  	<div class="container-fluid">
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<nav class="navbar bg-body-tertiary">
+            <div class="container-fluid">
+				<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
 					<div class="navbar-nav" align="center">
-						<a class="nav-link text-center text-white" href="/adminn">Listado de Productos</a>
-						<a class="nav-link text-center text-white" href="/ShowRegistrarP">Agregar Producto</a>
-                        <a class="nav-link text-center text-white" href="/ShowListU">Listado de Usuarios</a>
-						<a class="nav-link text-center text-white" href="/ShowRegistrarU">Agregar Usuario</a>
-                        <a class="nav-link text-center text-white" href="/ShowListA">Listado de Alumnos</a>
-                        <a class="nav-link text-center text-white" href="/ShowRegistrarA">Agregar Alumnos</a>
-                        <a class="nav-link text-center text-white" href="/ShowHis">Ver Historial</a>
-						<button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
-                        <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                          </div>
+						<a class="btn btn-outline-info nav-link text-center" href="/adminn">Listado de Productos</a>
+						<a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarP">Agregar Producto</a>
+                        <a class="btn btn-outline-info active nav-link text-center" href="/ShowListU">Listado de Usuarios</a>
+						<a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarU">Agregar Usuario</a>
+                        <a class="btn btn-outline-info nav-link text-center" href="/ShowListA">Listado de Alumnos</a>
+                        <a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarA">Agregar Alumnos</a>
+                        <a class="btn btn-outline-info nav-link text-center" href="/ShowHis">Ver Historial</a>
+						<a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
+                        <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                             <input
                             class="form-check-input p-2"
                             type="checkbox"
@@ -202,13 +218,23 @@
                             id="2"
                             onclick="myFunction()"
                             />
-                        </div></a>				
+                        </div></a>		
 					</div>
+                    <div class="" style="height: 100%;">
+                        <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
+                        <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                        <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
 				</div>
-                <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
+                <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Listado de usuarios</h5>
+                <h5 class="justify-content-end" style="position: fixed;top: 0.8em;right: 1em;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
 		  	</div>
 		</nav>
-		<div class="justify-content-center " style="background-color:#a0b976; padding-top:10px; padding-bottom:10px;">
+		<div class="d-flex justify-content-end align-items-center">
 			<div class="container-fluid">
                 <div align="center">
                     <div style="margin: 0 auto;float: none;">
@@ -218,6 +244,8 @@
                             'title':'Error',
                             'text':"{{r2}}",
                             toast: true,
+                            background: back,
+                            color: text,
                             'icon':'error'
                         })</script>
                         {% endif %}
@@ -230,25 +258,32 @@
                             icon: 'success',
                             title: '{{r}}',
                             toast: true,
+                            background: back,
+                            color: text,
                             showConfirmButton: false,
                             timer: 1500
                         })</script>
                         {% endif %}                
                         {% if u %}
-                        <div class="table-responsive">
-                            <table class="table table-hover" style="margin: 0 auto;float: none;">
-                                <tr style="background-color: lightgrey;">
-                                    <th style="text-align: center;">CORREO</th>
-                                    <th style="text-align: center;">CONTRASEÑA</th>
-                                    <th style="text-align: center;">TIPO</th>
-                                    <th style="text-align: center;">PUEDE CREAR ALUMNOS</th>
-                                    <th style="text-align: center;">PUEDE CREAR ESTADO DE PRODUCTO</th>
-                                    <th style="text-align: center;">EDITAR</th>
-                                    <th style="text-align: center;">ELIMINAR</th>
-                                </tr>
-                                
+                        <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
+                            <div class="input-group" >
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
+                                <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
+                              </div>
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+                                <thead id="head_table">
+                                    <tr style="background-color: lightgrey;">
+                                        <th style="text-align: center;">CORREO</th>
+                                        <th style="text-align: center;">CONTRASEÑA</th>
+                                        <th style="text-align: center;">TIPO</th>
+                                        <th style="text-align: center;">PUEDE CREAR ALUMNOS</th>
+                                        <th style="text-align: center;">PUEDE CREAR ESTADO DE PRODUCTO</th>
+                                        <th style="text-align: center;">EDITAR</th>
+                                        <th style="text-align: center;">ELIMINAR</th>
+                                    </tr>
+                                </thead>
                                 {% for x in u %}
-                                
+                                <tbody id="myTable">
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.correo}}</td>
                                     <td style="text-align: center;">***</td>
@@ -275,7 +310,7 @@
                                     </td>
                                 </tr>
                                 {% endfor %}
-                                
+                            </tbody>    
                             </table>
                         </div>
                             {% else %}  
@@ -296,7 +331,57 @@
 		  
 	</div>
 </div>
+<script>
+    var a = document.getElementById("showEmail");
+    var b = document.getElementById("showEmail2");
+    var e = document.getElementById("TheEmail");
+    var t = localStorage.getItem('ShowEmail');
+    console.log(t)
+        if (t==="true"){
+            e.innerHTML = '{{correo}}';
+            a.style.display = "block";
+            b.style.display = "none";
+            //console.log('b')
+        }
+        if(t==="false"){
+            e.innerHTML = '***';
+            a.style.display = "none";
+            b.style.display = "block";
+        }
+        //console.log("c")
+    </script>
 
+<script>
+    function ChangeShowEmail() {
+        var element = document.body;
+        var a = document.getElementById("showEmail");
+        var b = document.getElementById("showEmail2");
+        var e = document.getElementById("TheEmail");
+        console.log(a)
+        if (a.style.display == "block"){
+            localStorage.setItem('ShowEmail', false);
+            e.innerHTML = '***';
+            a.style.display = "none";
+            b.style.display = "block";
+        }
+        else{
+            localStorage.setItem('ShowEmail', true);
+            e.innerHTML = '{{correo}}';
+            a.style.display = "block";
+            b.style.display = "none";
+        }
+    }
+</script>
+<script>
+    $(document).ready(function(){
+      $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+</script>
 <script>
     function test() {
     Swal.fire({
@@ -310,34 +395,40 @@
 <script>
     var element = document.body;
     var a = localStorage.getItem('isDarkMode');
-    console.log(a)
+    var back = '';
+    var text = '';
+    if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
+    //console.log(a)
         if (a==="true"){
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
-            console.log('b')
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            //console.log('b')
         }
         if(a==="false"){
             element.dataset.bsTheme = "light";
+            document.getElementById('head_table').setAttribute("class", "table-dark");
         }
-        console.log("c")
+        //console.log("c")
     </script>
 <script>
     function myFunction() {
-			var element = document.body;
-			var darkcheck = document.getElementById("2");
-			console.log(darkcheck)
-			if (darkcheck.checked){
-				element.dataset.bsTheme = "dark"
-				localStorage.setItem('isDarkMode', true);
-			}
-			else{
-				element.dataset.bsTheme = "light"
-				localStorage.setItem('isDarkMode', false);
-			}
-			
-			//element.dataset.bsTheme = 
-			//element.dataset.bsTheme == "light" ? "dark" : "light";
-		}
+        var element = document.body;
+        var darkcheck = document.getElementById("2");
+        //console.log(darkcheck)
+        if (darkcheck.checked){
+            element.dataset.bsTheme = "dark"
+            localStorage.setItem('isDarkMode', true);
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            back = "#2d2d2d"; text = "#ffffff";
+        }
+        else{
+            element.dataset.bsTheme = "light"
+            localStorage.setItem('isDarkMode', false);
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+            back = "#fff"; text = "#545454";
+        }
+    }
     </script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 	

@@ -41,7 +41,7 @@ def Login(request):
             opcategoria = Categoria.objects.all().values().order_by("tipo")
             opesta = Estado_Producto.objects.all().values().order_by("estado")
             opalumno = Alumno.objects.all().values().order_by("rut")
-            dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'correo' : cor.upper()}
+            dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'correo' : cor.upper(),'correo' : request.session["correo"],'r':'Bienvenido '+ request.session["correo"]}
             return render(request, 'admin.html',dato)
 
         else:
@@ -66,7 +66,7 @@ def Login(request):
                 p = Producto.objects.filter(categoria_id=tip.tipo_id).select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opesta':opesta, 'opalumno':opalumno, 'tip':tip,'p': p}
+                dato = {'opesta':opesta, 'opalumno':opalumno, 'tip':tip,'p': p,'correo' : request.session["correo"],'r':'Bienvenido '+ request.session["correo"]}
                 return render(request, 'usuario.html',dato)
             else:
                 dato = {'r2' : 'Error El Usuario No Existe'}
@@ -141,7 +141,7 @@ def RegisterProducto(request):
                 rut = request.POST['txtrutss']
                 test = Producto.objects.filter(nombre=nom)
                 if test:
-                    dato = {'r2' : 'El Producto Llamado ( '+nom+' ) Ya Existe No Se puede Repetir'}
+                    dato = {'r2' : 'El Producto Llamado ( '+nom+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                     return render(request, 'agregar_pro.html',dato)
                 else:
                     des = "Registro del producto ("+nom.lower()+")"
@@ -157,7 +157,7 @@ def RegisterProducto(request):
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
                     opesta = Estado_Producto.objects.all().values().order_by("estado")
                     opalumno = Alumno.objects.all().values().order_by("rut")
-                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'r' : 'Registro Realizado Correctamente'}
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'r' : 'Registro Realizado Correctamente','correo' : request.session["correo"]}
                     return render(request, 'admin.html',dato)
             else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -246,7 +246,7 @@ def UpdateP(request):
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
                     opesta = Estado_Producto.objects.all().values().order_by("estado")
                     opalumno = Alumno.objects.all().values().order_by("rut")
-                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p , 'r2' : "No Existen Datos" }
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p , 'r2' : "No Existen Datos",'correo' : request.session["correo"]}
                     return render(request, 'admin.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -284,14 +284,14 @@ def DeleteP(request, id):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'r' : 'El Producto '+ nom +' Fue Eliminado Correctamente', 'p': p}
+                dato = {'r' : 'El Producto '+ nom +' Fue Eliminado Correctamente', 'p': p,'correo' : request.session["correo"]}
                 return render(request, 'admin.html',dato)
             except:
                 p = Producto.select_related('categoria','estado_producto','rut_alumno').objects.all().values().order_by("nombre")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe",'correo' : request.session["correo"]}
                 return render(request, 'admin.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -331,14 +331,14 @@ def DisableP(request):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'r' : 'El Producto '+ nom +' Fue Desactivado Correctamente', 'p': p}
+                dato = {'r' : 'El Producto '+ nom +' Fue Desactivado Correctamente', 'p': p,'correo' : request.session["correo"]}
                 return render(request, 'admin.html',dato)
             except:
                 p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().values().order_by("nombre")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe",'correo' : request.session["correo"]}
                 return render(request, 'admin.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -381,14 +381,14 @@ def EnableP(request):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'r' : 'El Producto '+ nom +' Fue Activado Correctamente', 'p': p}
+                dato = {'r' : 'El Producto '+ nom +' Fue Activado Correctamente', 'p': p,'correo' : request.session["correo"]}
                 return render(request, 'admin.html',dato)
             except:
                 p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().values().order_by("nombre")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe",'correo' : request.session["correo"]}
                 return render(request, 'admin.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -448,12 +448,12 @@ def RegisterUsuario(request):
                     creaest = False
                 if tpas1 != tpas2:
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
-                    dato = {'opcategoria':opcategoria,'r2' : 'Las constraseñas no coinciden'}
+                    dato = {'opcategoria':opcategoria,'r2' : 'Las constraseñas no coinciden','correo' : request.session["correo"]}
                     return render(request, 'agregar_usu.html',dato)
                 test = Usuario.objects.filter(correo=corr)
                 if test:
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
-                    dato = {'opcategoria':opcategoria,'r2' : 'El Correo ( '+corr+' ) Ya Existe No Se puede Repetir'}
+                    dato = {'opcategoria':opcategoria,'r2' : 'El Correo ( '+corr+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                     return render(request, 'agregar_usu.html',dato)             
                 else:
                     pas = tpas1
@@ -473,7 +473,7 @@ def RegisterUsuario(request):
                     u.save()
                     u = Usuario.objects.select_related('tipo').all().order_by("correo")
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
-                    dato = {'opcategoria':opcategoria, 'u': u, 'r' : 'Usuario Registrado Correctamente'}
+                    dato = {'opcategoria':opcategoria, 'u': u, 'r' : 'Usuario Registrado Correctamente','correo' : request.session["correo"]}
                     return render(request, 'listado_usu.html',dato)
                 
             else:
@@ -550,13 +550,13 @@ def UpdateU(request):
 
                     u = Usuario.objects.select_related('tipo').all().order_by("correo")
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
-                    dato = {'opcategoria':opcategoria, 'u' : u ,  'r':"Datos Modificados Correctamente"}
+                    dato = {'opcategoria':opcategoria, 'u' : u ,  'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'listado_usu.html', dato)
 
                 except:
                     u = Usuario.objects.select_related('tipo').all().order_by("correo")
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
-                    dato = {'opcategoria':opcategoria, 'u' : u , 'r2' : "No Existen Datos" }
+                    dato = {'opcategoria':opcategoria, 'u' : u , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'listado_usu.html', dato)
             else:
                 dato = { 'r2' : "No puedes acceder Por url" }
@@ -585,12 +585,12 @@ def DeleteU(request, id):
 
                 u = Usuario.objects.select_related('tipo').all().order_by("correo")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
-                dato = {'opcategoria':opcategoria, 'r' : 'El Usuario '+ corr +' Fue Eliminado Correctamente', 'u': u}
+                dato = {'opcategoria':opcategoria, 'r' : 'El Usuario '+ corr +' Fue Eliminado Correctamente', 'u': u,'correo' : request.session["correo"]}
                 return render(request, 'listado_usu.html',dato)
             except:
                 u = Usuario.objects.select_related('tipo').all().order_by("correo")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
-                dato = {'opcategoria':opcategoria, 'r2' : "El Usuario No Existe", 'u': u}
+                dato = {'opcategoria':opcategoria, 'r2' : "El Usuario No Existe", 'u': u,'correo' : request.session["correo"]}
                 return render(request, 'listado_usu.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -639,7 +639,7 @@ def RegisterAlumno(request):
                 sal = request.POST['textsal']
                 test = Alumno.objects.filter(rut=rut)
                 if test:
-                    dato = {'r2' : 'El Alumno Con Rut ( '+rut+' ) Ya Existe No Se puede Repetir'}
+                    dato = {'r2' : 'El Alumno Con Rut ( '+rut+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                     return render(request, 'agregar_alu.html',dato)             
                 else:
 
@@ -653,7 +653,7 @@ def RegisterAlumno(request):
                     u = Alumno(rut=rut, nombres=noms,lastnombre=apes,curso=cur,salon=sal)
                     u.save()
                     u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u': u, 'r' : 'Alumno Registrado Correctamente'}
+                    dato = {'u': u, 'r' : 'Alumno Registrado Correctamente','correo' : request.session["correo"]}
                     return render(request, 'listado_alu.html',dato)
                 
             else:
@@ -687,7 +687,7 @@ def RegisterAlumno2(request):
                     sal = data.get("sal_")
                     test = Alumno.objects.filter(rut=rut)
                     if test:
-                        dato = {'r2' : 'El Alumno Con Rut ( '+rut+' ) Ya Existe No Se puede Repetir'}
+                        dato = {'r2' : 'El Alumno Con Rut ( '+rut+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html',dato)             
                     else:
                         des = "Registro del alumno realizado ("+rut.upper()+")"
@@ -700,12 +700,12 @@ def RegisterAlumno2(request):
                         u = Alumno(rut=rut, nombres=noms,lastnombre=apes,curso=cur,salon=sal)
                         u.save()
 
-                        dato = {'r':"Alumno Registrado Correctamente"}
+                        dato = {'r':"Alumno Registrado Correctamente",'correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html', dato)
 
                 except:
                     u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u' : u , 'r2' : "No Existen Datos" }
+                    dato = {'u' : u , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'agregar_pro.html', dato)
             else:
                 dato = { 'r2' : "No puedes acceder Por url" }
@@ -771,13 +771,13 @@ def UpdateA(request):
                     u.save()
 
                     u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u' : u ,  'r':"Datos Modificados Correctamente"}
+                    dato = {'u' : u ,  'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'listado_alu.html', dato)
 
                 except:
                     u = Alumno.objects.all().values().order_by("nombres")
                     
-                    dato = {'u' : u , 'r2' : "No Existen Datos" }
+                    dato = {'u' : u , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'listado_alu.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -806,12 +806,12 @@ def DeleteA(request, id):
 
                 u = Alumno.objects.all().values().order_by("nombres")
 
-                dato = {'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente', 'u': u}
+                dato = {'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente', 'u': u,'correo' : request.session["correo"]}
                 return render(request, 'listado_alu.html',dato)
             except:
                 u = Usuario.objects.all().values().order_by("correo")
 
-                dato = {'r2' : "El Alumno No Existe", 'u': u}
+                dato = {'r2' : "El Alumno No Existe", 'u': u,'correo' : request.session["correo"]}
                 return render(request, 'listado_alu.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -838,13 +838,13 @@ def DeleteA2(request, id):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente'}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente','correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
             except:
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe",'correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -869,7 +869,7 @@ def RegisterEstado_Producto(request):
                     estado = data.get("estado_")
                     test = Estado_Producto.objects.filter(estado=estado)
                     if test:
-                        dato = {'r2' : 'El Estado  ( '+estado+' ) Ya Existe No Se puede Repetir'}
+                        dato = {'r2' : 'El Estado  ( '+estado+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html',dato)             
                     else:
                         des = "Registro del Estado realizado ("+estado+")"
@@ -885,11 +885,11 @@ def RegisterEstado_Producto(request):
                         opcategoria = Categoria.objects.all().values().order_by("tipo")
                         opesta = Estado_Producto.objects.all().values().order_by("estado")
                         opalumno = Alumno.objects.all().values().order_by("rut")
-                        dato = {'opalumno' : opalumno,'opesta' : opesta,'opcategoria' : opcategoria,  'r':"Alumno Registrado Correctamente"}
+                        dato = {'opalumno' : opalumno,'opesta' : opesta,'opcategoria' : opcategoria,  'r':"Alumno Registrado Correctamente",'correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html', dato)
 
                 except:
-                    dato = { 'r2' : "No Existen Datos" }
+                    dato = { 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'agregar_pro.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -926,11 +926,11 @@ def UpdateE(request):
                     u.estado = estado
                     u.save()
 
-                    dato = {'r':"Datos Modificados Correctamente"}
+                    dato = {'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'agregar_pro.html', dato)
 
                 except:                
-                    dato = {'r2' : "No Existen Datos" }
+                    dato = {'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'agregar_pro.html', dato)
             else:
                 u = Usuario.objects.all().values().order_by("correo")
@@ -961,13 +961,13 @@ def DeleteE(request, id):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'El Estado : '+ estado +' Fue Eliminado Correctamente'}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'El Estado : '+ estado +' Fue Eliminado Correctamente','correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
             except:
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe",'correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -992,7 +992,7 @@ def RegisterCategoria(request):
                     categoria = data.get("categoria_")
                     test = Categoria.objects.filter(tipo=categoria)
                     if test:
-                        dato = {'r2' : 'La Categoria  ( '+categoria+' ) Ya Existe No Se puede Repetir'}
+                        dato = {'r2' : 'La Categoria  ( '+categoria+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html',dato)             
                     else:
                         des = "Registro de Categoria realizado ("+categoria+")"
@@ -1008,11 +1008,11 @@ def RegisterCategoria(request):
                         opcategoria = Categoria.objects.all().values().order_by("tipo")
                         opesta = Estado_Producto.objects.all().values().order_by("estado")
                         opalumno = Alumno.objects.all().values().order_by("rut")
-                        dato = {'opalumno' : opalumno,'opesta' : opesta,'opcategoria' : opcategoria,  'r':"Alumno Registrado Correctamente"}
+                        dato = {'opalumno' : opalumno,'opesta' : opesta,'opcategoria' : opcategoria,  'r':"Alumno Registrado Correctamente",'correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html', dato)
                 except:
                     u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u' : u , 'r2' : "No Existen Datos" }
+                    dato = {'u' : u , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'listado_alu.html', dato)
             else:
                 u = Usuario.objects.all().values().order_by("correo")
@@ -1050,11 +1050,11 @@ def UpdateC(request):
                     u.tipo = categoria
                     u.save()
 
-                    dato = {'r':"Datos Modificados Correctamente"}
+                    dato = {'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'agregar_pro.html', dato)
 
                 except:                
-                    dato = {'r2' : "No Existen Datos" }
+                    dato = {'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'agregar_pro.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -1084,13 +1084,13 @@ def DeleteC(request, id):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'La Categoria : '+ categoria +' Fue Eliminado Correctamente'}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'La Categoria : '+ categoria +' Fue Eliminado Correctamente','correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
             except:
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe",'correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1117,13 +1117,13 @@ def DeleteC2(request, id):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'La Categoria : '+ categoria +' Fue Eliminado Correctamente'}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r' : 'La Categoria : '+ categoria +' Fue Eliminado Correctamente','correo' : request.session["correo"]}
                 return render(request, 'agregar_usu.html',dato)
             except:
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'r2' : "El Alumno No Existe",'correo' : request.session["correo"]}
                 return render(request, 'agregar_usu.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1167,7 +1167,7 @@ def ShowUsuarioMenu(request):
             p = Producto.objects.filter(categoria_id=tip).select_related('categoria','estado_producto','rut_alumno').all().order_by("nombre")
             opesta = Estado_Producto.objects.all().values().order_by("estado")
             opalumno = Alumno.objects.all().values().order_by("rut")
-            dato = {'opesta':opesta, 'opalumno':opalumno, 'tip':tip,'p': p}
+            dato = {'opesta':opesta, 'opalumno':opalumno, 'tip':tip,'p': p,'correo' : request.session["correo"]}
             return render(request, 'usuario.html',dato)
         else:
             dato = {'r2' : 'Debe estar logueado para acceder'}
@@ -1197,7 +1197,7 @@ def RegisterProductoUsu(request):
                 rut = request.POST['txtrutss']
                 test = Producto.objects.filter(nombre=nom)
                 if test:
-                    dato = {'r2' : 'El Producto Llamado ( '+nom+' ) Ya Existe No Se puede Repetir'}
+                    dato = {'r2' : 'El Producto Llamado ( '+nom+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                     return render(request, 'agregar_pro.html',dato)
                 else:
                     des = "Registro del producto ("+nom.lower()+")"
@@ -1213,7 +1213,7 @@ def RegisterProductoUsu(request):
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
                     opesta = Estado_Producto.objects.all().values().order_by("estado")
                     opalumno = Alumno.objects.all().values().order_by("rut")
-                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'r' : 'Registro Realizado Correctamente'}
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta,'p': p, 'r' : 'Registro Realizado Correctamente','correo' : request.session["correo"]}
                     return render(request, 'usuario.html',dato)
             else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1278,7 +1278,7 @@ def UpdateP2(request):
                     opcategoria = Categoria.objects.all().values().order_by("tipo")
                     opesta = Estado_Producto.objects.all().values().order_by("estado")
                     opalumno = Alumno.objects.all().values().order_by("rut")
-                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p , 'r2' : "No Existen Datos" }
+                    dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'usuario.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -1316,14 +1316,14 @@ def DeleteP2(request, id):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'r' : 'El Producto '+ nom +' Fue Eliminado Correctamente', 'p': p}
+                dato = {'r' : 'El Producto '+ nom +' Fue Eliminado Correctamente', 'p': p,'correo' : request.session["correo"]}
                 return render(request, 'usuario.html',dato)
             except:
                 p = Producto.select_related('categoria','estado_producto','rut_alumno').objects.all().values().order_by("nombre")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe",'correo' : request.session["correo"]}
                 return render(request, 'usuario.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1363,14 +1363,14 @@ def DisableP2(request):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'r' : 'El Producto '+ nom +' Fue Desactivado Correctamente', 'p': p}
+                dato = {'r' : 'El Producto '+ nom +' Fue Desactivado Correctamente', 'p': p,'correo' : request.session["correo"]}
                 return render(request, 'usuario.html',dato)
             except:
                 p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().values().order_by("nombre")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe",'correo' : request.session["correo"]}
                 return render(request, 'usuario.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1413,14 +1413,14 @@ def EnableP2(request):
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'r' : 'El Producto '+ nom +' Fue Activado Correctamente', 'p': p}
+                dato = {'r' : 'El Producto '+ nom +' Fue Activado Correctamente', 'p': p,'correo' : request.session["correo"]}
                 return render(request, 'usuario.html',dato)
             except:
                 p = Producto.objects.select_related('categoria','estado_producto','rut_alumno').all().values().order_by("nombre")
                 opcategoria = Categoria.objects.all().values().order_by("tipo")
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe"}
+                dato = {'opalumno': opalumno,'opcategoria': opcategoria,'opesta': opesta, 'p' : p ,'r2' : "El Producto No Existe",'correo' : request.session["correo"]}
                 return render(request, 'usuario.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1444,7 +1444,7 @@ def ShowRegisterProductoUsu(request):
             b = u.create_estado
             opesta = Estado_Producto.objects.all().values().order_by("estado")
             opalumno = Alumno.objects.all().values().order_by("rut")
-            dato = {'opalumno': opalumno,'opesta': opesta,'a' : a,'b':b}
+            dato = {'opalumno': opalumno,'opesta': opesta,'a' : a,'b':b,'correo' : request.session["correo"]}
             return render(request, 'usuario_agregar_pro.html',dato)
         else:
             dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1472,7 +1472,7 @@ def RegisterAlumnoUsu(request):
                     sal = data.get("sal_")
                     test = Alumno.objects.filter(rut=rut)
                     if test:
-                        dato = {'r2' : 'El Alumno Con Rut ( '+rut+' ) Ya Existe No Se puede Repetir'}
+                        dato = {'r2' : 'El Alumno Con Rut ( '+rut+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                         return render(request, 'agregar_pro.html',dato)             
                     else:
                         des = "Registro del alumno realizado ("+rut.upper()+")"
@@ -1485,12 +1485,12 @@ def RegisterAlumnoUsu(request):
                         u = Alumno(rut=rut, nombres=noms,lastnombre=apes,curso=cur,salon=sal)
                         u.save()
 
-                        dato = {'r':"Alumno Registrado Correctamente"}
+                        dato = {'r':"Alumno Registrado Correctamente",'correo' : request.session["correo"]}
                         return render(request, 'usuario_agregar_pro.html', dato)
 
                 except:
                     u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u' : u , 'r2' : "No Existen Datos" }
+                    dato = {'u' : u , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'usuario_agregar_pro.html', dato)
             else:
                 dato = { 'r2' : "No puedes acceder Por url" }
@@ -1536,13 +1536,13 @@ def UpdateAUsu(request):
                     u.save()
 
                     u = Alumno.objects.all().values().order_by("nombres")
-                    dato = {'u' : u ,  'r':"Datos Modificados Correctamente"}
+                    dato = {'u' : u ,  'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'usuario.html', dato)
 
                 except:
                     u = Alumno.objects.all().values().order_by("nombres")
                     
-                    dato = {'u' : u , 'r2' : "No Existen Datos" }
+                    dato = {'u' : u , 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'usuario.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -1571,12 +1571,12 @@ def DeleteAUsu(request, id):
 
                 u = Alumno.objects.all().values().order_by("nombres")
 
-                dato = {'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente', 'u': u}
+                dato = {'r' : 'El Alumno '+ rut +' Fue Eliminado Correctamente', 'u': u,'correo' : request.session["correo"]}
                 return render(request, 'listado_alu.html',dato)
             except:
                 u = Usuario.objects.all().values().order_by("correo")
 
-                dato = {'r2' : "El Alumno No Existe", 'u': u}
+                dato = {'r2' : "El Alumno No Existe", 'u': u,'correo' : request.session["correo"]}
                 return render(request, 'listado_alu.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }
@@ -1600,7 +1600,7 @@ def RegisterEstado_ProductoUsu(request):
                     estado = data.get("estado_")
                     test = Estado_Producto.objects.filter(estado=estado)
                     if test:
-                        dato = {'r2' : 'El Estado  ( '+estado+' ) Ya Existe No Se puede Repetir'}
+                        dato = {'r2' : 'El Estado  ( '+estado+' ) Ya Existe No Se puede Repetir','correo' : request.session["correo"]}
                         return render(request, 'usuario_agregar_pro.html',dato)             
                     else:
                         des = "Registro del Estado realizado ("+estado+")"
@@ -1615,11 +1615,11 @@ def RegisterEstado_ProductoUsu(request):
 
                         opesta = Estado_Producto.objects.all().values().order_by("estado")
                         opalumno = Alumno.objects.all().values().order_by("rut")
-                        dato = {'opalumno' : opalumno,'opesta' : opesta, 'r':"Alumno Registrado Correctamente"}
+                        dato = {'opalumno' : opalumno,'opesta' : opesta, 'r':"Alumno Registrado Correctamente",'correo' : request.session["correo"]}
                         return render(request, 'usuario_agregar_pro.html', dato)
 
                 except:
-                    dato = { 'r2' : "No Existen Datos" }
+                    dato = { 'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'usuario_agregar_pro.html', dato)
             else:
                 dato = {'r2' : "No puedes acceder Por url" }
@@ -1658,11 +1658,11 @@ def UpdateEUsu(request):
 
                     opesta = Estado_Producto.objects.all().values().order_by("estado")
                     opalumno = Alumno.objects.all().values().order_by("rut")
-                    dato = {'opalumno' : opalumno,'opesta' : opesta, 'r':"Datos Modificados Correctamente"}
+                    dato = {'opalumno' : opalumno,'opesta' : opesta, 'r':"Datos Modificados Correctamente",'correo' : request.session["correo"]}
                     return render(request, 'agregar_pro.html', dato)
 
                 except:                
-                    dato = {'r2' : "No Existen Datos" }
+                    dato = {'r2' : "No Existen Datos",'correo' : request.session["correo"] }
                     return render(request, 'agregar_pro.html', dato)
             else:
                 u = Usuario.objects.all().values().order_by("correo")
@@ -1692,12 +1692,12 @@ def DeleteEUsu(request, id):
 
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opesta': opesta,'r' : 'El Estado : '+ estado +' Fue Eliminado Correctamente'}
+                dato = {'opalumno': opalumno,'opesta': opesta,'r' : 'El Estado : '+ estado +' Fue Eliminado Correctamente','correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
             except:
                 opesta = Estado_Producto.objects.all().values().order_by("estado")
                 opalumno = Alumno.objects.all().values().order_by("rut")
-                dato = {'opalumno': opalumno,'opesta': opesta,'r2' : "El Alumno No Existe"}
+                dato = {'opalumno': opalumno,'opesta': opesta,'r2' : "El Alumno No Existe",'correo' : request.session["correo"]}
                 return render(request, 'agregar_pro.html',dato)
         else:
                 dato = { 'r2' : 'No puedes acceder esa funcion' }

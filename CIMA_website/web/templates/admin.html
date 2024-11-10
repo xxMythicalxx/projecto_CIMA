@@ -7,7 +7,7 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
 		<script >
-            const logout = () => {
+            const logout = () => {  
 				Swal.fire({
                     title: 'Cerrar Sesion',
                     text: "¿Está Seguro De Querer Cerrar La Sesión?",
@@ -17,7 +17,9 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si',
                     toast: true,
-                    cancelButtonText: 'Cancelar'
+                    background: back,
+                    color: text,
+                    cancelButtonText: 'Cancelar',
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/logout";
@@ -44,7 +46,9 @@
             Swal.fire({
                 title: 'Sesion Caducada',
                 'icon':'error',
-                toast: true
+                toast: true,
+                background: back,
+                color: text,
                 }).then((result) => {
                 if (result.isConfirmed) {
                 window.location.href = "/";
@@ -73,6 +77,8 @@
             Swal.fire({
             title: "Modificando a " + a,
             toast: true,
+            background: back,
+            color: text,
             html: `
                 <div class="row">
                     <label for="txtnom" class="form-label">Nombre del Producto</label>
@@ -205,6 +211,8 @@
                     icon: 'success',
                     title: 'Cambio Realizado Correctamente',
                     toast: true,
+                    background: back,
+                    color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/adminn";
@@ -215,7 +223,9 @@
                 'title':'Error',
                 'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
                 'icon':'error',
-                toast: true
+                toast: true,
+                background: back,
+                color: text,
             })
         }
     }
@@ -229,6 +239,8 @@
         input: "textarea",
         showCancelButton: true,
         toast: true,
+        background: back,
+        color: text,
         inputValidator: (value) => {
             if (!value) {
             return "No puede quedar vacia";
@@ -250,6 +262,8 @@
                     icon: 'success',
                     title: 'Cambio Realizado Correctamente',
                     toast: true,
+                    background: back,
+                    color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/adminn";
@@ -267,6 +281,8 @@
             icon: 'warning',
             showCancelButton: true,
             toast: true,
+            background: back,
+            color: text,
             preConfirm: () => {
             fetch('http://127.0.0.1:8000/EnableP',{method: 'POST',
                 headers: {
@@ -284,6 +300,8 @@
                 icon: 'success',
                 title: 'Cambio Realizado Correctamente',
                 toast: true,
+                background: back,
+                color: text,
                 }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = "/adminn";
@@ -303,7 +321,9 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si, borralo',
                     cancelButtonText: 'Cancelar',
-                    toast: true
+                    toast: true,
+                    background: back,
+                    color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/DeleteP/"+id;
@@ -311,28 +331,145 @@
                     })
             }
         </script>
-
+<script>
+    const xddaa = (id__) => {
+        var hhhh = localStorage.getItem('isDarkMode');
+        var id = id__;
+        var a = '';
+        var b = '';
+        var c = '';
+        var d = 0;
+        var e = 0;
+        var f = '';
+        var g = '';
+        var h = '';
+        var ii = '';
+        var j = '';
+        var k = '';
+        var l = '';
+        var m = '';
+        var n = '';
+        {% for i in p %}
+            if (id == '{{i.id}}'){a='{{i.nombre}}';b='{{i.descripcion}}';c='{{i.categoria}}';d=parseInt('{{i.cantidad}}');e=parseInt('{{i.precio}}');f= d * e;g='{{i.razon_ingreso}}';h='{{i.estado_producto}}';ii='{{i.estado_habil}}';j='{{i.fecha_ingreso}}';k='{{i.fecha_modificacion}}';l='{{i.fecha_egreso}}';m='{{i.razon_egreso}}';n='{{i.rut_alumno}}';}   
+        {% endfor %}
+        if(l=='None'){l='---'}
+        if(m==''){m='vacio'}
+        let head =  'Informacion del producto '+ a;
+        $("#cabeza").html(head);
+        let xdd
+        console.log(hhhh)
+        if (hhhh!="true"){xdd = '<thead class="table-dark">'}else{xdd = '<thead class="table-light">'}
+        let str = `
+        <div class="table-responsive" style="max-height: calc(100vh - 100px);">
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+            `+ 
+            xdd
+            +`
+            <tr style="background-color: lightgrey;">
+                <th style="text-align: center;" data-sortable="true">NOMBRE</th>
+                <th style="text-align: center;" data-sortable="true">DESCRIPCION</th>
+            </tr>
+            </thead>
+            <tr class="align-middle">
+                <td style="text-align: center;">${a}</td>
+                <td style="text-align: center;">${b}</td>
+            </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+            `+ 
+            xdd
+            +`
+            <tr style="background-color: lightgrey;">
+                <th style="text-align: center;" data-sortable="true">CATEGORIA</th>
+                <th style="text-align: center;" data-sortable="true">CANTIDAD</th>
+                <th style="text-align: center;" data-sortable="true">PRECIO</th>
+            </tr>
+            </thead>
+            <tr class="align-middle">
+                <td style="text-align: center;">${c}</td>
+                <td style="text-align: center;">${d}</td>
+                <td style="text-align: center;">$${e}</td>
+            </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+            `+ 
+            xdd
+            +`
+            <tr style="background-color: lightgrey;">
+                <th style="text-align: center;" data-sortable="true">TOTAL</th>
+                <th style="text-align: center;" data-sortable="true">RAZON DE INGRESO</th>
+                <th style="text-align: center;" data-sortable="true">ESTADO DEL PRODUCTO</th>
+            </tr>
+            </thead>
+            <tr class="align-middle">
+                <td style="text-align: center;">$${f}</td>
+                <td style="text-align: center;">${g}</td>
+                <td style="text-align: center;">${h}</td>
+            </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+            `+ 
+            xdd
+            +`
+            <tr style="background-color: lightgrey;">
+                <th style="text-align: center;" data-sortable="true">HABILITADO</th>
+                <th style="text-align: center;" data-sortable="true">FECHA DE INGRESO</th>
+                <th style="text-align: center;" data-sortable="true">FECHA DE MODIFICACION</th>
+                <th style="text-align: center;" data-sortable="true">FECHA DE EGRESO</th>
+                <th style="text-align: center;" data-sortable="true">RAZON DE EGRESO</th>
+                <th style="text-align: center;" data-sortable="true">ALUMNO ASOCIADO</th>
+            </tr>
+            </thead>
+            <tr class="align-middle">
+                <td style="text-align: center;">${ii}</td>
+                <td style="text-align: center;">${j}</td>
+                <td style="text-align: center;">${k}</td>
+                <td style="text-align: center;">${l}</td>
+                <td style="text-align: center;">${m}</td>
+                <td style="text-align: center;">${n}</td>
+            </tr>
+        </tbody>
+        </table>
+        <div class="accordion-item" style="margin: 0 auto;float: none; text-align: center;">
+        <button type="button" onClick="update(${id})" class="btn btn-info btn-lg" >Editar 
+            <i class="bi bi-pencil-fill" ></i>
+        </button>
+        <button type="button" onClick="deletes(${id})" class="btn btn-danger btn-lg">Eliminar 
+            <i class="bi bi-trash-fill"></i>
+        </button>
+        </div>
+        </div>`
+    $("#cuerpo").html(str);
+    };
+</script>
 	</head>
 <body>
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div  class="vh-100 d-flex justify-content-center ">
 	<div class="container-fluid">		
-		<nav class="navbar navbar-expand-lg" style="background-color: rgb(138, 138, 138);">
+		<nav class="navbar bg-body-tertiary">
             <div class="container-fluid">
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+				<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
 					<div class="navbar-nav" align="center">
-						<a class="nav-link text-center text-white" href="/adminn">Listado de Productos</a>
-						<a class="nav-link text-center text-white" href="/ShowRegistrarP">Agregar Producto</a>
-                        <a class="nav-link text-center text-white" href="/ShowListU">Listado de Usuarios</a>
-						<a class="nav-link text-center text-white" href="/ShowRegistrarU">Agregar Usuario</a>
-                        <a class="nav-link text-center text-white" href="/ShowListA">Listado de Alumnos</a>
-                        <a class="nav-link text-center text-white" href="/ShowRegistrarA">Agregar Alumnos</a>
-                        <a class="nav-link text-center text-white" href="/ShowHis">Ver Historial</a>
-						<button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
-                        <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                          </div>
+						<a class="btn btn-outline-info active nav-link text-center" href="/adminn">Listado de Productos</a>
+						<a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarP">Agregar Producto</a>
+                        <a class="btn btn-outline-info nav-link text-center" href="/ShowListU">Listado de Usuarios</a>
+						<a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarU">Agregar Usuario</a>
+                        <a class="btn btn-outline-info nav-link text-center" href="/ShowListA">Listado de Alumnos</a>
+                        <a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarA">Agregar Alumnos</a>
+                        <a class="btn btn-outline-warning nav-link text-center" href="/ShowHis">Ver Historial</a>
+						<a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
+                        <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                             <input
                             class="form-check-input p-2"
                             type="checkbox"
@@ -340,15 +477,26 @@
                             id="2"
                             onclick="myFunction()"
                             />
-                        </div></a>				
+                        </div></a>	
+								
 					</div>
+                    <div class="" style="height: 100%;">
+                    <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
+                    <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                        <i class="bi bi-eye-slash"></i>
+                    </button>
+                    <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    </div>
 				</div>
-                <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
+                <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Listado de Productos</h5>
+                <h5 class="justify-content-end" style="position: fixed;top: 0.8em;right: 1em;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
 		  	</div>
 		</nav>
-		<div class="justify-content-center " style="background-color:#a0b976; padding-top:10px; padding-bottom:10px;">
+		<div class="d-flex justify-content-end align-items-center" >
 			<div class="container-fluid">
-                <div>
+                <div align="center">
                     <div style="margin: 0 auto;float: none;">
                         {% if r2 %}
                         <script>
@@ -356,6 +504,8 @@
                             'title':'Error',
                             'text':"{{r2}}",
                             toast: true,
+                            background: back,
+                            color: text,
                             'icon':'error'
                         })</script>
                         {% endif %}
@@ -369,44 +519,29 @@
                             icon: 'success',
                             title: '{{r}}',
                             toast: true,
+                            background: back,
+                            color: text,
                             showConfirmButton: false,
-                            timer: 1500,
+                            timer: 3000,
+                            timerProgressBar: true,
                         })</script>
                         {% endif %}                
                         {% if p %}
-                        <div class="accordion-item" style="margin: 2px;">
-                            <h2 class="accordion-header">
-                              <button class="btn btn-info" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne" style="padding: 2px;">
-                                Busqueda
-                            </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
-                              <div class="accordion-body">
-                                <input class="form-control" id="myInput" type="text" placeholder="Search.." style="width: auto;">
-                              </div>
+                        <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
+                            <div class="input-group" >
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
+                                <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
                             </div>
-                          </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover sortable" style="margin: 0 auto;float: none;"  id="sortTable" >
-                                <thead>
-                                <tr style="background-color: lightgrey;">
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+
+                                <thead id="head_table">
+                                <tr>
                                     <th style="text-align: center;" data-sortable="true">NOMBRE</th>
                                     <th style="text-align: center;" data-sortable="true">DESCRIPCION</th>
                                     <th style="text-align: center;" data-sortable="true">CATEGORIA</th>
                                     <th style="text-align: center;" data-sortable="true">CANTIDAD</th>
                                     <th style="text-align: center;" data-sortable="true">PRECIO</th>
-                                    <th style="text-align: center;" data-sortable="true">TOTAL</th>
-                                    <th style="text-align: center;" data-sortable="true">RAZON DE INGRESO</th>
-                                    <th style="text-align: center;" data-sortable="true">ESTADO DEL PRODUCTO</th>
-                                    <th style="text-align: center;" data-sortable="true">HABILITADO</th>
-                                    <th style="text-align: center;" data-sortable="true">FECHA DE INGRESO</th>
-                                    <th style="text-align: center;" data-sortable="true">FECHA DE MODIFICACION</th>
-                                    <th style="text-align: center;" data-sortable="true">FECHA DE EGRESO</th>
-                                    <th style="text-align: center;" data-sortable="true">RAZON DE EGRESO</th>
-                                    <th style="text-align: center;" data-sortable="true">ALUMNO ASOCIADO</th>
-                                    <th style="text-align: center;" data-sortable="true">EDITAR</th>
-                                    <th style="text-align: center;" data-sortable="true">ACTIVAR/ DESACTIVAR</th>
-                                    <th style="text-align: center;" data-sortable="true">ELIMINAR</th>
+                                    <th style="text-align: center;" data-sortable="true">INFORMACION</th>
                                 </tr>
                                 </thead>
                                 {% for x in p %}
@@ -416,50 +551,47 @@
                                 {% else %}
                                 <tr class="align-middle">
                                 {% endif %}
-                                    <td style="text-align: center;">{{x.nombre}}</td>
-                                    <td style="text-align: center;">{{x.descripcion}}</td>
-                                    <td style="text-align: center;">{{x.categoria}}</td>
-                                    <td style="text-align: center;">{{x.cantidad}}</td>
-                                    <td style="text-align: center;">{{x.precio}}</td>
-                                    <td style="text-align: center;">${% widthratio x.precio 1 x.cantidad %}</td>
-                                    <td style="text-align: center;">{{x.razon_ingreso}}</td>
-                                    <td style="text-align: center;">{{x.estado_producto}}</td>
-                                    <td style="text-align: center;">{{x.estado_habil}}</td>
-                                    <td style="text-align: center;">{{x.fecha_ingreso}}</td>
-                                    <td style="text-align: center;">{{x.fecha_modificacion}}</td>
-                                    <td style="text-align: center;">{{x.fecha_egreso}}</td>
-                                    {% if x.razon_egreso == '' %}
-                                    <td style="text-align: center;">Vacio</td>
-                                    {% else %}
-                                    <td style="text-align: center;">{{x.razon_egreso}}</td>
-                                    {% endif %}
-                                    <td style="text-align: center;">{{x.rut_alumno}}</td>
-                                    <td style="text-align: center;">
-                                        <button type="button" onClick="update({{x.id}})" class="btn btn-lg">
-                                            <i class="bi bi-pencil-fill" ></i>
-                                        </button>
-                                    </td>
-                                    {% if x.estado_habil == 'desactivo' %}
-                                    <td style="text-align: center;">
-                                        <button type="button" onClick="enable({{x.id}})" class="btn btn-lg">
-                                            <i class="bi bi-eye-slash"></i>
-                                        </button>
-                                    </td>
-                                    {% else %}
-                                    <td style="text-align: center;">
-                                        <button type="button" onClick="disable({{x.id}})" class="btn btn-lg">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </td>
-                                    {% endif %}
-                                    <td style="text-align: center;">
-                                        <button type="button" onClick="deletes({{x.id}})" class="btn btn-lg">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
+                                <td style="text-align: center;">{{x.nombre}}</td>
+                                <td style="text-align: center;">{{x.descripcion}}</td>
+                                <td style="text-align: center;">{{x.categoria}}</td>
+                                <td style="text-align: center;">{{x.cantidad}}</td>
+                                <td style="text-align: center;">${{x.precio}}</td>
+                                    <td >
+                                            <!-- Button trigger modal -->
+                                            <div class="text-center">
+                                            <button type="button" class="btn btn-primary" onclick="xddaa({{x.id}})" data-bs-toggle="modal" data-bs-target="#exampleModal" >
+                                                Ver mas
+                                            </button>      
+                                                {% if x.estado_habil == 'desactivo' %}
+                                                <button type="button" onClick="enable({{x.id}})" class="btn btn-lg">
+                                                    <i class="bi bi-eye-slash"></i>
+                                                </button>
+                                                {% else %}
+                                                    <button type="button" onClick="disable({{x.id}})" class="btn btn-lg">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="cabeza"></h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" id="cuerpo">
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
-                            </tbody>    
+                            </tbody>
                             </table>
                         </div>
                             {% else %}  
@@ -478,6 +610,47 @@
 		  
 	</div>
 </div>
+<script>
+    var a = document.getElementById("showEmail");
+    var b = document.getElementById("showEmail2");
+    var e = document.getElementById("TheEmail");
+    var t = localStorage.getItem('ShowEmail');
+    console.log(t)
+        if (t==="true"){
+            e.innerHTML = '{{correo}}';
+            a.style.display = "block";
+            b.style.display = "none";
+            //console.log('b')
+        }
+        if(t==="false"){
+            e.innerHTML = '***';
+            a.style.display = "none";
+            b.style.display = "block";
+        }
+        //console.log("c")
+    </script>
+
+<script>
+    function ChangeShowEmail() {
+        var element = document.body;
+        var a = document.getElementById("showEmail");
+        var b = document.getElementById("showEmail2");
+        var e = document.getElementById("TheEmail");
+        console.log(a)
+        if (a.style.display == "block"){
+            localStorage.setItem('ShowEmail', false);
+            e.innerHTML = '***';
+            a.style.display = "none";
+            b.style.display = "block";
+        }
+        else{
+            localStorage.setItem('ShowEmail', true);
+            e.innerHTML = '{{correo}}';
+            a.style.display = "block";
+            b.style.display = "none";
+        }
+    }
+</script>
 
 <script>
     $(document).ready(function(){
@@ -502,14 +675,19 @@
 <script>
     var element = document.body;
     var a = localStorage.getItem('isDarkMode');
+    var back = '';
+    var text = '';
+    if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
     //console.log(a)
         if (a==="true"){
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
+            document.getElementById('head_table').setAttribute("class", "table-light");
             //console.log('b')
         }
         if(a==="false"){
             element.dataset.bsTheme = "light";
+            document.getElementById('head_table').setAttribute("class", "table-dark");
         }
         //console.log("c")
     </script>
@@ -517,18 +695,19 @@
     function myFunction() {
         var element = document.body;
         var darkcheck = document.getElementById("2");
-        console.log(darkcheck)
+        //console.log(darkcheck)
         if (darkcheck.checked){
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            back = "#2d2d2d"; text = "#ffffff";
         }
         else{
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+            back = "#fff"; text = "#545454";
         }
-        
-        //element.dataset.bsTheme = 
-        //element.dataset.bsTheme == "light" ? "dark" : "light";
     }
     </script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>

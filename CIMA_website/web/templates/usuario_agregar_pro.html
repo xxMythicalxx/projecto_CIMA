@@ -17,6 +17,8 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si',
                     toast: true,
+                    background: back,
+                    color: text,
                     cancelButtonText: 'Cancelar'
                     }).then((result) => {
                     if (result.isConfirmed) {
@@ -33,6 +35,8 @@
             Swal.fire({
             title: "creando un Alumno",
             toast: true,
+            background: back,
+            color: text,
             html: `
                 <div class="row">
                     <label for="txtnom" class="form-label">Rut</label>
@@ -87,6 +91,8 @@
                 'title':'Error',
                 'text':"Error El Alumno ya existe",
                 toast: true,
+                background: back,
+                color: text,
                 'icon':'error'})
                 }
             else{
@@ -113,6 +119,8 @@
                     icon: 'success',
                     title: 'Alumno Registrado Correctamente',
                     toast: true,
+                    background: back,
+                    color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/ShowRegistrarPusu";
@@ -123,6 +131,8 @@
                 'title':'Error',
                 'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
                 toast: true,
+                background: back,
+                color: text,
                 'icon':'error'
             })}}}})
         }
@@ -140,6 +150,8 @@
                 'title':'Error',
                 'text':"Error No Se Puede Modifcar",
                 toast: true,
+                background: back,
+                color: text,
                 'icon':'error'})
             }
             else{
@@ -154,6 +166,8 @@
             Swal.fire({
             title: "Modificando a " + a,
             toast: true,
+            background: back,
+            color: text,
             html: `
                 <div class="row">
                     <label for="txtnom" class="form-label">Rut</label>
@@ -222,6 +236,8 @@
                     icon: 'success',
                     title: 'Alumno Modificado Correctamente',
                     toast: true,
+                    background: back,
+                    color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = "/ShowRegistrarPusu";
@@ -232,6 +248,8 @@
                 'title':'Error',
                 'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
                 toast: true,
+                background: back,
+                color: text,
                 'icon':'error'
             })}}})
         }}
@@ -247,6 +265,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 toast: true,
+                background: back,
+                color: text,
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, borralo',
                 cancelButtonText: 'Cancelar'
@@ -263,6 +283,8 @@
                 Swal.fire({
                 title: "creando un estado de producto",
                 toast: true,
+                background: back,
+                color: text,
                 html: `
                     <div class="row">
                         <label for="txtnom" class="form-label">Estado</label>
@@ -284,6 +306,8 @@
                     'title':'Error',
                     'text':"Error El Estado ya existe",
                     toast: true,
+                    background: back,
+                    color: text,
                     'icon':'error'})
                     }
                 else{
@@ -306,6 +330,8 @@
                         icon: 'success',
                         title: 'Estado Registrado Correctamente',
                         toast: true,
+                        background: back,
+                        color: text,
                         }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.href = "/ShowRegistrarPusu";
@@ -316,6 +342,8 @@
                     'title':'Error',
                     'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
                     toast: true,
+                    background: back,
+                    color: text,
                     'icon':'error'
                 })}}}})
             }
@@ -329,6 +357,8 @@
                         'title':'Error',
                         'text':"Error No Se Puede Modifcar",
                         toast: true,
+                        background: back,
+                        color: text,
                         'icon':'error'})
                     }
                     else{
@@ -339,6 +369,8 @@
                     Swal.fire({
                     title: "Modificando a " + a,
                     toast: true,
+                    background: back,
+                    color: text,
                     html: `
                         <div class="row">
                         <label for="txtnom" class="form-label">Estado</label>
@@ -371,6 +403,8 @@
                             icon: 'success',
                             title: 'Estado Modificado Correctamente',
                             toast: true,
+                            background: back,
+                            color: text,
                             }).then((result) => {
                             if (result.isConfirmed) {
                                 window.location.href = "/ShowRegistrarPusu";
@@ -381,6 +415,8 @@
                         'title':'Error',
                         'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
                         toast: true,
+                        background: back,
+                        color: text,
                         'icon':'error'
                     })}}})
                 }}
@@ -396,6 +432,8 @@
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         toast: true,
+                        background: back,
+                        color: text,
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Si, borralo',
                         cancelButtonText: 'Cancelar'
@@ -448,7 +486,9 @@
         Swal.fire({
             title: 'Sesion Caducada',
             'icon':'error',
-            toast: true
+            toast: true,
+            background: back,
+            color: text,
             }).then((result) => {
             if (result.isConfirmed) {
             window.location.href = "/";
@@ -462,18 +502,21 @@
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <div  class="vh-100 d-flex justify-content-center ">
             <div class="container-fluid">		
-                <nav class="navbar navbar-expand-lg" style="background-color: rgb(138, 138, 138);">
-                    <div id="ten-countdown"></div>
-                      <div class="container-fluid">
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
                             <div class="navbar-nav" align="center">
-                                <a class="nav-link text-center text-white" href="/usumenu">Listado de Productos</a>
-                                <a class="nav-link text-center text-white" href="/ShowRegistrarPusu">Agregar Productos</a>
-                                <button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
-                                <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <a class="btn btn-outline-info active nav-link text-center" href="/usumenu">Listado de Productos</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarPusu">Agregar Productos</a>
+                                <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>
+                                <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                                     <input
                                     class="form-check-input p-2"
                                     type="checkbox"
@@ -483,8 +526,18 @@
                                     />
                                 </div></a>				
                             </div>
+                            <div class="" style="height: 100%;">
+                                <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
+                                <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                                <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
-                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
+                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Agregar Producto</h5>
+                        <h5 class="justify-content-end" style="position: fixed;top: 0.8em;right: 1em;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
                       </div>
                 </nav>
 
@@ -494,6 +547,8 @@
                     'title':'Error',
                     'text':"{{r2}}",
                     toast: true,
+                    background: back,
+                    color: text,
                     'icon':'error'
                     })</script>
             {% endif %}
@@ -505,156 +560,192 @@
                 icon: 'success',
                 title: '{{r}}',
                 toast: true,
+                background: back,
+                color: text,
                 showConfirmButton: false,
                 timer: 1500
                 })</script>
             {% endif %}
-            <div style="background-color:#a0b976; padding-top:10px; padding-bottom:10px;">
-                <center>
-                    <h1>Registrar Producto</h1>
-                </center> 
-                <form action="/RegistrarPusu" method="post" style="margin-top: 30px;margin-left: 50px;">
+            <div class="col-md-7 col-lg-8 vh-100 d-flex justify-content-center align-items-center" style="margin: 0 auto;float: none;padding-bottom: 48px; max-height: calc(100vh - 100px);" >
+                <form class="row g-3 bg-body-tertiary" action="/RegistrarPusu" method="post" style="padding: 10px;">
                     {% csrf_token %}
-                        <div class="row row-cols-1 row-cols-md-3 g-4 justify">
-                            <div class="row">
-                                <label for="txtnom" class="form-label">Nombre del Producto</label>
-                                <div class="col-sm-9">        
-                                <input type="text" name="txtnombre" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <label for="txtnom" class="form-label">Nombre del Producto</label>
+                        <input type="text" name="txtnombre" required class="form-control form-control-lg" />
+                    </div>
 
-                            <div class="row">
-                                <label for="txtdes" class=" form-label">Descripcion del Producto</label>
-                                <div class="col-sm-9">     
-                                <input type="text" name="txtdescipcion" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <label for="txtdes" class=" form-label">Descripcion del Producto</label>
+                        <textarea type="text" name="txtdescipcion" required class="form-control form-control-lg" ></textarea>
+                    </div>
 
-                            <div class="row">
-                                <label for="txtcan" class="form-label">Cantidad de Producto</label>
-                                <div class="col-sm-9">     
-                                <input type="number" name="cantidad" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <label for="txtcan" class="form-label">Cantidad de Producto</label>
+                        <input type="number" name="cantidad" required class="form-control form-control-lg" />
+                    </div>
 
-                            <div class="row">
-                                <label for="txtpre" class="form-label">Precio del Producto (Unitario)</label>
-                                <div class="col-sm-9">     
-                                <input type="number" name="precio" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
+                    <div class="col-md-6" id="PrecioP">
+                        <label for="txtpre" class="form-label">Precio del Producto (Unitario)</label>
+                        <input type="number" id="pre__" name="precio" required class="form-control form-control-lg" />
+                    </div>
 
-                            <div class="row">
-                                <label for="txtraz" class="form-label">Razon de Ingreso</label>
-                                <div class="col-sm-9">     
-                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
-                                        <input class="form-check-input h6" type="radio" id="op1" name="opt" value="comprado" checked>
-                                        <label class="form-check-label h6" for="op1">comprado</label>
-
-                                        &nbsp;&nbsp;&nbsp;
-
-                                        <input class="form-check-input h6" type="radio" id="op2" name="opt" value="donado">
-                                        <label class="form-check-label h6" for="op2">donado</label>
-                                    </div>
-                                </div>
+                    <div class="col-md-12" id="compradonado">
+                        <label for="txtraz" class="form-label">Razon de Ingreso</label>
+                            <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                <input class="btn-check" type="radio" id="op1" name="opt" value="comprado" onclick="showDineros()" checked>
+                                <label class="btn btn-outline-secondary btn-lg" for="op1" style="width: 49%;" >comprado</label>
+                                <input class="btn-check" type="radio" id="op2" name="opt" value="donado" onclick="showDineros()">
+                                <label class="btn btn-outline-secondary btn-lg" for="op2" style="width: 49%;" >donado</label>
                             </div>
+                    </div>
 
-                            <div class="row">
-                                <label for="txtestados"  class=" form-label">estado de Producto</label>
-                                <div class="col-sm-9">     
-                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
-                                    <select name="txtestados" id="txtestado" required class="form-select form-select-lg">
-                                        {% for x in opesta %}
-                                            <option value="{{ x.id }}">{{ x.estado }}</option>
-                                        {% empty %}
-                                            <option value="">no hay estados creados</option>
-                                        {% endfor %}
-                                    </select>
-                            {% if a %}
-                                    <button type="button" onClick="createestado()" class="btn btn-outline-success">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                    <button type="button" onClick="updateestado()" class="btn btn-outline-success">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </button>
-                                    <button type="button" onClick="deleteestado()" class="btn btn-outline-success">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                            {% endif %}
-                                </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <label for="txtrutss" class=" form-label">Rut asociado</label>
-                                <div class="col-sm-9">     
-                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
-                                        <select name="txtrutss" id="txtruts" required class="form-select form-select-lg">
-                                        {% for x in opalumno %}
-                                            <option value="{{ x.id }}">{{ x.rut }}</option>
-                                        {% empty %}
-                                            <option value="">no hay alumnos creados</option>
-                                        {% endfor %}
-                                        </select>
-                            {% if b %}
-                                        <button type="button" onClick="createalumno()" class="btn btn-outline-success">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                        <button type="button" onClick="updatealumno()" class="btn btn-outline-success">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </button>
-                                        <button type="button" onClick="deletealumno()" class="btn btn-outline-success">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                            {% endif %}           
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="" class=" form-label"></label>
-                                <label for="" class=" form-label"></label>
-                                <label for="" class=" form-label"></label>
-                                <div class="col-sm-9">  
-                                <input type="submit" value="Registrar" class="btn btn-primary btn-lg" style="width:100%"/>
-                                </div>
-                            </div>    
+                    <div class="col-md-6">
+                        <label for="txtestados"  class=" form-label">estado de Producto</label>
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                            <select name="txtestados" id="txtestado" required class="form-select form-select-lg">
+                                {% for x in opesta %}
+                                    <option value="{{ x.id }}">{{ x.estado }}</option>
+                                {% empty %}
+                                    <option value="">no hay estados creados</option>
+                                {% endfor %}
+                            </select>
+                    {% if a %}
+                            <button type="button" onClick="createestado()" class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                            <button type="button" onClick="updateestado()" class="btn btn-outline-warning">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button type="button" onClick="deleteestado()" class="btn btn-outline-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                    {% endif %}
                         </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="txtrutss" class=" form-label">Rut asociado</label>
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                <select name="txtrutss" id="txtruts" required class="form-select form-select-lg">
+                                {% for x in opalumno %}
+                                    <option value="{{ x.id }}">{{ x.rut }}</option>
+                                {% empty %}
+                                    <option value="">no hay alumnos creados</option>
+                                {% endfor %}
+                                </select>
+                    {% if b %}
+                                <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                                <button type="button" onClick="updatealumno()" class="btn btn-outline-warning">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button type="button" onClick="deletealumno()" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                    {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-6 vstack gap-2 col-md-5 mx-auto">
+                            <button type="submit" value="Registrar" class="btn btn-primary btn-lg" >Registrar</button>
+                        </div>
+                    </div>   
                 </form>
             </div>  
 
         </div>
         <script>
-			var element = document.body;
-			var a = localStorage.getItem('isDarkMode');
-			//console.log(a)
-				if (a==="true"){
-					element.dataset.bsTheme = "dark"
-					document.getElementById("2").checked = true;
-					//console.log('b')
-				}
-				if(a==="false"){
-					element.dataset.bsTheme = "light";
-				}
-				//console.log("c")
-			</script>
+            var a = document.getElementById("showEmail");
+            var b = document.getElementById("showEmail2");
+            var e = document.getElementById("TheEmail");
+            var t = localStorage.getItem('ShowEmail');
+            console.log(t)
+                if (t==="true"){
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                    //console.log('b')
+                }
+                if(t==="false"){
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                //console.log("c")
+            </script>
+        
         <script>
-            function myFunction() {
-			var element = document.body;
-			var darkcheck = document.getElementById("2");
-			console.log(darkcheck)
-			if (darkcheck.checked){
-				element.dataset.bsTheme = "dark"
-				localStorage.setItem('isDarkMode', true);
+            function ChangeShowEmail() {
+                var element = document.body;
+                var a = document.getElementById("showEmail");
+                var b = document.getElementById("showEmail2");
+                var e = document.getElementById("TheEmail");
+                console.log(a)
+                if (a.style.display == "block"){
+                    localStorage.setItem('ShowEmail', false);
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                else{
+                    localStorage.setItem('ShowEmail', true);
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                }
+            }
+        </script>
+        <script>
+            function showDineros() {
+            var y = document.getElementById("PrecioP");
+            var op1 = document.getElementById("op1");
+            if (op1.checked){
+                document.getElementById('compradonado').setAttribute("class", "col-md-12");
+                document.getElementById('pre__').setAttribute("value", "");
+				y.style.display = "block";
 			}
 			else{
-				element.dataset.bsTheme = "light"
-				localStorage.setItem('isDarkMode', false);
+                document.getElementById('compradonado').setAttribute("class", "col-md-6");
+                document.getElementById('pre__').setAttribute("value", "0");
+				y.style.display = "none";
 			}
-			
-			//element.dataset.bsTheme = 
-			//element.dataset.bsTheme == "light" ? "dark" : "light";
-		}
-            </script>
+            }
+        </script>
+<script>
+    var element = document.body;
+    var a = localStorage.getItem('isDarkMode');
+    var back = '';
+    var text = '';
+    if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
+    //console.log(a)
+        if (a==="true"){
+            element.dataset.bsTheme = "dark"
+            document.getElementById("2").checked = true;
+            //console.log('b')
+        }
+        if(a==="false"){
+            element.dataset.bsTheme = "light";
+            }
+        //console.log("c")
+    </script>
+<script>
+    function myFunction() {
+        var element = document.body;
+        var darkcheck = document.getElementById("2");
+        //console.log(darkcheck)
+        if (darkcheck.checked){
+            element.dataset.bsTheme = "dark"
+            localStorage.setItem('isDarkMode', true);
+            back = "#2d2d2d"; text = "#ffffff";
+        }
+        else{
+            element.dataset.bsTheme = "light"
+            localStorage.setItem('isDarkMode', false);
+            back = "#fff"; text = "#545454";
+        }
+    }
+    </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
         
     </body>

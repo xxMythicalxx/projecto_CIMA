@@ -17,6 +17,8 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si',
                     toast: true,
+                    background: back,
+                    color: text,
                     cancelButtonText: 'Cancelar'
                     }).then((result) => {
                     if (result.isConfirmed) {
@@ -43,7 +45,9 @@
             Swal.fire({
                 title: 'Sesion Caducada',
                 'icon':'error',
-                toast: true
+                toast: true,
+                background: back,
+                color: text,
                 }).then((result) => {
                 if (result.isConfirmed) {
                 window.location.href = "/";
@@ -59,23 +63,26 @@
         <div  class="vh-100 d-flex justify-content-center ">
             <div class="container-fluid">		
                 <div id="ten-countdown"></div>
-                <nav class="navbar navbar-expand-lg" style="background-color: rgb(138, 138, 138);">
-                    <div id="ten-countdown"></div>
-                      <div class="container-fluid">
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
                             <div class="navbar-nav" align="center">
-                                <a class="nav-link text-center text-white" href="/adminn">Listado de Productos</a>
-                                <a class="nav-link text-center text-white" href="/ShowRegistrarP">Agregar Producto</a>
-                                <a class="nav-link text-center text-white" href="/ShowListU">Listado de Usuarios</a>
-                                <a class="nav-link text-center text-white" href="/ShowRegistrarU">Agregar Usuario</a>
-                                <a class="nav-link text-center text-white" href="/ShowListA">Listado de Alumnos</a>
-                                <a class="nav-link text-center text-white" href="/ShowRegistrarA">Agregar Alumnos</a>
-                                <a class="nav-link text-center text-white" href="/ShowHis">Ver Historial</a>
-                                <button class="nav-link text-center text-white" onClick="logout()">Cerrar Sesión</button>	
-                                <a class="nav-link text-center text-white"><div class="form-check form-switch mx-4">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                  </div>
+                                <a class="btn btn-outline-info nav-link text-center" href="/adminn">Listado de Productos</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarP">Agregar Producto</a>
+                                <a class="btn btn-outline-info nav-link text-center" href="/ShowListU">Listado de Usuarios</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowRegistrarU">Agregar Usuario</a>
+                                <a class="btn btn-outline-info nav-link text-center" href="/ShowListA">Listado de Alumnos</a>
+                                <a class="btn btn-outline-success active nav-link text-center" href="/ShowRegistrarA">Agregar Alumnos</a>
+                                <a class="btn btn-outline-warning nav-link text-center" href="/ShowHis">Ver Historial</a>
+                                <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
+                                <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                                     <input
                                     class="form-check-input p-2"
                                     type="checkbox"
@@ -83,10 +90,20 @@
                                     id="2"
                                     onclick="myFunction()"
                                     />
-                                </div></a>				
+                                </div></a>		
+                            </div>
+                            <div class="" style="height: 100%;">
+                                <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
+                                <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                                <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye"></i>
+                                </button>
                             </div>
                         </div>
-                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
+                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Agregar Alumno</h5>
+                        <h5 class="justify-content-end" style="position: fixed;top: 0.8em;right: 1em;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">--:--:--</span></h5>
                       </div>
                 </nav>
 
@@ -96,6 +113,8 @@
                     'title':'Error',
                     'text':"{{r2}}",
                     toast: true,
+                    background: back,
+                    color: text,
                     'icon':'error'
                     })</script>
             {% endif %}
@@ -107,62 +126,89 @@
                 icon: 'success',
                 title: '{{r}}',
                 toast: true,
+                background: back,
+                color: text,
                 showConfirmButton: false,
                 timer: 1500
                 })</script>
             {% endif %}
-            <div style="background-color:#a0b976; padding-top:10px; padding-bottom:10px;">
-                <center>
-                    <h1>Registrar Alumno</h1>
-                </center> 
-                <form action="/RegistrarA" method="post" style="margin-top: 30px;margin-left: 50px;">
+            <div class="col-md-4 col-md-6 vh-100 d-flex justify-content-center align-items-center" style="margin: 0 auto;float: none;padding-bottom: 48px; max-height: calc(100vh - 100px);">
+                <form class="row g-3 bg-body-tertiary" action="/RegistrarA" method="post" style="margin: 0 auto;float: none;padding: 10px;">
                     {% csrf_token %}
-                        <div class="row row-cols-1 row-cols-md-3 g-4 justify">
-                            <div class="row">
-                                <label for="txtnom" class="form-label">Rut</label>
-                                <div class="col-sm-9">        
-                                <input type="text" name="rut" required class="form-control form-control-lg" required oninput="checkRut(this)" maxlength="10"/>
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <label for="txtnom" class="form-label">Rut</label>      
+                        <input type="text" name="rut" required class="form-control form-control-lg" required oninput="checkRut(this)" maxlength="10"/>
+                    </div>
 
-                            <div class="row">
-                                <label for="txtdes" class=" form-label">Nombres</label>
-                                <div class="col-sm-9">     
-                                <input type="text" name="textnoms" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
+                    <div class="col-md-6">
+                        <label for="txtdes" class=" form-label">Nombres</label>  
+                        <input type="text" name="textnoms" required class="form-control form-control-lg" />
+                    </div>
 
-                            <div class="row">
-                                <label for="txtdes" class=" form-label">Apellidos</label>
-                                <div class="col-sm-9">     
-                                <input type="text" name="textapes" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="txtdes" class=" form-label">Curso</label>
-                                <div class="col-sm-9">     
-                                <input type="text" name="textcur" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="txtdes" class=" form-label">Salon</label>
-                                <div class="col-sm-9">     
-                                <input type="text" name="textsal" required class="form-control form-control-lg" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="" class=" form-label"></label>
-                                <label for="" class=" form-label"></label>
-                                <label for="" class=" form-label"></label>
-                                <div class="col-sm-9">  
-                                <input type="submit" value="Registrar" class="btn btn-primary btn-lg" style="width:100%"/>
-                                </div>
-                            </div>    
-                        </div>
+                    <div class="col-md-4">
+                        <label for="txtdes" class=" form-label">Apellidos</label>
+                        <input type="text" name="textapes" required class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="txtdes" class=" form-label">Curso</label>
+                        <input type="text" name="textcur" required class="form-control form-control-lg" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="txtdes" class=" form-label">Salon</label>
+                        <input type="text" name="textsal" required class="form-control form-control-lg" />
+                    </div>
+                    <div class="col-md-12"> 
+                        <div class="col-6 vstack gap-2 col-md-5 mx-auto">
+                            <input type="submit" value="Registrar" class="btn btn-primary btn-lg" style="width:100%"/>
+                        </div>    
+                    </div>    
                 </form>
+            </div>
             </div>  
 
         </div>
+        <script>
+            var a = document.getElementById("showEmail");
+            var b = document.getElementById("showEmail2");
+            var e = document.getElementById("TheEmail");
+            var t = localStorage.getItem('ShowEmail');
+            console.log(t)
+                if (t==="true"){
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                    //console.log('b')
+                }
+                if(t==="false"){
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                //console.log("c")
+            </script>
+        
+        <script>
+            function ChangeShowEmail() {
+                var element = document.body;
+                var a = document.getElementById("showEmail");
+                var b = document.getElementById("showEmail2");
+                var e = document.getElementById("TheEmail");
+                console.log(a)
+                if (a.style.display == "block"){
+                    localStorage.setItem('ShowEmail', false);
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                else{
+                    localStorage.setItem('ShowEmail', true);
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                }
+            }
+        </script>
         <script>
             function checkRut(rut) {
             //limipar rut
@@ -183,38 +229,44 @@
 
         }
         </script>
-        <script>
-			var element = document.body;
-			var a = localStorage.getItem('isDarkMode');
-			console.log(a)
-				if (a==="true"){
-					element.dataset.bsTheme = "dark"
-					document.getElementById("2").checked = true;
-					console.log('b')
-				}
-				if(a==="false"){
-					element.dataset.bsTheme = "light";
-				}
-				console.log("c")
-			</script>
-        <script>
-            function myFunction() {
-			var element = document.body;
-			var darkcheck = document.getElementById("2");
-			console.log(darkcheck)
-			if (darkcheck.checked){
-				element.dataset.bsTheme = "dark"
-				localStorage.setItem('isDarkMode', true);
-			}
-			else{
-				element.dataset.bsTheme = "light"
-				localStorage.setItem('isDarkMode', false);
-			}
-			
-			//element.dataset.bsTheme = 
-			//element.dataset.bsTheme == "light" ? "dark" : "light";
-		}
-            </script>
+<script>
+    var element = document.body;
+    var a = localStorage.getItem('isDarkMode');
+    var back = '';
+    var text = '';
+    if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
+    //console.log(a)
+        if (a==="true"){
+            element.dataset.bsTheme = "dark"
+            document.getElementById("2").checked = true;
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            //console.log('b')
+        }
+        if(a==="false"){
+            element.dataset.bsTheme = "light";
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+        }
+        //console.log("c")
+    </script>
+<script>
+    function myFunction() {
+        var element = document.body;
+        var darkcheck = document.getElementById("2");
+        //console.log(darkcheck)
+        if (darkcheck.checked){
+            element.dataset.bsTheme = "dark"
+            localStorage.setItem('isDarkMode', true);
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            back = "#2d2d2d"; text = "#ffffff";
+        }
+        else{
+            element.dataset.bsTheme = "light"
+            localStorage.setItem('isDarkMode', false);
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+            back = "#fff"; text = "#545454";
+        }
+    }
+    </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
         
     </body>
