@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+		<title>Admin-Mode</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
+		<script> var a = localStorage.getItem('isDarkMode'); var back = ''; var text = ''; if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}</script>
+		<script >
+            const logout = () => {
+				Swal.fire({
+                    title: 'Cerrar Sesion',
+                    text: "¿Está Seguro De Querer Cerrar La Sesión?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/logout";
+                    }
+                    })
+            }
+        </script>
+        {% csrf_token %} 
+        <script>
+        const update = (nombre) => {
+            var array = nombre;
+            var id = nombre.id;
+            var a = nombre.nombre;
+            var b = nombre.telefono;
+            var c = nombre.email;
+            var d = nombre.direccion;
+            Swal.fire({
+            title: "Modificando a " + a,
+            toast: true,
+            background: back,
+            color: text,
+            html: `
+                <div class="modal-body">
+                <form class="row g-3 bg-body-tertiary" id="formgod" style="margin: 0 auto;float: none;padding: 10px;">
+                        <div class="col-md-12">
+                            <label for="txtnom" class="form-label">Nombre completo</label>
+                            <input type="text" id="nom" name="nom" required class="form-control form-control-lg" value="${a}" />
+                            <div id="nomError" class="error-message text-danger" style="display: none;"></div> <!-- Contenedor de error -->
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="txtdes" class=" form-label">telefono</label>
+                            <input type="tel" id="tel" name="tel" pattern="^\+569 \d{2} \d{3} \d{3}$" title="Formato válido: +569 12 345 678" maxlength="15" required class="form-control form-control-lg" value="${b}"/>
+                            <div id="telError" class="error-message text-danger" style="display: none;"></div> <!-- Contenedor de error -->
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="txtdes" class=" form-label">Correo</label>
+                            <input type="email" id="ema" name="ema" required class="form-control form-control-lg" value="${c}"/>
+                            <div id="emaError" class="error-message text-danger" style="display: none;"></div> <!-- Contenedor de error -->
+                        </div>
+                        <div class="col-md-12">
+                            <label for="txtcategorias" class=" form-label">direccion</label>
+                            <input type="text" id="dir" name="dir" required class="form-control form-control-lg" value="${d}"/>
+                            <div id="dirError" class="error-message text-danger" style="display: none;"></div> <!-- Contenedor de error -->
+                        </div>
+                        </div>
+                </form>
+            </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            preConfirm: () => {
+            // Limpiar los mensajes de error previos
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+            let isValid = true;
+
+            // Validación del campo 'nombre'
+            const nom__ = document.getElementById('nom');
+            const nomError = document.getElementById('nomError');
+            if (!nom__.value.trim()) {
+                isValid = false;
+                nomError.textContent = 'El nombre completo es obligatorio.';
+                nomError.style.display = 'block'; // Mostrar el error debajo del campo
+            }
+
+            // Validación del campo 'teléfono'
+            const tel__ = document.getElementById('tel');
+            const telError = document.getElementById('telError');
+            const telPattern = /^\+569 \d{2} \d{3} \d{3}$/;
+            if (!tel__.value.match(telPattern)) {
+                isValid = false;
+                telError.textContent = 'El formato debe ser +569 12 345 678.';
+                telError.style.display = 'block'; // Mostrar el error debajo del campo
+            }
+
+            // Validación del campo 'correo'
+            const ema__ = document.getElementById('ema');
+            const emaError = document.getElementById('emaError');
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!ema__.value.match(emailPattern)) {
+                isValid = false;
+                emaError.textContent = 'El correo electrónico no es válido.';
+                emaError.style.display = 'block'; // Mostrar el error debajo del campo
+            }
+
+            // Validación del campo 'dirección'
+            const dir__ = document.getElementById('dir');
+            const dirError = document.getElementById('dirError');
+            if (!dir__.value.trim()) {
+                isValid = false;
+                dirError.textContent = 'La dirección es obligatoria.';
+                dirError.style.display = 'block'; // Mostrar el error debajo del campo
+            }
+
+            // Si todo es válido, no se detiene el proceso
+            if (isValid){
+                var nom = document.getElementById("nom").value;
+                var tel = document.getElementById("tel").value;
+                var ema = document.getElementById("ema").value;
+                var dir = document.getElementById("dir").value;
+                fetch('http://127.0.0.1:8000/UpdateProveedor',{method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                    id_: id,
+                    nom_: nom,
+                    tel_: tel,
+                    ema_: ema,
+                    dir_: dir,
+                  })
+                })
+                .then(response => response.json())
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Cambio Realizado Correctamente',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/ShowGestionS";
+                    }
+                })
+            }else{return isValid;}
+            },
+            didOpen: () => {
+            // Agregar manejadores de evento `input` para cada campo
+            document.getElementById('nom').addEventListener('input', () => {
+                const nomError = document.getElementById('nomError');
+                if (nomError.style.display === 'block') {
+                nomError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                }
+            });
+
+            document.getElementById('tel').addEventListener('input', () => {
+                const telError = document.getElementById('telError');
+                if (telError.style.display === 'block') {
+                telError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                }
+            });
+
+            document.getElementById('ema').addEventListener('input', () => {
+                const emaError = document.getElementById('emaError');
+                if (emaError.style.display === 'block') {
+                emaError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                }
+            });
+
+            document.getElementById('dir').addEventListener('input', () => {
+                const dirError = document.getElementById('dirError');
+                if (dirError.style.display === 'block') {
+                dirError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                }
+            });
+            }
+            });
+        }
+        </script>
+        <script>
+            const deletes = (id) => {
+                Swal.fire({
+                    title: '¿Está Seguro(a) De Querer Eliminar El Registro?',
+                    text: "Esta accion no se puede revertir",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, borralo',
+                    cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/DeleteProveedor/"+id;
+                    }
+                    })
+            }
+        </script>
+        <script>
+        let count = 3599;
+        const timer = setInterval(function() {
+        //console.log(count);
+        var counth = count /3600;
+        var hour = Math.trunc(counth);
+        var countm = count /60;
+        var minute = Math.trunc(countm);
+        var counts = Math.floor( count%(60) );
+        var second = Math.trunc(counts);
+        //document.getElementById("countdown").innerHTML =days + ":" + hours + ":" + minutes + ":" + seconds;
+        count--;
+        if (count === 0) {
+            clearInterval(timer);
+            Swal.fire({
+                title: 'Sesion Caducada',
+                'icon':'error',
+                toast: true,
+                background: back,
+                color: text,
+                }).then((result) => {
+                if (result.isConfirmed) {
+                window.location.href = "/";
+            }
+            })
+        }
+        }, 1000);
+        </script>
+
+    </head>
+    <body>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <div  class="vh-100 d-flex justify-content-center ">
+            <div class="container-fluid">		
+                <div id="ten-countdown"></div>
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
+                            <div class="navbar-nav" align="center">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                  </div>
+                                <a class="btn btn-outline-info nav-link text-center" href="/adminn">Dashboard</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
+                                <a class="btn btn-outline-info nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
+                                <a class="btn btn-outline-info nav-link text-center" href="/ShowGestionP">Gestionar Productos</a>
+                                <a class="btn btn-outline-success active nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
+                                <a class="btn btn-outline-warning nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
+                                <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
+                                <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
+                                    <input
+                                    class="form-check-input p-2"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="2"
+                                    onclick="myFunction()"
+                                    />
+                                </div></a>		
+                            </div>
+                            <div class="" style="height: 100%;">
+                                <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
+                                <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                                <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Gestionar Movimientos</h5>
+                    </div>
+                </nav>
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="container-fluid">
+                        <div align="center">
+                            <div style="margin: 0 auto;float: none;">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#RegistrarCategoria">Generar Movimento</button>
+                                <div class="modal fade" id="RegistrarCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Generando Movimento...</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form class="row g-3 bg-body-tertiary" action="/RegistrarS" method="post" style="margin: 0 auto;float: none;padding: 10px;">
+                                                {% csrf_token %}
+                                                    <div class="col-md-12">
+                                                        <label for="pro" class=" form-label">Nombre de Producto</label>  
+                                                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                                            <select name="pro" required class="form-select form-select-lg">
+                                                                {% for x in producto %}
+                                                                {% if x.estado_habil != 'desactivo' %}
+                                                                <option value="{{ x.id }}">{{ x.nombre }}</option>
+                                                                {% endif %}
+                                                                    
+                                                                {% empty %}
+                                                                    <option value="">no hay categorias creados</option>
+                                                                {% endfor %}  
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label for="can" class=" form-label">Cantidad</label>
+                                                        <input type="number" name="can" min="0" required class="form-control form-control-lg" />
+                                                    </div>
+
+                                                    <div class="col-md-12" id="compradonado">
+                                                        <label for="txtraz" class="form-label">Tipo de Movimiento</label>
+                                                        <div class="d-grid gap-2 form-check d-block">     
+                                                            <div class="gap-2">
+                                                                <input class="btn-check" type="radio" id="op1" name="tip" value="Entrada" checked>
+                                                                <label class="btn btn-outline-secondary" for="op1" style="width: 49%;">Entrada</label>
+                                                                <input class="btn-check" type="radio" id="op2" name="tip" value="Salida">
+                                                                <label class="btn btn-outline-secondary" for="op2" style="width: 49%;">Salida</label>   
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label for="txtcategorias" class=" form-label">Razon</label>
+                                                        <textarea type="text" name="raz" required class="form-control form-control-lg"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-primary">Agregar</button>
+                                                    </div>
+                                            </form>
+                                        </div>  
+                                    </div>  
+                            </div>  
+                        </div>  
+                        {% if s %}
+                        <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
+                            <div class="input-group" >
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
+                                <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
+                                </div>
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+                                <thead id="head_table">
+                                <tr>
+                                    <th style="text-align: center;">PRODUCTO</th>
+                                    <th style="text-align: center;">CANTIDAD</th>
+                                    <th style="text-align: center;">TIPO DE MOVIMIENTO</th>
+                                    <th style="text-align: center;">FECHA</th>
+                                    <th style="text-align: center;">RAZON</th>
+                                    <!-- <th style="text-align: center;">EDITAR</th>
+                                    <th style="text-align: center;">ELIMINAR</th> -->
+                                </tr>
+                            </thead>
+                                {% for x in s %}
+                            <tbody id="myTable">    
+                                <tr class="align-middle">
+                                    <td style="text-align: center;">{{x.producto}}</td>
+                                    <td style="text-align: center;">{{x.cantidad}}</td>
+                                    <td style="text-align: center;">{{x.tipo}}</td>
+                                    <td style="text-align: center;">{{x.fecha}}</td>
+                                    <td style="text-align: center;">{{x.razon}}</td>
+                                    <!-- <td style="text-align: center;">
+                                        <button type="button" onClick="update({{x}})" class="btn btn-lg btn-outline-primary" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-primary-text-emphasis);">
+                                            <i class="bi bi-pencil-fill" ></i>
+                                        </button>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button type="button" onClick="deletes({{x.id}})" class="btn btn-lg btn-outline-danger" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-danger-text-emphasis);">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </td> -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>    
+                            </table>
+                        </div>
+                            {% else %}  
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h5>No Hay Registros</h5>
+                            </div>
+                        {% endif %}   
+                    </div>  
+                </div>  
+            </div>  
+        </div>
+        {% if r2 %}
+        <script>
+        Swal.fire({
+        'title':'Error',
+        'text':"{{r2}}",
+        toast: true,
+        background: back,
+        color: text,
+        'icon':'error'
+        }).then(()=>{window.location.href = "/ShowGestionS";})</script>
+        {% endif %}
+
+        {% if r %}
+        <script>
+        Swal.fire({
+        position: 'top',
+        icon: 'success',
+        title: '{{r}}',
+        toast: true,
+        background: back,
+        color: text,
+        showConfirmButton: false,
+        timer: 1500
+        })</script>
+        {% endif %}
+
+
+        <script>
+        var a = document.getElementById("showEmail");
+        var b = document.getElementById("showEmail2");
+        var e = document.getElementById("TheEmail");
+        var t = localStorage.getItem('ShowEmail');
+        console.log(t)
+        if (t==="true"){
+        e.innerHTML = '{{correo}}';
+        a.style.display = "block";
+        b.style.display = "none";
+        //console.log('b')
+        }
+        if(t==="false"){
+        e.innerHTML = '***';
+        a.style.display = "none";
+        b.style.display = "block";
+        }
+        //console.log("c")
+        </script>
+        
+        <script>
+            function ChangeShowEmail() {
+                var element = document.body;
+                var a = document.getElementById("showEmail");
+                var b = document.getElementById("showEmail2");
+                var e = document.getElementById("TheEmail");
+                if (a.style.display == "block"){
+                    localStorage.setItem('ShowEmail', false);
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                else{
+                    localStorage.setItem('ShowEmail', true);
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                }
+            }
+        </script>
+    <script>
+        function chanalu() {
+            const a = document.getElementById("crearalumno");
+            const c = document.getElementById("crealum");
+            if(a.checked){c.innerHTML = 'Activo';}else{c.innerHTML = 'Desactivo';}          
+        }
+    </script>
+<script>
+        function chanest() {
+            const b = document.getElementById("crearestado");
+            const d = document.getElementById("creaest");           
+            if(b.checked){d.innerHTML = 'Activo';}else{d.innerHTML = 'Desactivo';}            
+        }
+    </script>
+<script>
+    var element = document.body;
+    var a = localStorage.getItem('isDarkMode');
+    var back = '';
+    var text = '';
+    if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
+    //console.log(a)
+        if (a==="true"){
+            element.dataset.bsTheme = "dark"
+            document.getElementById("2").checked = true;
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            //console.log('b')
+        }
+        if(a==="false"){
+            element.dataset.bsTheme = "light";
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+        }
+        //console.log("c")
+    </script>
+<script>
+    function myFunction() {
+        var element = document.body;
+        var darkcheck = document.getElementById("2");
+        //console.log(darkcheck)
+        if (darkcheck.checked){
+            element.dataset.bsTheme = "dark"
+            localStorage.setItem('isDarkMode', true);
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            back = "#2d2d2d"; text = "#ffffff";
+        }
+        else{
+            element.dataset.bsTheme = "light"
+            localStorage.setItem('isDarkMode', false);
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+            back = "#fff"; text = "#545454";
+        }
+    }
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+        
+    </body>
+</html>

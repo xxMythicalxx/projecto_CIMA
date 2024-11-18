@@ -7,38 +7,8 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
 	</head>
-<!--	
-	<script>
-		let count = 3600;
-		const timer = setInterval(function() {
-		//console.log(count);
-		var counth = count /3600;
-		var hour = Math.trunc(counth);
-		var countm = count /60;
-		var minute = Math.trunc(countm);
-		var counts = Math.floor( count%(60) );
-		var second = Math.trunc(counts);
-		//document.getElementById("countdown").innerHTML =days + ":" + hours + ":" + minutes + ":" + seconds;
-		document.getElementById("countdown").innerHTML = hour + ":" + minute + ":" + second;
-		count--;
-		if (count === 0) {
-			clearInterval(timer);
-			Swal.fire({
-				title: 'Sesion Caducada',
-				'icon':'error',
-				toast: true
-				}).then((result) => {
-				if (result.isConfirmed) {
-				window.location.href = "/";
-			}
-			})
-		}
-	}, 1000);
-	</script>
--->
 	<body>
 	<div class="vh-100">	
-		
 		<div class="form-check form-switch mx-4">
 			<input
 			  class="form-check-input p-2"
@@ -47,11 +17,7 @@
 			  id="2"
 			  onclick="myFunction()"
 			  />
-
-
-<!--	<h3 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Tiempo de la sesion <span id="countdown" class="badge text-bg-secondary">60</span></h3> -->
-		</div>
-		
+		</div>	
 		<div class="vh-100 d-flex justify-content-center align-items-center" style="max-height: calc(100vh - 100px);">
 			<div class="container text-center" >
 				<div class="card align-self-center" style="max-width: 40rem;margin: 0 auto;float: none;">
@@ -73,34 +39,30 @@
 			var back = '';
 			var text = '';
 			if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
-			//console.log(a)
 				if (a==="true"){
 					element.dataset.bsTheme = "dark"
 					document.getElementById("2").checked = true;
-					document.getElementById('head_table').setAttribute("class", "table-light");
-					//console.log('b')
+					document.getElementById('head_login').setAttribute("class", "card text-bg-light");
 				}
 				if(a==="false"){
 					element.dataset.bsTheme = "light";
-					document.getElementById('head_table').setAttribute("class", "table-dark");
+					document.getElementById('head_login').setAttribute("class", "card text-bg-dark");
 				}
-				//console.log("c")
 			</script>
 		<script>
 			function myFunction() {
 				var element = document.body;
 				var darkcheck = document.getElementById("2");
-				//console.log(darkcheck)
 				if (darkcheck.checked){
 					element.dataset.bsTheme = "dark"
 					localStorage.setItem('isDarkMode', true);
-					document.getElementById('head_table').setAttribute("class", "table-light");
+					document.getElementById('head_login').setAttribute("class", "card text-bg-light");
 					back = "#2d2d2d"; text = "#ffffff";
 				}
 				else{
 					element.dataset.bsTheme = "light"
 					localStorage.setItem('isDarkMode', false);
-					document.getElementById('head_table').setAttribute("class", "table-dark");
+					document.getElementById('head_login').setAttribute("class", "card text-bg-dark");
 					back = "#fff"; text = "#545454";
 				}
 			}

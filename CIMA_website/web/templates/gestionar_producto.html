@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+		<title>Admin-Mode</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
+		<script> var a = localStorage.getItem('isDarkMode'); var back = ''; var text = ''; if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}</script>
+		<script >
+            const logout = () => {
+				Swal.fire({
+                    title: 'Cerrar Sesion',
+                    text: "¿Está Seguro De Querer Cerrar La Sesión?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/logout";
+                    }
+                    })
+            }
+        </script>
+
+{% csrf_token %} 
+        <script>
+        const update = (id__) => {
+            console.log(id__)
+            var array = id__;
+            var id = id__;
+            var a = '';
+            var b = '';
+            var c = 0;
+            var d = 0;
+            {% for i in p %}
+                if (id == '{{i.id}}'){a='{{i.nombre}}';b='{{i.descripcion}}';c=parseInt('{{i.cantidad}}');d=Number('{{i.precio_unitario}}');}   
+            {% endfor %}
+            Swal.fire({
+            title: "Modificando a " + a,
+            toast: true,
+            background: back,
+            color: text,
+            width: 400,
+            html: `
+                <div class="modal-body">
+                <form class="row g-3 bg-body-tertiary"  style="padding: 10px;">
+                    <div class="col-md-6">
+                        <label for="txtnom" class="form-label">Nombre del Producto</label>     
+                        <input type="text" id="nom" name="txtnombre" required class="form-control form-control-lg" value='${a}'/>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="txtdes" class=" form-label">Descripcion del Producto</label>    
+                        <textarea type="text" id="des" name="txtdescipcion" required class="form-control form-control-lg">${b}</textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="txtcategorias" class=" form-label">Categoria de Producto</label>  
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                            <select name="txtcategorias" id='cat' required class="form-select form-select-lg">
+                                {% for x in categoria %}
+                                    <option value="{{ x.id }}">{{ x.nombre }}</option>
+                                {% empty %}
+                                    <option value="">no hay categorias creados</option>
+                                {% endfor %}  
+                            </select>
+                            <!-- <button type="button" onClick="createcategoria()" class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                            <button type="button" onClick="updatecategoria()" class="btn btn-outline-warning">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button type="button" onClick="deletecategoria()" class="btn btn-outline-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </button> -->
+                        </div>
+                    </div>
+                    <div class="col-md-6"id="cantidadP2">
+                        <label for="txtcan" class="form-label disable">Cantidad de Producto</label>  
+                        <input type="number" id='can' name="cantidad" required min="0" value='${c}' class="form-control form-control-lg" disabled/>
+                    </div>
+                    <div class="col-md-6" id="PrecioP2">
+                        <label for="txtpre" class="form-label">Precio del Producto (Unitario)</label>     
+                        <input type="number" id="pre__2" name="precio" min="0" value='${d}' required class="form-control form-control-lg" />
+                    </div>
+                    <div class="col-md-12" id="compradonado">
+                        <label for="txtraz" class="form-label">Razon de Ingreso</label>    
+                        <div class="d-grid gap-2 form-check d-block">
+                            <div class="gap-2">
+                            <input class="btn-check" type="radio" id="op12" name="opt" value="comprado" onclick="showDineros2()" checked>
+                            <label class="btn btn-outline-secondary btn-lg" for="op12" style="width: 49%;" >comprado</label>
+                            <input class="btn-check" type="radio" id="op22" name="opt" value="donado" onclick="showDineros2()">
+                            <label class="btn btn-outline-secondary btn-lg" for="op22" style="width: 49%;" >donado</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-12">
+                        <label for="txtestados"  class=" form-label">estado de Producto</label>    
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                        <select name="txtestados" id="est" required class="form-select form-select-lg">
+                            {% for x in estado %}
+                                <option value="{{ x.id }}">{{ x.estado }}</option>
+                            {% empty %}
+                                <option value="">no hay estados creados</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" onClick="createestado()" class="btn btn-outline-success">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                        <button type="button" onClick="updateestado()" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button type="button" onClick="deleteestado()" class="btn btn-outline-danger">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                        </div>
+                    </div> -->
+                    <div class="col-md-12">
+                        <label for="txtrutss" class=" form-label">Rut asociado</label>    
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                            <select name="txtrutss" id="rut" required class="form-select form-select-lg">
+                            {% for x in alumno %}
+                                <option value="{{ x.id }}">{{ x.rut }}</option>
+                            {% empty %}
+                                <option value="">no hay alumnos creados</option>
+                            {% endfor %}
+                            </select>
+                            <!-- <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                            <button type="button" onClick="updatealumno()" class="btn btn-outline-warning">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button type="button" onClick="deletealumno()" class="btn btn-outline-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </button> -->
+                        </div>
+                    <div class="col-md-12">
+                        <label for="txtprovs" class=" form-label">Proveedor Asociado</label>    
+                        <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                            <select name="txtprovs" id="pro" required class="form-select form-select-lg">
+                            {% for x in proveedor %}
+                                <option value="{{ x.id }}">{{ x.nombre }}</option>
+                            {% empty %}
+                                <option value="">no hay alumnos creados</option>
+                            {% endfor %}
+                            </select>
+                            <!-- <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                            <button type="button" onClick="updatealumno()" class="btn btn-outline-warning">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button type="button" onClick="deletealumno()" class="btn btn-outline-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </button> -->
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-12"> 
+                        <label for="message-text" class="col-form-label">Razon de ingreso</label>
+                        <textarea name="razon_" class="form-control" id="razon_" required></textarea>
+                    </div> -->
+                    </form>
+            </div>
+            `,
+            showCancelButton: true,
+        }).then((result)=>{
+            if (result.isConfirmed){
+            var nom = document.getElementById("nom").value;
+            var des = document.getElementById("des").value;
+            var cat = document.getElementById("cat").value;
+            var pro = document.getElementById("pro").value;
+            var can = document.getElementById("can").value;
+            var preval = document.getElementById("pre__2");
+            var pre = document.getElementById("pre__2").value;
+            var opt = document.getElementById("op12");
+            var raz = '';
+            if (opt.checked){raz=document.getElementById("op12").value;}else{raz=document.getElementById("op22").value;} 
+            var est = 1;
+            var rut = document.getElementById("txtruts").value;
+            if (nom && des && cat && can && pre && raz && est && rut && pro) {
+                fetch('http://127.0.0.1:8000/UpdateP',{method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                    id_: id,
+                    nom_: nom,
+                    des_: des,
+                    cat_: cat,
+                    pro_: pro,
+                    can_: can,
+                    pre_: pre,
+                    raz_: raz,
+                    est_: est,
+                    rut_: rut,
+                  })
+                })
+                .then(response => response.json())
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Cambio Realizado Correctamente',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/ShowGestionP";
+                    }
+                })
+            }else{
+                Swal.fire({
+                'title':'Error',
+                'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                toast: true,
+                background: back,
+                color: text,
+                'icon':'error'}).then(()=>{update(array)})
+                }
+            }
+        })
+        }
+        </script>
+        <script>
+            const deletes = (id) => {
+                Swal.fire({
+                    title: '¿Está Seguro(a) De Querer Eliminar El Registro?',
+                    text: "Esta accion no se puede revertir",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, borralo',
+                    cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/DeleteP/"+id;
+                    }
+                    })
+            }
+        </script>
+
+<!-- Scrips Alumno -->
+        <!-- <script>
+        const createalumno = () => {
+            Swal.fire({
+            title: "creando un Alumno",
+            toast: true,
+            background: back,
+            color: text,
+            html: `
+                <div class="row">
+                    <label for="txtnom" class="form-label">Rut</label>
+                    <div class="col-sm-9">        
+                    <input type="text" id="txtrut"  required oninput="checkRut(this)" maxlength="10" class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Nombres</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtnoms"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Apellidos</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtapes"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Curso</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtcur"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Salon</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtsal"  required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+
+            `,
+            showCancelButton: true,
+            preConfirm: () => {
+            let test = false;
+            var rut = document.getElementById("txtrut").value;
+            var noms = document.getElementById("txtnoms").value;
+            var apes = document.getElementById("txtapes").value;
+            var cur = document.getElementById("txtcur").value;
+            var sal = document.getElementById("txtsal").value;
+            {% for i in opalumno %}
+                if (rut == '{{i.rut}}'){test=true;}   
+            {% endfor %} 
+            if(test==true){
+                Swal.fire({
+                'title':'Error',
+                'text':"Error El Alumno ya existe",
+                toast: true,
+                background: back,
+                color: text,
+                'icon':'error'})
+                }
+            else{
+            test = false;
+            if (rut && noms && apes && cur && sal) {
+                //console.log(rut+noms+apes)
+                fetch('http://127.0.0.1:8000/RegistrarA2',{method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                    rut_: rut,
+                    noms_: noms,
+                    apes_: apes,
+                    cur_: cur,
+                    sal_: sal,
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data));
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Alumno Registrado Correctamente',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/ShowRegistrarP";
+                    }
+                })
+            }else{
+                Swal.fire({
+                'title':'Error',
+                'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                toast: true,
+                background: back,
+                color: text,
+                'icon':'error'
+            })}}}})
+        }
+        </script>
+        <script>
+        const updatealumno = () => {
+            var a = '';
+            var b = '';
+            var c = '';
+            var d = '';
+            var e = '';
+            var id = document.getElementById("txtruts").value;
+            if (id==''){
+                Swal.fire({
+                'title':'Error',
+                'text':"Error No Se Puede Modifcar",
+                toast: true,
+                background: back,
+                color: text,
+                'icon':'error'})
+            }
+            else{
+            {% for i in opalumno %}
+                if (id == '{{i.id}}'){
+                    a='{{i.rut}}';
+                    b='{{i.nombres}}';
+                    c='{{i.lastnombre}}';
+                    d='{{i.curso}}';
+                    e='{{i.salon}}';}  
+            {% endfor %}   
+            Swal.fire({
+            title: "Modificando a " + a,
+            toast: true,
+            background: back,
+            color: text,
+            html: `
+                <div class="row">
+                    <label for="txtnom" class="form-label">Rut</label>
+                    <div class="col-sm-9">        
+                    <input type="text" id="txtrut" value=${a} required oninput="checkRut(this)" maxlength="10" class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Nombres</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtnoms" value=${b} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Apellidos</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtapes" value=${c} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Curso</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtcur" value=${d} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="txtdes" class=" form-label">Salon</label>
+                    <div class="col-sm-9">     
+                    <input type="text" id="txtsal" value=${e} required class="form-control form-control-lg" />
+                    </div>
+                </div>
+
+
+            `,
+            showCancelButton: true,
+            preConfirm: () => {
+            var rut = document.getElementById("txtrut").value;
+            var noms = document.getElementById("txtnoms").value;
+            var apes = document.getElementById("txtapes").value;
+            var cur = document.getElementById("txtcur").value;
+            var sal = document.getElementById("txtsal").value;
+            if (rut && noms && apes && cur && sal) {
+                //console.log(rut+noms+apes)
+                fetch('http://127.0.0.1:8000/UpdateA',{method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({
+                    id_: id,
+                    rut_: rut,
+                    noms_: noms,
+                    apes_: apes,
+                    cur_: cur,
+                    sal_: sal,
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data));
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Alumno Modificado Correctamente',
+                    toast: true,
+                    background: back,
+                    color: text,
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/ShowRegistrarP";
+                    }
+                })
+            }else{
+                Swal.fire({
+                'title':'Error',
+                'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                toast: true,
+                background: back,
+                color: text,
+                'icon':'error'
+            })}}})
+        }}
+        </script>
+
+        <script>
+        const deletealumno = () => {
+            var id = document.getElementById("txtruts").value;
+            Swal.fire({
+                title: '¿Está Seguro(a) De Querer Eliminar El Registro?',
+                text: "Esta accion no se puede revertir",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                toast: true,
+                background: back,
+                color: text,
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, borralo',
+                cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/DeleteA2/"+id;
+                }
+                })
+        }
+        </script> -->
+<!-- Scripts Estados -->
+        <!-- <script>
+            const createestado = () => {
+                Swal.fire({
+                title: "creando un estado de producto",
+                toast: true,
+                background: back,
+                color: text,
+                html: `
+                    <div class="row">
+                        <label for="txtnom" class="form-label">Estado</label>
+                        <div class="col-sm-9">        
+                        <input type="text" id="txtestados"  required class="form-control form-control-lg" />
+                        </div>
+                    </div>
+
+                `,
+                showCancelButton: true,
+                preConfirm: () => {
+                let test = false;
+                var estado = document.getElementById("txtestados").value;
+                {% for i in opesta %}
+                    if (estado == '{{i.estado}}'){test=true;}
+                {% endfor %} 
+                if(test==true){  
+                    Swal.fire({
+                    'title':'Error',
+                    'text':"Error El Estado ya existe",
+                    toast: true,
+                    background: back,
+                    color: text,
+                    'icon':'error'})
+                    }
+                else{
+                test = false;
+                if (estado) {
+                    //console.log(rut+noms+apes)
+                    fetch('http://127.0.0.1:8000/RegistrarE',{method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                      },
+                      body: JSON.stringify({
+                        estado_: estado,
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log(data));
+                    Swal.fire({
+                        position: 'top',
+                        icon: 'success',
+                        title: 'Estado Registrado Correctamente',
+                        toast: true,
+                        background: back,
+                        color: text,
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/ShowRegistrarP";
+                        }
+                    })
+                }else{
+                    Swal.fire({
+                    'title':'Error',
+                    'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                    toast: true,
+                    background: back,
+                    color: text,
+                    'icon':'error'
+                })}}}})
+            }
+            </script>
+            <script>
+                const updateestado = () => {
+                    var a = '';
+                    var id = document.getElementById("txtestado").value;
+                    if (id==''){
+                        Swal.fire({
+                        'title':'Error',
+                        'text':"Error No Se Puede Modifcar",
+                        toast: true,
+                        background: back,
+                        color: text,
+                        'icon':'error'})
+                    }
+                    else{
+                    {% for i in opesta %}
+                        if (id == '{{i.id}}'){
+                            a='{{i.estado}}';}
+                    {% endfor %}   
+                    Swal.fire({
+                    title: "Modificando a " + a,
+                    toast: true,
+                    background: back,
+                    color: text,
+                    html: `
+                        <div class="row">
+                        <label for="txtnom" class="form-label">Estado</label>
+                        <div class="col-sm-9">        
+                        <input type="text" id="txtestados" value=${a} required class="form-control form-control-lg" />
+                        </div>
+                        </div>
+        
+        
+                    `,
+                    showCancelButton: true,
+                    preConfirm: () => {
+                    var estado = document.getElementById("txtestados").value;
+                    if (estado) {
+                        //console.log(rut+noms+apes)
+                        fetch('http://127.0.0.1:8000/UpdateE',{method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                          },
+                          body: JSON.stringify({
+                            id_: id,
+                            estado_: estado,
+                          })
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log(data));
+                        Swal.fire({
+                            position: 'top',
+                            icon: 'success',
+                            title: 'Estado Modificado Correctamente',
+                            toast: true,
+                            background: back,
+                            color: text,
+                            }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/ShowRegistrarP";
+                            }
+                        })
+                    }else{
+                        Swal.fire({
+                        'title':'Error',
+                        'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                        toast: true,
+                        background: back,
+                        color: text,
+                        'icon':'error'
+                    })}}})
+                }}
+                </script>
+        
+                <script>
+                const deleteestado = () => {
+                    var id = document.getElementById("txtestado").value;
+                    Swal.fire({
+                        title: '¿Está Seguro(a) De Querer Eliminar El Registro?',
+                        text: "Esta accion no se puede revertir",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        toast: true,
+                        background: back,
+                        color: text,
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, borralo',
+                        cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/DeleteE/"+id;
+                        }
+                        })
+                }
+                </script> -->
+
+<!-- Scripts Categoria -->
+<!-- 
+            <script>
+                const createcategoria = () => {
+                    Swal.fire({
+                    title: "creando un categoria de producto",
+                    toast: true,
+                    background: back,
+                    color: text,
+                    html: `
+                        <div class="row">
+                            <label for="txtnom" class="form-label">Categoria</label>
+                            <div class="col-sm-9">        
+                            <input type="text" id="txtcategorias"  required class="form-control form-control-lg" />
+                            </div>
+                        </div>
+
+                    `,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    preConfirm: () => {
+                    let test = false;
+                    var categoria = document.getElementById("txtcategorias").value;
+                    {% for i in opcategoria %}
+                        if (categoria == '{{i.tipo}}'){test=true;}  
+                    {% endfor %} 
+                    if(test==true){ 
+                        Swal.fire({
+                        'title':'Error',
+                        'text':"Error La Categoria ya existe",
+                        toast: true,
+                        background: back,
+                        color: text,
+                        'icon':'error'})
+                        }
+                    else{
+                    test = false;
+                    if (categoria) {
+                        //console.log(rut+noms+apes)
+                        fetch('http://127.0.0.1:8000/RegistrarC',{method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            categoria_: categoria,
+                        })
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log(data));
+                        Swal.fire({
+                            position: 'top',
+                            icon: 'success',
+                            title: 'Categoria Registrada Correctamente',
+                            toast: true,
+                            background: back,
+                            color: text,
+                            }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/ShowRegistrarP";
+                            }
+                        })
+                    }else{
+                        Swal.fire({
+                        'title':'Error',
+                        'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                        toast: true,
+                        background: back,
+                        color: text,
+                        'icon':'error'
+                    })}}}})
+                }
+                </script>
+
+                <script>
+                    const updatecategoria = () => {
+                        var a = '';
+                        var id = document.getElementById("txtcategoria").value;
+                        if (id==''){
+                            Swal.fire({
+                            'title':'Error',
+                            'text':"Error No Se Puede Modifcar",
+                            toast: true,
+                            background: back,
+                            color: text,
+                            'icon':'error'})
+                        }
+                        else{
+                        {% for i in opcategoria %}
+                            if (id == '{{i.id}}'){
+                                a='{{i.tipo}}';}
+                        {% endfor %}   
+                        Swal.fire({
+                        title: "Modificando a " + a,
+                        toast: true,
+                        background: back,
+                        color: text,
+                        html: `
+                            <div class="row">
+                            <label for="txtnom" class="form-label">Estado</label>
+                            <div class="col-sm-9">        
+                            <input type="text" id="txtcategorias" value=${a} required class="form-control form-control-lg" />
+                            </div>
+                            </div>
+
+
+                        `,
+                        showCancelButton: true,
+                        preConfirm: () => {
+                        var tipo = document.getElementById("txtcategorias").value;
+                        if (tipo) {
+                            //console.log(rut+noms+apes)
+                            fetch('http://127.0.0.1:8000/UpdateC',{method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                id_: id,
+                                tipo_: tipo,
+                            })
+                            })
+                            .then(response => response.json())
+                            .then(data => console.log(data));
+                            Swal.fire({
+                                position: 'top',
+                                icon: 'success',
+                                title: 'Categoria Modificada Correctamente',
+                                toast: true,
+                                background: back,
+                                color: text,
+                                }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "/ShowRegistrarP";
+                                }
+                            })
+                        }else{
+                            Swal.fire({
+                            'title':'Error',
+                            'text':"Error No Se Puede Dejar Vacio Ninguna Casilla",
+                            toast: true,
+                            background: back,
+                            color: text,
+                            'icon':'error'
+                        })}}})
+                    }}
+                    </script>
+
+                    <script>
+                    const deletecategoria = () => {
+                        var id = document.getElementById("txtcategoria").value;
+                        Swal.fire({
+                            title: '¿Está Seguro(a) De Querer Eliminar El Registro?',
+                            text: "Esta accion no se puede revertir",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            toast: true,
+                            background: back,
+                            color: text,
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si, borralo',
+                            cancelButtonText: 'Cancelar'
+                            }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/DeleteC/"+id;
+                            }
+                            })
+                        }
+                    </script> -->
+<!-- casilla de rut  -->
+        <!-- <script>
+        function checkRut(rut) {
+        //limipar rut
+        var rutlimpio = rut.value.replace(/[^0-9kK]/g, '');
+        // Despejar Puntos
+        var valor = rutlimpio.replace('.','');
+        // Despejar Guión
+        valor = valor.replace('-','');
+
+        // Aislar Cuerpo y Dígito Verificador
+        cuerpo = valor.slice(0,-1);
+        dv = valor.slice(-1).toUpperCase();
+
+        // Formatear RUN
+        if(cuerpo.length<1 && dv.length<1){rut.value=''}
+        else{rut.value = cuerpo + '-' + dv}
+
+
+        }
+        </script> -->
+
+<!-- tiempo de la sesion (es solo visual no afecta al tiempo real de la sesion, eso esta en settings al final) -->
+        <script>
+        let count = 3599;
+        const timer = setInterval(function() {
+        //console.log(count);
+        var counth = count /3600;
+        var hour = Math.trunc(counth);
+        var countm = count /60;
+        var minute = Math.trunc(countm);
+        var counts = Math.floor( count%(60) );
+        var second = Math.trunc(counts);
+        //document.getElementById("countdown").innerHTML =days + ":" + hours + ":" + minutes + ":" + seconds;
+        count--;
+        if (count === 0) {
+        clearInterval(timer);
+        Swal.fire({
+            title: 'Sesion Caducada',
+            'icon':'error',
+            toast: true,
+            background: back,
+            color: text,
+            }).then((result) => {
+            if (result.isConfirmed) {
+            window.location.href = "/";
+        }
+        })
+        }
+        }, 1000);
+        </script>
+    </head>
+    <body >
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <div  class="vh-100 d-flex justify-content-center ">
+            <div class="container-fluid">		
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
+                            <div class="navbar-nav" align="center">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                  </div>
+                                <a class="btn btn-outline-info nav-link text-center" href="/adminn">Dashboard</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
+                                <a class="btn btn-outline-info nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
+                                <a class="btn btn-outline-info active nav-link text-center" href="/ShowGestionP">Gestionar Productos</a>
+                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
+                                <a class="btn btn-outline-warning nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
+                                <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
+                                <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
+                                    <input
+                                    class="form-check-input p-2"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="2"
+                                    onclick="myFunction()"
+                                    />
+                                </div></a>		
+                            </div>
+                            <div class="" style="height: 100%;">
+                                <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
+                                <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                                <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h5 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Gestion de Productos</h5>
+                    </div>
+                </nav>
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="container-fluid">
+                        <div align="center">
+                            <div style="margin: 0 auto;float: none;">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#RegistrarCategoria">Agregar Producto</button>
+                                <div class="modal fade" id="RegistrarCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Creando Producto...</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form class="row g-3 bg-body-tertiary" action="/RegistrarP" method="post" style="padding: 10px;">
+                                                {% csrf_token %}
+                                                <div class="col-md-6">
+                                                    <label for="txtnom" class="form-label">Nombre del Producto</label>     
+                                                    <input type="text" name="txtnombre" required class="form-control form-control-lg" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="txtdes" class=" form-label">Descripcion del Producto</label>    
+                                                    <textarea   type="text" name="txtdescipcion" required class="form-control form-control-lg"></textarea>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="txtcategorias" class=" form-label">Categoria de Producto</label>  
+                                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                                        <select name="txtcategorias" id='txtcategoria' required class="form-select form-select-lg">
+                                                            {% for x in categoria %}
+                                                                <option value="{{ x.id }}">{{ x.nombre }}</option>
+                                                            {% empty %}
+                                                                <option value="">no hay categorias creados</option>
+                                                            {% endfor %}  
+                                                        </select>
+                                                        <!-- <button type="button" onClick="createcategoria()" class="btn btn-outline-success">
+                                                            <i class="bi bi-plus-lg"></i>
+                                                        </button>
+                                                        <button type="button" onClick="updatecategoria()" class="btn btn-outline-warning">
+                                                            <i class="bi bi-pencil-fill"></i>
+                                                        </button>
+                                                        <button type="button" onClick="deletecategoria()" class="btn btn-outline-danger">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button> -->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6"id="cantidadP">
+                                                    <label for="txtcan" class="form-label disable">Cantidad de Producto</label>  
+                                                    <input type="number" name="cantidad" required min="0" value="0" class="form-control form-control-lg" disabled/>
+                                                </div>
+                                                <div class="col-md-6" id="PrecioP">
+                                                    <label for="txtpre" class="form-label">Precio del Producto (Unitario)</label>     
+                                                    <input type="number" id="pre__" name="precio" min="0" value="0" required class="form-control form-control-lg"/>
+                                                </div>
+                                                <div class="col-md-12" id="compradonado">
+                                                    <label for="txtraz" class="form-label">Razon de Ingreso</label>    
+                                                    <div class="d-grid gap-2 form-check d-block">
+                                                        <div class="gap-2">
+                                                        <input class="btn-check" type="radio" id="op1" name="opt" value="comprado" onclick="showDineros()" checked>
+                                                        <label class="btn btn-outline-secondary btn-lg" for="op1" style="width: 49%;" >comprado</label>
+                                                        <input class="btn-check" type="radio" id="op2" name="opt" value="donado" onclick="showDineros()">
+                                                        <label class="btn btn-outline-secondary btn-lg" for="op2" style="width: 49%;" >donado</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-md-12">
+                                                    <label for="txtestados"  class=" form-label">estado de Producto</label>    
+                                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                                    <select name="txtestados" id="txtestado" required class="form-select form-select-lg">
+                                                        {% for x in estado %}
+                                                            <option value="{{ x.id }}">{{ x.estado }}</option>
+                                                        {% empty %}
+                                                            <option value="">no hay estados creados</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="button" onClick="createestado()" class="btn btn-outline-success">
+                                                        <i class="bi bi-plus-lg"></i>
+                                                    </button>
+                                                    <button type="button" onClick="updateestado()" class="btn btn-outline-warning">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button type="button" onClick="deleteestado()" class="btn btn-outline-danger">
+                                                        <i class="bi bi-trash-fill"></i>
+                                                    </button>
+                                                    </div>
+                                                </div> -->
+                                                <div class="col-md-12">
+                                                    <label for="txtrutss" class=" form-label">Rut asociado</label>    
+                                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                                        <select name="txtrutss" id="txtruts" required class="form-select form-select-lg">
+                                                        {% for x in alumno %}
+                                                            <option value="{{ x.id }}">{{ x.rut }}</option>
+                                                        {% empty %}
+                                                            <option value="">no hay alumnos creados</option>
+                                                        {% endfor %}
+                                                        </select>
+                                                        <!-- <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                                            <i class="bi bi-plus-lg"></i>
+                                                        </button>
+                                                        <button type="button" onClick="updatealumno()" class="btn btn-outline-warning">
+                                                            <i class="bi bi-pencil-fill"></i>
+                                                        </button>
+                                                        <button type="button" onClick="deletealumno()" class="btn btn-outline-danger">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button> -->
+                                                    </div>
+                                                <div class="col-md-12">
+                                                    <label for="txtprovs" class=" form-label">Proveedor Asociado</label>    
+                                                    <div class="hstack gap-1 d-flex justify-content-center align-items-center">
+                                                        <select name="txtprovs" id="txtprov" required class="form-select form-select-lg">
+                                                        {% for x in proveedor %}
+                                                            <option value="{{ x.id }}">{{ x.nombre }}</option>
+                                                        {% empty %}
+                                                            <option value="">no hay alumnos creados</option>
+                                                        {% endfor %}
+                                                        </select>
+                                                        <!-- <button type="button" onClick="createalumno()" class="btn btn-outline-success">
+                                                            <i class="bi bi-plus-lg"></i>
+                                                        </button>
+                                                        <button type="button" onClick="updatealumno()" class="btn btn-outline-warning">
+                                                            <i class="bi bi-pencil-fill"></i>
+                                                        </button>
+                                                        <button type="button" onClick="deletealumno()" class="btn btn-outline-danger">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button> -->
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-md-12"> 
+                                                    <label for="message-text" class="col-form-label">Razon de ingreso</label>
+                                                    <textarea name="razon_" class="form-control" id="razon_" required></textarea>
+                                                </div> -->
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Agregar</button>
+                                                </div>
+                                                </form>
+                                            </div>   
+                                        </div>
+                                         
+                                    </div>
+                                      
+                                </div>
+                            </div>
+                            {% if p %}
+                        <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
+                            <div class="btn-group-horizontal" role="group" aria-label="Vertical radio toggle button group">
+                                <input type="checkbox" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" onclick="Showdisable()">
+                                <label class="btn btn-outline-danger" for="vbtn-radio1">Ver Productos desactivos</label>
+                              </div>
+                            <div class="input-group" >
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
+                                <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
+                                </div>
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none; display: none;"  id="tableall" >
+                                <thead id="head_table">
+                                <tr>
+                                    <th style="text-align: center;">NOMBRRE</th>
+                                    <th style="text-align: center;">DDESCRIPCION</th>
+                                    <th style="text-align: center;">CATEGORIA</th>
+                                    <th style="text-align: center;">CANTIDAD</th>
+                                    <th style="text-align: center;">PRECIO</th>
+                                    <th style="text-align: center;">INFORMACION</th>
+                                </tr>
+                            </thead>
+                                {% for x in p %} 
+                                <tbody id="myTable">
+                                {% if x.estado_habil == 'desactivo' %}
+                                <tr class="align-middle table-active">
+                                {% else %}
+                                <tr class="align-middle">
+                                {% endif %}
+                                    <td style="text-align: center;">{{x.nombre}}</td>
+                                    <td style="text-align: center;">{{x.descripcion}}</td>
+                                    <td style="text-align: center;">{{x.categoria}}</td>
+                                    <td style="text-align: center;">{{x.cantidad}}</td>
+                                    <td style="text-align: center;">${{x.precio_unitario}}</td>
+                                    <td style="text-align: center;">
+                                        <button type="button" onclick="VerMas({{x.id}})" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#VERMAS">
+                                            Ver mas
+                                        </button>
+                                        {% if x.estado_habil == 'desactivo' %}
+                                        <button type="button" onClick="enable({{x.id}})" class="btn btn-lg">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                        {% else %}
+                                            <button type="button" onClick="disable({{x.id}})" class="btn btn-lg">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        {% endif %} 
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>    
+                            </table>
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="tabndisable" >
+                                <thead id="head_table2">
+                                <tr>
+                                    <th style="text-align: center;">NOMBRRE</th>
+                                    <th style="text-align: center;">DDESCRIPCION</th>
+                                    <th style="text-align: center;">CATEGORIA</th>
+                                    <th style="text-align: center;">CANTIDAD</th>
+                                    <th style="text-align: center;">PRECIO</th>
+                                    <th style="text-align: center;">INFORMACION</th>
+                                </tr>
+                            </thead>
+                                {% for x in p %}
+                                {% if x.estado_habil != 'desactivo' %} 
+                                <tbody id="myTable">
+                                {% if x.estado_habil == 'desactivo' %}
+                                <tr class="align-middle table-active">
+                                {% else %}
+                                <tr class="align-middle">
+                                {% endif %}
+                                    <td style="text-align: center;">{{x.nombre}}</td>
+                                    <td style="text-align: center;">{{x.descripcion}}</td>
+                                    <td style="text-align: center;">{{x.categoria}}</td>
+                                    <td style="text-align: center;">{{x.cantidad}}</td>
+                                    <td style="text-align: center;">${{x.precio_unitario}}</td>
+                                    <td style="text-align: center;">
+                                        <button type="button" onclick="VerMas({{x.id}})" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#VERMAS">
+                                            Ver mas
+                                        </button>
+                                        {% if x.estado_habil == 'desactivo' %}
+                                        <button type="button" onClick="enable({{x.id}})" class="btn btn-lg">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                        {% else %}
+                                            <button type="button" onClick="disable({{x.id}})" class="btn btn-lg">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        {% endif %} 
+                                    </td>
+                                </tr>
+                                {% endif %} 
+                                {% endfor %}
+                            </tbody>    
+                            </table>
+                        </div>
+                            {% else %}  
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h5>No Hay Registros</h5>
+                            </div>
+                        {% endif %}   
+                    </div>   
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="VERMAS" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cabeza"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="cuerpo">
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        function Showdisable() {
+        var disable = document.getElementById("vbtn-radio1");
+        var tableall = document.getElementById("tableall");
+        var tabndisable = document.getElementById("tabndisable");
+        //console.log(darkcheck)
+        if (disable.checked){
+        tableall.style.display = "";
+        tabndisable.style.display = "none";
+        }
+        else{
+        tableall.style.display = "none";
+        tabndisable.style.display = "";
+        }
+        }
+        </script>
+        <script>
+        const VerMas = (id__) => {
+        var dark = localStorage.getItem('isDarkMode');
+        var id = id__;
+        var a = '';
+        var b = '';
+        var c = '';
+        var d = '';
+        var e = 0;
+        var f = 0;
+        var g = 0;
+        var h = '';
+        var ii = '';
+        var j = '';
+        var k = '';
+        var l = '';
+        var m = '';
+        var n = '';
+        var o = '';
+        {% for i in p %}
+            if (id == '{{i.id}}'){a='{{i.nombre}}';b='{{i.descripcion}}';c='{{i.categoria}}';d='{{i.proveedor}}';e=parseInt('{{i.cantidad}}');f=Number('{{i.precio_unitario}}');g= e * f;h='{{i.razon_ingreso}}';ii='{{i.estado_producto}}';j='{{i.estado_habil}}';k='{{i.fecha_ingreso}}';l='{{i.fecha_modificacion}}';m='{{i.fecha_egreso}}';n='{{i.razon_egreso}}';o='{{i.rut_alumno}}';}   
+        {% endfor %}
+        if(m=='None'){m='---'}
+        if(n==''){n='Sin registro...'}
+        let head =  'Informacion del producto '+ a;
+        var cabeza = document.getElementById("cabeza");
+        cabeza.innerHTML = head;
+        let header = '';
+        if (dark!="true"){header = '<thead class="table-dark">'}else{header = '<thead class="table-light">'}
+        let str = `
+        <div class="table-responsive" style="max-height: calc(100vh - 100px);">
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+        `+ 
+        header
+        +`
+        <tr style="background-color: lightgrey;">
+            <th style="text-align: center;" data-sortable="true">NOMBRE</th>
+            <th style="text-align: center;" data-sortable="true">DESCRIPCION</th>
+            <th style="text-align: center;" data-sortable="true">CATEGORIA</th>
+        </tr>
+        </thead>
+        <tr class="align-middle">
+            <td style="text-align: center;">${a}</td>
+            <td style="text-align: center;">${b}</td>
+            <td style="text-align: center;">${c}</td>
+        </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+        `+ 
+        header
+        +`
+        <tr style="background-color: lightgrey;">
+            <th style="text-align: center;" data-sortable="true">PROVEEDOR</th>
+            <th style="text-align: center;" data-sortable="true">CANTIDAD</th>
+            <th style="text-align: center;" data-sortable="true">PRECIO</th>
+        </tr>
+        </thead>
+        <tr class="align-middle">
+            <td style="text-align: center;">${d}</td>
+            <td style="text-align: center;">${e}</td>
+            <td style="text-align: center;">$${f}</td>
+        </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+        `+ 
+        header
+        +`
+        <tr style="background-color: lightgrey;">
+            <th style="text-align: center;" data-sortable="true">TOTAL</th>
+            <th style="text-align: center;" data-sortable="true">RAZON DE INGRESO</th>
+            <th style="text-align: center;" data-sortable="true">ESTADO DEL PRODUCTO</th>
+        </tr>
+        </thead>
+        <tr class="align-middle">
+            <td style="text-align: center;">$${g}</td>
+            <td style="text-align: center;">${h}</td>
+            <td style="text-align: center;">${ii}</td>
+        </tr>
+        </tbody>
+        </table>
+        <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+        `+ 
+        header
+        +`
+        <tr style="background-color: lightgrey;">
+            <th style="text-align: center;" data-sortable="true">HABILITADO</th>
+            <th style="text-align: center;" data-sortable="true">FECHA DE INGRESO</th>
+            <th style="text-align: center;" data-sortable="true">FECHA DE MODIFICACION</th>
+            <th style="text-align: center;" data-sortable="true">FECHA DE EGRESO</th>
+            <th style="text-align: center;" data-sortable="true">RAZON DE EGRESO</th>
+            <th style="text-align: center;" data-sortable="true">ALUMNO ASOCIADO</th> 
+        </tr>
+        </thead>
+        <tr class="align-middle">
+            <td style="text-align: center;">${j}</td>
+            <td style="text-align: center;">${k}</td>
+            <td style="text-align: center;">${l}</td>
+            <td style="text-align: center;">${m}</td>
+            <td style="text-align: center;">${n}</td>
+            <td style="text-align: center;">${o}</td> 
+        </tr>
+        </tbody>
+        </table>
+        <div class="accordion-item" style="margin: 0 auto;float: none; text-align: center;">
+        <button type="button" onClick="update(${id})" data-bs-dismiss="modal" class="btn btn-info btn-lg" >Editar 
+        <i class="bi bi-pencil-fill" ></i>
+        </button>
+        <button type="button" onClick="deletes(${id})" class="btn btn-danger btn-lg">Eliminar 
+        <i class="bi bi-trash-fill"></i>
+        </button>
+        </div>
+        </div>`
+        var cuerpo = document.getElementById("cuerpo");
+        cuerpo.innerHTML = str;
+        };
+        </script>
+
+    <script>    
+    const disable = (id) => {
+    const { value } = Swal.fire({
+    title: "Ingrese la razon de la desactivacion",
+    input: "textarea",
+    showCancelButton: true,
+    toast: true,
+    background: back,
+    color: text,
+    inputValidator: (value) => {
+        if (!value) {
+        return "No puede quedar vacia";
+        }else{
+            fetch('http://127.0.0.1:8000/DisableP',{method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({
+                id_: id,
+                raz_: value,
+              })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data));
+            Swal.fire({
+                position: 'top',
+                icon: 'success',
+                title: 'Cambio Realizado Correctamente',
+                toast: true,
+                background: back,
+                color: text,
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/ShowGestionP";
+                }
+                })
+        }
+    }
+    });
+    }
+    </script>
+    <script>
+        const enable = (id) => {
+        Swal.fire({
+        title: "¿Desea reactivarlo?",
+        icon: 'warning',
+        showCancelButton: true,
+        toast: true,
+        background: back,
+        color: text,
+        preConfirm: () => {
+        fetch('http://127.0.0.1:8000/EnableP',{method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+            id_: id,
+            })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data));
+        Swal.fire({
+            position: 'top',
+            icon: 'success',
+            title: 'Cambio Realizado Correctamente',
+            toast: true,
+            background: back,
+            color: text,
+            }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/ShowGestionP";
+            }
+            })
+        }});
+        }
+        </script>
+
+    {% if r2 %}
+    <script>
+        Swal.fire({
+        'title':'Error',
+        'text':"{{r2}}",
+        toast: true,
+        background: back,
+        color: text,
+        'icon':'error'
+        }).then(()=>{window.location.href = "/ShowGestionP";})</script>
+    {% endif %}
+
+    {% if r %}
+    <script>
+    Swal.fire({
+    position: 'top',
+    icon: 'success',
+    title: '{{r}}',
+    toast: true,
+    background: back,
+    color: text,
+    showConfirmButton: false,
+    timer: 1500
+    })</script>
+    {% endif %}
+    
+        <script>
+            var a = document.getElementById("showEmail");
+            var b = document.getElementById("showEmail2");
+            var e = document.getElementById("TheEmail");
+            var t = localStorage.getItem('ShowEmail');
+            console.log(t)
+                if (t==="true"){
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                    //console.log('b')
+                }
+                if(t==="false"){
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                //console.log("c")
+            </script>
+        
+        <script>
+            function ChangeShowEmail() {
+                var element = document.body;
+                var a = document.getElementById("showEmail");
+                var b = document.getElementById("showEmail2");
+                var e = document.getElementById("TheEmail");
+                console.log(a)
+                if (a.style.display == "block"){
+                    localStorage.setItem('ShowEmail', false);
+                    e.innerHTML = '***';
+                    a.style.display = "none";
+                    b.style.display = "block";
+                }
+                else{
+                    localStorage.setItem('ShowEmail', true);
+                    e.innerHTML = '{{correo}}';
+                    a.style.display = "block";
+                    b.style.display = "none";
+                }
+            }
+        </script>
+        <script>
+            var dat = 0;
+            function showDineros() {
+            var y = document.getElementById("PrecioP");
+            var op1 = document.getElementById("op1");
+            var values = document.getElementById("pre__").value;
+            if(values==null){values=0}
+            if(values!=0){dat=values}
+            if (op1.checked){
+                document.getElementById('cantidadP').setAttribute("class", "col-md-6");
+                document.getElementById('pre__').value=dat;
+				y.style.display = "";
+			}
+			else{
+                document.getElementById('cantidadP').setAttribute("class", "col-md-12");
+                document.getElementById('pre__').value = 0;
+				y.style.display = "none";
+			}
+            }
+        </script>
+        <script>
+            var dat = 0;
+            function showDineros2() {
+            var y = document.getElementById("PrecioP2");
+            var op1 = document.getElementById("op12");
+            var values = document.getElementById("pre__2").value;
+            if(values==null){values=0}
+            if(values!=0){dat=values}
+            if (op1.checked){
+                document.getElementById('cantidadP2').setAttribute("class", "col-md-6");
+                document.getElementById('pre__2').value=dat;
+				y.style.display = "";
+			}
+			else{
+                document.getElementById('cantidadP2').setAttribute("class", "col-md-12");
+                document.getElementById('pre__2').value = 0;
+				y.style.display = "none";
+			}
+            }
+        </script>
+<script>
+    var element = document.body;
+    var a = localStorage.getItem('isDarkMode');
+    var back = '';
+    var text = '';
+    if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
+    //console.log(a)
+        if (a==="true"){
+            element.dataset.bsTheme = "dark"
+            document.getElementById("2").checked = true;
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            document.getElementById('head_table2').setAttribute("class", "table-light");
+            //console.log('b')
+        }
+        if(a==="false"){
+            element.dataset.bsTheme = "light";
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+            document.getElementById('head_table2').setAttribute("class", "table-dark");
+        }
+        //console.log("c")
+    </script>
+<script>
+    function myFunction() {
+        var element = document.body;
+        var darkcheck = document.getElementById("2");
+        //console.log(darkcheck)
+        if (darkcheck.checked){
+            element.dataset.bsTheme = "dark"
+            localStorage.setItem('isDarkMode', true);
+            document.getElementById('head_table').setAttribute("class", "table-light");
+            document.getElementById('head_table2').setAttribute("class", "table-light");
+            back = "#2d2d2d"; text = "#ffffff";
+        }
+        else{
+            element.dataset.bsTheme = "light"
+            localStorage.setItem('isDarkMode', false);
+            document.getElementById('head_table').setAttribute("class", "table-dark");
+            document.getElementById('head_table2').setAttribute("class", "table-dark");
+            back = "#fff"; text = "#545454";
+        }
+    }
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+        
+    </body>
+</html>

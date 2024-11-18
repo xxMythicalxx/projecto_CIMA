@@ -136,17 +136,63 @@
                         })</script>
                         {% endif %}                
                         {% if h %}
+                        <script>
+                            function showHis() {
+                                var session = document.getElementById("vbtn-radio1");
+                                var tableall = document.getElementById("tableall");
+                                var tabsesion = document.getElementById("tabsesion");
+                                //console.log(darkcheck)
+                                if (session.checked){
+                                    tabsesion.style.display = "";
+                                    tableall.style.display = "none";
+                                }
+                                else{
+                                    tabsesion.style.display = "none";
+                                    tableall.style.display = "";
+                                }
+                            }
+                            </script>
                         <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
+                            <div class="btn-group-horizontal" role="group" aria-label="Vertical radio toggle button group">
+                                <input type="checkbox" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" onclick="showHis()">
+                                <label class="btn btn-outline-danger" for="vbtn-radio1">Ver Incios y Cierres de sesion</label>
+                              </div>
                             <div class="input-group" >
                                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
                                 <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
                               </div>
-                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+                            <table id="tableall" class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
                                 <thead id="head_table">
                                     <tr>
                                         <th style="text-align: center;">USUARIO</th>
                                         <th style="text-align: center;">DESCRIPCION</th>
-                                        <th style="text-align: center;">TABLA AFECTADA</th>
+                                        <th style="text-align: center;">RAZON</th>
+                                        <th style="text-align: center;">FECHA</th>
+                                    </tr>
+                                </thead>
+                                {% for x in h %}
+                                {%if x.descripcion != 'Cierra Sesión' and x.descripcion != 'Inicia Sesión'%}
+                                <tbody id="myTable">
+                                <tr class="align-middle">
+                                    <td style="text-align: center;">{{x.usuario}}</td>
+                                    <td style="text-align: center;">{{x.descripcion}}</td>
+                                {% if x.razon == '' %}
+                                    <td style="text-align: center;">Ninguna</td>
+                                {% else %}
+                                    <td style="text-align: center;">{{x.razon}}</td>
+                                {% endif %}    
+                                    <td style="text-align: center;">{{x.hour}}</td>
+                                </tr>
+                                {% endif %} 
+                                {% endfor %}
+                                </tbody>    
+                            </table>
+                            <table id="tabsesion" class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;display: none;"  id="sortTable">
+                                <thead id="head_table2">
+                                    <tr>
+                                        <th style="text-align: center;">USUARIO</th>
+                                        <th style="text-align: center;">DESCRIPCION</th>
+                                        <th style="text-align: center;">RAZON</th>
                                         <th style="text-align: center;">FECHA</th>
                                     </tr>
                                 </thead>
@@ -155,10 +201,10 @@
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.usuario}}</td>
                                     <td style="text-align: center;">{{x.descripcion}}</td>
-                                {% if x.tableinfo == '' %}
+                                {% if x.razon == '' %}
                                     <td style="text-align: center;">Ninguna</td>
                                 {% else %}
-                                    <td style="text-align: center;">{{x.tableinfo}}</td>
+                                    <td style="text-align: center;">{{x.razon}}</td>
                                 {% endif %}    
                                     <td style="text-align: center;">{{x.hour}}</td>
                                 </tr>
@@ -256,11 +302,13 @@
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
             document.getElementById('head_table').setAttribute("class", "table-light");
+            document.getElementById('head_table2').setAttribute("class", "table-light");
             //console.log('b')
         }
         if(a==="false"){
             element.dataset.bsTheme = "light";
             document.getElementById('head_table').setAttribute("class", "table-dark");
+            document.getElementById('head_table2').setAttribute("class", "table-dark");
         }
         //console.log("c")
     </script>
@@ -273,12 +321,14 @@
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
             document.getElementById('head_table').setAttribute("class", "table-light");
+            document.getElementById('head_table2').setAttribute("class", "table-light");
             back = "#2d2d2d"; text = "#ffffff";
         }
         else{
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
             document.getElementById('head_table').setAttribute("class", "table-dark");
+            document.getElementById('head_table2').setAttribute("class", "table-dark");
             back = "#fff"; text = "#545454";
         }
     }
