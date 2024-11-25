@@ -135,11 +135,18 @@
                     dir_: dir,
                   })
                 })
-                .then(response => response.json())
-                Swal.fire({
+                .then(response => {
+                // Verificamos si la respuesta fue exitosa (status 200-299)
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json(); // Parseamos la respuesta como JSON
+                })
+                .then(data => {
+                    Swal.fire({
                     position: 'top',
                     icon: 'success',
-                    title: 'Cambio Realizado Correctamente',
+                    title: data.message,
                     toast: true,
                     background: back,
                     color: text,
@@ -147,7 +154,10 @@
                     if (result.isConfirmed) {
                         window.location.href = "/ShowGestionProveedor";
                     }
-                })
+                })})
+                .catch(error => {
+                    console.error('Hubo un problema con la solicitud:', error);
+                });
             }else{return isValid;}
             },
             didOpen: () => {
@@ -235,11 +245,11 @@
 
     </head>
     <body>
+        {% load static %}
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <div  class="vh-100 d-flex justify-content-center ">
-            <div class="container-fluid">		
-                <div id="ten-countdown"></div>
-                <nav class="navbar bg-body-tertiary">
+            <div class="container-fluid" id="backgroundall">		
+                <nav class="navbar " id="navbarcenter">
                     <div class="container-fluid">
                         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -247,16 +257,32 @@
                         <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
                             <div class="navbar-nav" align="center">
                                 <div class="offcanvas-header">
-                                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">LOGO</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    <img src="{% static 'img/insignia_CIMA3.png' %}" alt="Imagen de ejemplo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;display: block;margin-left: auto;margin-right: auto;" >
+                                     <button type="button" class="btn-close position-fixed" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                   </div>
-                                <a class="btn btn-outline-info nav-link text-center" href="/adminn">Dashboard</a>
-                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
-                                <a class="btn btn-outline-info nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
-                                <a class="btn btn-outline-success active nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
-                                <a class="btn btn-outline-info nav-link text-center" href="/ShowGestionP">Gestionar Productos</a>
-                                <a class="btn btn-outline-success nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
-                                <a class="btn btn-outline-warning nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
+                                <a class="btn btn-outline-secondary nav-link text-center" href="/adminn">Dashboard</a>
+                                {% for g in grup %}
+                                {% for perm in g.permissions %}
+                                {% if perm.codename == 'view_categoria' %}
+                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
+                                {% endif %}
+                                {% if perm.codename == 'view_alumno' %}
+                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
+                                {% endif %}
+                                {% if perm.codename == 'view_proveedor' %}
+                                <a class="btn btn-outline-secondary active nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
+                                {% endif %}
+                                {% if "view_producto" in perm.codename %}
+                                <a class="btn btn-outline-secondary nav-link text-center product-link" href="/ShowGestionP">Gestionar Productos</a>
+                                {% endif %}
+                                {% if perm.codename == 'view_movimiento' %}
+                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
+                                {% endif %}
+                                {% if perm.codename == 'view_historial_acciones' %}
+                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
+                                {% endif %}
+                                {% endfor %}
+                                {% endfor %}
                                 <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
                                 <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                                     <input
@@ -268,6 +294,20 @@
                                     />
                                 </div></a>		
                             </div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    let productLinkDisplayed = false;
+                                    const productLinks = document.querySelectorAll('.product-link');
+                                    
+                                    productLinks.forEach(link => {
+                                        if (productLinkDisplayed) {
+                                            link.style.display = 'none';
+                                        } else {
+                                            productLinkDisplayed = true;
+                                        }
+                                    });
+                                });
+                            </script>
                             <div class="" style="height: 100%;">
                                 <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
                                 <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
@@ -285,7 +325,13 @@
                     <div class="container-fluid">
                         <div align="center">
                             <div style="margin: 0 auto;float: none;">
+                                {% for g in grup %}
+                                {% for perm in g.permissions %}
+                                {% if perm.codename == 'add_proveedor' %}
                                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#RegistrarCategoria">Agregar Proveedor</button>
+                                {% endif %}
+                                {% endfor %}
+                                {% endfor %}
                                 <div class="modal fade" id="RegistrarCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -337,8 +383,8 @@
                                     <th style="text-align: center;">TELEFONO</th>
                                     <th style="text-align: center;">CORREO</th>
                                     <th style="text-align: center;">DIRECCION</th>
-                                    <th style="text-align: center;">EDITAR</th>
-                                    <th style="text-align: center;">ELIMINAR</th>
+                                    <th id="editHeader" style="text-align: center;">EDITAR</th>
+                                    <th id="deleteHeader" style="text-align: center;">ELIMINAR</th>
                                 </tr>
                             </thead>
                                 {% for x in p %}
@@ -348,12 +394,12 @@
                                     <td style="text-align: center;">{{x.telefono}}</td>
                                     <td style="text-align: center;">{{x.email}}</td>
                                     <td style="text-align: center;">{{x.direccion}}</td>
-                                    <td style="text-align: center;">
+                                    <td class="editCell" style="text-align: center;">
                                         <button type="button" onClick="update({{x}})" class="btn btn-lg btn-outline-primary" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-primary-text-emphasis);">
                                             <i class="bi bi-pencil-fill" ></i>
                                         </button>
                                     </td>
-                                    <td style="text-align: center;">
+                                    <td class="deleteCell" style="text-align: center;">
                                         <button type="button" onClick="deletes({{x.id}})" class="btn btn-lg btn-outline-danger" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-danger-text-emphasis);">
                                             <i class="bi bi-trash-fill"></i>
                                         </button>
@@ -372,6 +418,60 @@
                 </div>  
             </div>  
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Variable para controlar si el enlace "Gestionar Productos" ya ha sido mostrado
+                let productLinkDisplayed = false;
+        
+                // Seleccionar todos los enlaces "Gestionar Productos"
+                const productLinks = document.querySelectorAll('.product-link');
+
+                productLinks.forEach(link => {
+                    // Si ya se ha mostrado, ocultamos este enlace
+                    if (productLinkDisplayed) {
+                        link.style.display = 'none';
+                    } else {
+                        // Marcamos que el enlace ha sido mostrado
+                        productLinkDisplayed = true;
+                    }
+                });
+            });
+        </script>	
+
+        <script>
+            // Genera un array de permisos en formato JavaScript a partir de los permisos del usuario
+            const userPermissions = []
+            {% for g in grup %}
+            {% for perm in g.permissions %}
+            userPermissions.push("{{ perm.codename }}") 
+            {% endfor %}
+            {% endfor %}
+            ;
+            // Función para ajustar las columnas según los permisos
+            function adjustTableColumns() {
+            // Si el usuario no tiene el permiso "change_proveedor" (editar), ocultar la columna de "Editar"
+            if (userPermissions.indexOf('change_proveedor') === -1) {
+            document.getElementById('editHeader').style.display = 'none'; // Ocultar cabecera de editar
+            const editCells = document.querySelectorAll('.editCell');
+            editCells.forEach(cell => {
+            cell.style.display = 'none'; // Ocultar celdas de editar
+            });
+            }
+        
+            // Si el usuario no tiene el permiso "delete_proveedor" (eliminar), ocultar la columna de "Eliminar"
+            if (userPermissions.indexOf('delete_proveedor') === -1) {
+            document.getElementById('deleteHeader').style.display = 'none'; // Ocultar cabecera de eliminar
+            const deleteCells = document.querySelectorAll('.deleteCell');
+            deleteCells.forEach(cell => {
+            cell.style.display = 'none'; // Ocultar celdas de eliminar
+            });
+            }
+            }
+            // Llamar a la función al cargar la página
+            window.onload = adjustTableColumns;
+        </script>
+
         {% if r2 %}
         <script>
         Swal.fire({
@@ -464,11 +564,23 @@
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
             document.getElementById('head_table').setAttribute("class", "table-light");
+            document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
+            document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
+            document.getElementById("backgroundall").style.backgroundColor= '#404040';
+            document.getElementById("backgroundall").style.color= '#FFFFFF';
+            document.getElementById("navbarcenter").style.backgroundColor= '#791500';
+            document.getElementById("navbarcenter").style.color= '#FFFFFF';
             //console.log('b')
         }
         if(a==="false"){
             element.dataset.bsTheme = "light";
             document.getElementById('head_table').setAttribute("class", "table-dark");
+            document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
+            document.getElementById("offcanvasNavbar").style.color= '#000000';
+            document.getElementById("backgroundall").style.backgroundColor = '#c19284';
+            document.getElementById("backgroundall").style.color= '#000000';
+            document.getElementById("navbarcenter").style.backgroundColor = '#8a8a8a';
+            document.getElementById("navbarcenter").style.color= '#000000';
         }
         //console.log("c")
     </script>
@@ -481,12 +593,24 @@
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
             document.getElementById('head_table').setAttribute("class", "table-light");
+            document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
+            document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
+            document.getElementById("backgroundall").style.backgroundColor= '#404040';
+            document.getElementById("backgroundall").style.color= '#FFFFFF';
+            document.getElementById("navbarcenter").style.backgroundColor= '#791500';
+            document.getElementById("navbarcenter").style.color= '#FFFFFF';
             back = "#2d2d2d"; text = "#ffffff";
         }
         else{
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
             document.getElementById('head_table').setAttribute("class", "table-dark");
+            document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
+            document.getElementById("offcanvasNavbar").style.color= '#000000';
+            document.getElementById("backgroundall").style.backgroundColor = '#c19284';
+            document.getElementById("backgroundall").style.color= '#000000';
+            document.getElementById("navbarcenter").style.backgroundColor = '#8a8a8a';
+            document.getElementById("navbarcenter").style.color= '#000000';
             back = "#fff"; text = "#545454";
         }
     }

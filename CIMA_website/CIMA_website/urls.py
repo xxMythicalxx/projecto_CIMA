@@ -19,45 +19,63 @@ from django.urls import path
 from web import views
 
 urlpatterns = [
+    # Recuperacion de Contraseña
+    path('password_reset/', views.password_reset_request, name='password_reset'),
+    path('password_reset/done/', views.password_reset_done, name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('reset/done/', views.password_reset_complete, name='password_reset_complete'),
     # test
-    path('test', views.test),
+    # path('test', views.test),
+    # path('test2', views.test2),
+    # path('test3', views.test3),
+    # path('test4', views.test4), 
     path('admin/', admin.site.urls),
     # incio de session
-    path('',views.showLogin),
+    path('',views.showLogin, name='showlogin'),
     path('login',views.Login),
     path('logout',views.Logout),
+    path('logout',views.Logout),
+    #admin de Usuarios
+    path('showUsuregister',views.ShowUserRegister, name='showusuregister'),
+    path('usuRegister',views.UserRegister),
+    path('UpdateUser', views.UpdateUser),
+    path('DeleteUser/<int:id>', views.DeleteUser),
+    #admin de Roles
+    path('showRolregister',views.ShowRolRegister, name='showrolregister'),
+    path('rolRegister',views.RolRegister),
+    path('UpdateRol', views.UpdateRol),
+    path('DeleteRol/<int:id>', views.DeleteRol),
+    #admin de Roles Permisos
+    path('showRolPermisoregister',views.ShowRolPermisoRegister, name='showrolpermisoregister'),
+    path('rolPermisoRegister',views.RolPermisoRegister),
+    #admin de Roles Usuarios
+    path('showRolUsuarioregister',views.ShowRolUsuarioRegister, name='showrolusuarioregister'),
+    path('rolUsuarioRegister',views.RolUsuarioRegister),
     #dashboard
-    path('adminn', views.Showdashboard),
+    path('adminn', views.Showdashboard, name='showdashboard'),
     #admin Categoria Producto
-    path('ShowGestionC', views.ShowCategoria),
+    path('ShowGestionC', views.ShowCategoria, name='showcategoria'),
     path('RegistrarC', views.RegisterCategoria),
-    path('RegistrarC2', views.RegisterCategoria2),
+    path('RegistrarC2', views.RegisterCategoria2), # no se usa
     path('UpdateC', views.UpdateC),
     path('DeleteC/<int:id>', views.DeleteC),
-    path('DeleteC2/<int:id>', views.DeleteC2),
+    path('DeleteC2/<int:id>', views.DeleteC2), # no se usa
     # admin Alumnos
-    path('ShowGestionA', views.ShowGestionAlumno),
+    path('ShowGestionA', views.ShowGestionAlumno, name='showalumno'),
     path('RegistrarA', views.RegisterAlumno),
-    path('RegistrarA2', views.RegisterAlumno2),
+    path('RegistrarA2', views.RegisterAlumno2), # no se usa
     path('UpdateA', views.UpdateA),
     path('DeleteA/<int:id>', views.DeleteA),
-    path('DeleteA2/<int:id>', views.DeleteA2),
-    # admin Alumnos
-    path('ShowGestionProveedor', views.ShowGestionProveedores),
+    path('DeleteA2/<int:id>', views.DeleteA2), # no se usa
+    # admin Proveedor
+    path('ShowGestionProveedor', views.ShowGestionProveedores, name='showproveedor'),
     path('RegistrarProveedor', views.RegisterProveedores),
-    path('RegistrarProveedor2', views.RegisterProveedores2),
+    path('RegistrarProveedor2', views.RegisterProveedores2), # no se usa
     path('UpdateProveedor', views.UpdateProveedores),
     path('DeleteProveedor/<int:id>', views.DeleteProveedores),
-    path('DeleteProveedor2/<int:id>', views.DeleteProveedores2),
-    # admin Alumnos
-    path('ShowGestionA', views.ShowGestionAlumno),
-    path('RegistrarA', views.RegisterAlumno),
-    path('RegistrarA2', views.RegisterAlumno2),
-    path('UpdateA', views.UpdateA),
-    path('DeleteA/<int:id>', views.DeleteA),
-    path('DeleteA2/<int:id>', views.DeleteA2),
+    path('DeleteProveedor2/<int:id>', views.DeleteProveedores2), # no se usa
     # admin Productos
-    path('ShowGestionP', views.ShowGestionProducto),
+    path('ShowGestionP', views.ShowGestionProducto, name='showproducto'),
     path('RegistrarP', views.RegisterProducto),
     path('UpdateP', views.UpdateP),
     path('EnableP', views.EnableP),
@@ -66,38 +84,14 @@ urlpatterns = [
     path('MinusP', views.MinusProducto),
     path('DeleteP/<int:id>', views.DeleteP),
     # admin Stock
-    path('ShowGestionS', views.ShowGestionStock),
+    path('ShowGestionS', views.ShowGestionStock,  name='showstock'),
     path('RegistrarS', views.RegisterStock),
-    path('UpdateS', views.UpdateS),
-    path('DeleteS/<int:id>', views.DeleteS),
-    # admin Usuarios
-    path('ShowListU', views.ShowUsuario),
-    path('ShowRegistrarU', views.ShowRegisterUsuario),
-    path('RegistrarU', views.RegisterUsuario),
-    path('UpdateU', views.UpdateU),
-    path('DeleteU/<int:id>', views.DeleteU),
     #admin Estado Producto
-    path('RegistrarE', views.RegisterEstado_Producto),
-    path('UpdateE', views.UpdateE),
-    path('DeleteE/<int:id>', views.DeleteE),
+    path('RegistrarE', views.RegisterEstado_Producto), # no se usa
+    path('UpdateE', views.UpdateE), # no se usa
+    path('DeleteE/<int:id>', views.DeleteE), # no se usa
     #admin historial
     path('ShowHis', views.ShowHis),
-    # usuario menu
-    path('usumenu', views.ShowUsuarioMenu),
-    path('UpdatePusu', views.UpdateP2),
-    path('RegistrarPusu', views.RegisterProductoUsu),
-    path('ShowRegistrarPusu', views.ShowRegisterProductoUsu),
-    path('EnablePusu', views.EnableP2),
-    path('DisablePusu', views.DisableP2),
-    path('DeletePusu/<int:id>', views.DeleteP2),
-    #usuario Estado producto
-    path('RegistrarEusu', views.RegisterEstado_ProductoUsu),
-    path('UpdateEusu', views.UpdateEUsu),
-    path('DeleteEusu/<int:id>', views.DeleteEUsu),
-    # admin Alumnos
-    path('RegistrarAusu', views.RegisterAlumnoUsu),
-    path('UpdateAusu', views.UpdateAUsu),
-    path('DeleteAusu/<int:id>', views.DeleteAUsu),
 ]
 
 

@@ -7,6 +7,12 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
 		
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+        
+        <script> var a = localStorage.getItem('isDarkMode'); var back = ''; var text = ''; if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}</script>
 		<script >
             const logout = () => {
 				Swal.fire({
@@ -28,6 +34,7 @@
                     })
             }
         </script>
+
         <script>
         let count = 3599;
         const timer = setInterval(function() {
@@ -61,10 +68,10 @@
     {% load static %}
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div  class="vh-100 d-flex justify-content-center ">
-    <div class="container-fluid" id="backgroundall">		
-        <nav class="navbar " id="navbarcenter">
+        <div class="container-fluid" id="backgroundall">		
+            <nav class="navbar " id="navbarcenter">
             <div class="container-fluid">
-				<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+				<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" >
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
@@ -72,32 +79,13 @@
                         <div class="offcanvas-header">
                             <img src="{% static 'img/insignia_CIMA3.png' %}" alt="Imagen de ejemplo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;display: block;margin-left: auto;margin-right: auto;" >
                             <button type="button" class="btn-close position-fixed" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                          </div>
-                          <a class="btn btn-outline-secondary nav-link text-center" href="/adminn">Dashboard</a>
-                          {% for g in grup %} 
-                            {% for perm in g.permissions %}
-                            {% if perm.codename == 'view_categoria' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_alumno' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_proveedor' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
-                            {% endif %}
-                            {% if "view_producto" in perm.codename %}
-                            <a class="btn btn-outline-secondary nav-link text-center product-link" href="/ShowGestionP">Gestionar Productos</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_movimiento' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_historial_acciones' %}
-                            <a class="btn btn-outline-secondary active nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
-                            {% endif %}
-                            {% endfor %}
-                            {% endfor %}
-						<a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
-                        <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
+                            </div>
+                            <a class="btn btn-outline-secondary nav-link text-center" href="/showUsuregister">Gestion de Usuarios</a>
+                            <a class="btn btn-outline-secondary nav-link text-center" href="/showRolregister">Gestion de Roles</a>
+                            <a class="btn btn-outline-secondary nav-link text-center" href="/showRolPermisoregister">Gestion de Permisos</a>
+                            <a class="btn btn-outline-secondary active nav-link text-center" href="/showRolUsuarioregister">Gestion de Roles Usuario</a>
+                            <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
+                            <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                             <input
                             class="form-check-input p-2"
                             type="checkbox"
@@ -117,107 +105,97 @@
                         </button>
                     </div>
 				</div>
-                <h1 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Historial</h1>
+                <h2 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Gestion de Roles A Usuarios</h2>
             </div>
 		</nav>
 		<div class="d-flex justify-content-end align-items-center">
 			<div class="container-fluid">
                 <div align="center">
                     <div style="margin: 0 auto;float: none;">
-                        {% if r2 %}
-                        <script>
-                            Swal.fire({
-                            'title':'Error',
-                            'text':"{{r2}}",
-                            toast: true,
-                            background: back,
-                            color: text,
-                            'icon':'error'
-                        })</script>
-                        {% endif %}
-                        
-                        
-                        {% if r %}
-                        <script>
-                            Swal.fire({
-                            position: 'top',
-                            icon: 'success',
-                            title: '{{r}}',
-                            toast: true,
-                            background: back,
-                            color: text,
-                            showConfirmButton: false,
-                            timer: 1500
-                        })</script>
-                        {% endif %}                
-                        {% if h %}
-                        <script>
-                            function showHis() {
-                                var session = document.getElementById("vbtn-radio1");
-                                var tableall = document.getElementById("tableall");
-                                var tabsesion = document.getElementById("tabsesion");
-                                //console.log(darkcheck)
-                                if (session.checked){
-                                    tabsesion.style.display = "";
-                                    tableall.style.display = "none";
-                                }
-                                else{
-                                    tabsesion.style.display = "none";
-                                    tableall.style.display = "";
-                                }
-                            }
-                            </script>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#AsociarRolPermiso">Asociar Roles a Usuarios</button>
+                            <div class="modal fade" id="AsociarRolPermiso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Asociando Roles...</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="/rolUsuarioRegister" method="post">
+                                        {% csrf_token %}
+                                        <div class="col-md-12">
+                                            <select name="user" style="padding: 10px;width: 100%;">
+                                                {% for x in u %}
+                                                <option value="{{x.username}}">{{x.username}}</option>
+                                                {% endfor %}
+                                              </select>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="rol" class="col-form-label">Permisos</label>
+                                            <div class="input-group mb-12">
+                                                <div class="input-group-text" style="width: 100%;">
+                                                  <button id="selectAllBtn" class="btn btn-outline-secondary" type="button" aria-label="Checkbox for following text input">Seleccionar Todo</button>
+                                                  <select id="multirol" name="multirol[]" multiple="multiple" style="padding: 10px;width: 100%;">
+                                                    {% for x in g %}
+                                                    <option value="{{x.id}}">{{x.name}}</option>
+                                                    {% endfor %}
+                                                  </select>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                        <div class="col-md-12">
+                                            <label for="txtraz" class="form-label">Tipo de Accion</label>    
+                                            <div class="d-grid gap-2 form-check d-block">
+                                                <div class="gap-2">
+                                                <input class="btn-check" type="radio" id="op1" name="opt" value="Add" checked>
+                                                <label class="btn btn-outline-secondary btn-lg" for="op1" style="width: 49%;" >Agregar</label>
+                                                <input class="btn-check" type="radio" id="op2" name="opt" value="Delete">
+                                                <label class="btn btn-outline-secondary btn-lg" for="op2" style="width: 49%;" >Quitar</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                                    </div>
+                                </form>
+                                    </div>
+                                </div>
+                            </div>               
+                        {% if u %}
                         <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
-                            <div class="btn-group-horizontal" role="group" aria-label="Vertical radio toggle button group">
-                                <input type="checkbox" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" onclick="showHis()">
-                                <label id="btndasactivo" class="btn btn-outline-danger" for="vbtn-radio1">Ver Incios y Cierres de sesion</label>
-                              </div>
                             <div class="input-group" >
                                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
                                 <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
                               </div>
-                            <table id="tableall" class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
                                 <thead id="head_table">
-                                    <tr>
-                                        <th style="text-align: center;">USUARIO</th>
-                                        <th style="text-align: center;">DESCRIPCION</th>
-                                        <th style="text-align: center;">FECHA</th>
-                                    </tr>
-                                </thead>
-                                {% for x in h %}
-                                {%if x.descripcion != 'Cierra Sesión' and x.descripcion != 'Inicia Sesión'%}
-                                <tbody id="myTable">
-                                <tr class="align-middle">
-                                    <td style="text-align: center;">{{x.usuario}}</td>
-                                    <td style="text-align: center;">{{x.descripcion}}</td>
-                                    <td style="text-align: center;">{{x.fecha}}</td>
+                                <tr>
+                                    <th style="text-align: center;">USUARIO</th>
+                                    <th style="text-align: center;">ROLES</th>
                                 </tr>
-                                {% endif %} 
-                                {% endfor %}
-                                </tbody>    
-                            </table>
-                            <table id="tabsesion" class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;display: none;"  id="sortTable">
-                                <thead id="head_table2">
-                                    <tr>
-                                        <th style="text-align: center;">USUARIO</th>
-                                        <th style="text-align: center;">DESCRIPCION</th>
-                                        <th style="text-align: center;">FECHA</th>
-                                    </tr>
-                                </thead>
-                                {% for x in h %}
-                                <tbody id="myTable">
-                                <tr class="align-middle">
-                                    <td style="text-align: center;">{{x.usuario}}</td>
-                                    <td style="text-align: center;">{{x.descripcion}}</td>
-                                    <td style="text-align: center;">{{x.fecha}}</td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>    
+                            </thead>
+                            {% for user in u %}
+                            <tr>
+                                <td style="text-align: center;">{{ user.email }}</td>
+                                <td style="text-align: center;">
+                                    {% if user.groups.all %}
+                                            {% for group in user.groups.all %}
+                                                <li style="list-style-type:none;">{{ group.name }}</li>
+                                            {% empty %}
+                                                <li style="list-style-type:none;">No tiene roles asignados</li>
+                                            {% endfor %}
+                                    {% else %}
+                                        <p>No tiene roles asignados</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                            </tbody>    
                             </table>
                         </div>
                             {% else %}  
-    
-    
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <h5>No Hay Registros</h5>
                             </div>
@@ -230,9 +208,90 @@
                 
             </div>
         </div>
-		  
-	</div>
+    </div> 
+            
 </div>
+
+
+<script>
+    $('#AsociarRolPermiso').on('shown.bs.modal', function () {
+        if (!$('#multirol').data('select2')) {
+            $('#multirol').select2({
+                templateResult: function(data) {
+                var $result = $('<span></span>');
+                $result.text(data.text);
+                $result.css('color', '#000000'); 
+                return $result;
+            },
+            placeholder: "Selecionar roles",
+            allowClear: true,
+            dropdownParent: $('#AsociarRolPermiso'),
+
+        });
+        $('#selectAllBtn').on('click', function() {
+                var allValues = $('#multirol option').map(function() {
+                    $('.select2-selection').css('color', '#000000');
+                    return this.value;
+                }).get();
+                $('#multirol').val(allValues).trigger('change'); // Establecer todos los valores y disparar el cambio
+            });
+    }
+    });
+    $('#AsociarRolPermiso').on('select2:open', function() {
+    $('.select2-results').css('color', '#000000'); 
+    $('.select2-selection').css('color', '#000000'); 
+    });
+
+     $('#AsociarRolPermiso').on('select2:select', function(e) {
+         $('.select2-selection').css('color', '#000000'); 
+     });
+
+    $('#AsociarRolPermiso').on('hidden.bs.modal', function () {
+        $('.select2-selection').css('color', '#000000'); 
+    });
+</script>
+
+<script>
+    $('#AsociarRolPermiso').on('shown.bs.modal', function () {
+        if (!$('#permisos').data('select2')) {
+            $('#rol').select2({
+            placeholder: 'Selecciona un rol', 
+            allowClear: true  
+        });
+        }
+    });
+</script>
+
+
+
+
+{% if r2 %}
+<script>
+    Swal.fire({
+    'title':'Error',
+    'text':"{{r2}}",
+    toast: true,
+    background: back,
+    color: text,
+    'icon':'error'
+})
+</script>
+{% endif %}
+
+
+{% if r %}
+<script>
+    Swal.fire({
+    position: 'top',
+    icon: 'success',
+    title: '{{r}}',
+    toast: true,
+    background: back,
+    color: text,
+    showConfirmButton: false,
+    timer: 3000
+})</script>
+{% endif %}
 <script>
     var a = document.getElementById("showEmail");
     var b = document.getElementById("showEmail2");
@@ -292,7 +351,7 @@
     toast: true,
     title: 'test',
     showConfirmButton: false,
-    timer: 1500
+    timer: 3000
 })}</script>
 <script>
     var element = document.body;
@@ -305,8 +364,6 @@
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
             document.getElementById('head_table').setAttribute("class", "table-light");
-            document.getElementById('head_table2').setAttribute("class", "table-light");
-            document.getElementById('btndasactivo').setAttribute("class", "btn btn-outline-danger");
             document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
             document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
             document.getElementById("backgroundall").style.backgroundColor= '#404040';
@@ -318,8 +375,6 @@
         if(a==="false"){
             element.dataset.bsTheme = "light";
             document.getElementById('head_table').setAttribute("class", "table-dark");
-            document.getElementById('head_table2').setAttribute("class", "table-dark");
-            document.getElementById('btndasactivo').setAttribute("class", "btn btn-outline-dark");
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
             document.getElementById("backgroundall").style.backgroundColor = '#c19284';
@@ -338,8 +393,6 @@
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
             document.getElementById('head_table').setAttribute("class", "table-light");
-            document.getElementById('head_table2').setAttribute("class", "table-light");
-            document.getElementById('btndasactivo').setAttribute("class", "btn btn-outline-danger");
             document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
             document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
             document.getElementById("backgroundall").style.backgroundColor= '#404040';
@@ -352,8 +405,6 @@
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
             document.getElementById('head_table').setAttribute("class", "table-dark");
-            document.getElementById('head_table2').setAttribute("class", "table-dark");
-            document.getElementById('btndasactivo').setAttribute("class", "btn btn-outline-dark");
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
             document.getElementById("backgroundall").style.backgroundColor = '#c19284';

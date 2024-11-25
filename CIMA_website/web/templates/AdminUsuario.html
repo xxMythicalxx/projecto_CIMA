@@ -6,7 +6,13 @@
         <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
-		<script> var a = localStorage.getItem('isDarkMode'); var back = ''; var text = ''; if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}</script>
+		
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+        
+        <script> var a = localStorage.getItem('isDarkMode'); var back = ''; var text = ''; if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}</script>
 		<script >
             const logout = () => {
 				Swal.fire({
@@ -31,13 +37,16 @@
 
         {% csrf_token %} 
         <script>
-        const update = (nombre) => {
-            var array = nombre;
-            var id = nombre.id;
-            var a = nombre.nombre;
-            var b = nombre.descripcion;
+        const update = (id__) => {
+            var array = id__;
+            var id = id__;
+            var a = '';
+            var b = '';
+            {% for i in u %}
+                if (id == '{{i.id}}'){a='{{i.username}}';b='{{i.email}}';}   
+            {% endfor %}
             Swal.fire({
-            title: "Modificando a " + a,
+            title: "Modificando a "+ a ,
             toast: true,
             background: back,
             color: text,
@@ -45,12 +54,12 @@
                 <div class="modal-content">
                         <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="recipient-name" class="col-form-label">Nombre</label>
-                                    <input type="text" name="txtcategoria" class="form-control" id="nombre" value='${a}'>
+                                    <label for="recipient-name" class="col-form-label">Usuario</label>
+                                    <input type="text" name="usuario" class="form-control" id="txtuser" value="${a}" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="message-text" class="col-form-label">Descripcion</label>
-                                    <textarea class="form-control" name="txtdescripcion" id="descripcion">${b}</textarea>
+                                    <label for="recipient-name" class="col-form-label">Correo</label>
+                                    <input type="text" name="correo" class="form-control" id="txtcorreo" value="${b}" required>
                                 </div>
                             </div>
                         </div>
@@ -59,18 +68,18 @@
             showCancelButton: true,
         }).then((result)=>{
             if (result.isConfirmed){
-            var nombre = document.getElementById("nombre").value;
-            var descripcion = document.getElementById("descripcion").value;
-            if (nombre && descripcion) {
-                fetch('http://127.0.0.1:8000/UpdateC',{method: 'POST',
+            var user = document.getElementById("txtuser").value;
+            var cor = document.getElementById("txtcorreo").value;
+            if (user && cor) {
+                fetch('http://127.0.0.1:8000/UpdateUser',{method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'
                   },
                   body: JSON.stringify({
                     id_: id,
-                    nombre_: nombre,
-                    descripcion_: descripcion,
+                    user_: user,
+                    email_: cor,
                   })
                 })
                 .then(response => {
@@ -81,7 +90,7 @@
                 return response.json(); // Parseamos la respuesta como JSON
                 })
                 .then(data => {
-                Swal.fire({
+                    Swal.fire({
                     position: 'top',
                     icon: 'success',
                     title: data.message,
@@ -90,7 +99,7 @@
                     color: text,
                     }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "/ShowGestionC";
+                        window.location.href = "/showUsuregister";
                     }
                 })})
                 .catch(error => {
@@ -125,7 +134,7 @@
                     cancelButtonText: 'Cancelar'
                     }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "/DeleteC/"+id;
+                        window.location.href = "/DeleteUser/"+id;
                     }
                     })
             }
@@ -175,29 +184,10 @@
                             <img src="{% static 'img/insignia_CIMA3.png' %}" alt="Imagen de ejemplo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;display: block;margin-left: auto;margin-right: auto;" >
                             <button type="button" class="btn-close position-fixed" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/adminn">Dashboard</a>
-                            {% for g in grup %} 
-                            {% for perm in g.permissions %}
-                            {% if perm.codename == 'view_categoria' %}
-                            <a class="btn btn-outline-secondary active nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_alumno' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_proveedor' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
-                            {% endif %}
-                            {% if "view_producto" in perm.codename %}
-                            <a class="btn btn-outline-secondary nav-link text-center product-link" href="/ShowGestionP">Gestionar Productos</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_movimiento' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
-                            {% endif %}
-                            {% if perm.codename == 'view_historial_acciones' %}
-                            <a class="btn btn-outline-secondary nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
-                            {% endif %}
-                            {% endfor %}
-                            {% endfor %}
+                            <a class="btn btn-outline-secondary active nav-link text-center" href="/showUsuregister">Gestion de Usuarios</a>
+                            <a class="btn btn-outline-secondary nav-link text-center" href="/showRolregister">Gestion de Roles</a>
+                            <a class="btn btn-outline-secondary nav-link text-center" href="/showRolPermisoregister">Gestion de Permisos</a>
+                            <a class="btn btn-outline-secondary nav-link text-center" href="/showRolUsuarioregister">Gestion de Roles Usuario</a>
                             <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
                             <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
                             <input
@@ -219,37 +209,35 @@
                         </button>
                     </div>
 				</div>
-                <h2 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Gestion de Categorias</h2>
+                <h2 class="d-flex justify-content-end align-items-center" style="margin: 0 auto;float: none;">Gestion de Usuarios</h2>
             </div>
 		</nav>
 		<div class="d-flex justify-content-end align-items-center">
 			<div class="container-fluid">
                 <div align="center">
                     <div style="margin: 0 auto;float: none;">
-                        {% for g in grup %}
-                        {% for perm in g.permissions %}
-                        {% if perm.codename == 'add_categoria' %}
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#RegistrarCategoria">Agregar Categoría </button>
-                        {% endif %}
-                        {% endfor %}
-                        {% endfor %}
-                            <div class="modal fade" id="RegistrarCategoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#RegistrarUsuario">Agregar Usuario </button>
+                            <div class="modal fade" id="RegistrarUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Creando Categoria...</h1>
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Creando Usuario...</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="/RegistrarC" method="post">
+                                        <form action="/usuRegister" method="post">
                                         {% csrf_token %} 
                                         <div class="mb-3">
-                                            <label for="recipient-name" class="col-form-label">Nombre</label>
-                                            <input type="text" name="txtcategoria" class="form-control" id="recipient-name" required>
+                                            <label for="recipient-name" class="col-form-label">Usuario</label>
+                                            <input type="text" name="usuario" class="form-control" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="message-text" class="col-form-label">Descripcion</label>
-                                            <textarea class="form-control" name="txtdescripcion" id="message-text" required></textarea>
+                                            <label for="recipient-name" class="col-form-label">Correo</label>
+                                            <input type="text" name="correo" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="message-text" class="col-form-label">Contraseña</label>
+                                            <input type="password" class="form-control" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Debe contener al menos un numero, una mayuscula y una minuscula, y debe ser de 8 o mas caracteres" required>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -260,46 +248,45 @@
                                     </div>
                                 </div>
                             </div>               
-                        {% if opcategoria %}
+                        {% if u %}
                         <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
                             <div class="input-group" >
                                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
                                 <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
                               </div>
-                              <table class="table table-hover sortable table-bordered" style="margin: 0 auto; float: none;" id="sortTable">
+                            <table class="table table-hover sortable table-bordered" style="margin: 0 auto;float: none;"  id="sortTable" >
                                 <thead id="head_table">
-                                    <tr>
-                                        <th style="text-align: center;">NOMBRE</th>
-                                        <th style="text-align: center;">DESCRIPCION</th>
-                                        <th id="editHeader" style="text-align: center;">EDITAR</th>
-                                        <th id="deleteHeader" style="text-align: center;">ELIMINAR</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="myTable">
-                                    {% for x in opcategoria %}
-                                    <tr class="align-middle">
-                                        <td style="text-align: center;">{{ x.nombre }}</td>
-                                        <td style="text-align: center;">{{ x.descripcion }}</td>
-                                        <td class="editCell" style="text-align: center;">
-                                            <button type="button" onClick="update({{ x }})" class="btn btn-lg btn-outline-primary" style="border: none; outline: 0; text-decoration: none; background-color: transparent;">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </button>
-                                        </td>
-                                        <td class="deleteCell" style="text-align: center;">
-                                            <button type="button" onClick="deletes({{ x.id }})" class="btn btn-lg btn-outline-danger" style="border: none; outline: 0; text-decoration: none; background-color: transparent;">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
+                                <tr>
+                                    <th style="text-align: center;">USUARIO</th>
+                                    <th style="text-align: center;">CORREO</th>
+                                    <th style="text-align: center;">EDITAR</th>
+                                    <th style="text-align: center;">ELIMINAR</th>
+                                </tr>
+                            </thead>
+                                {% for x in u %}
+                            <tbody id="myTable">    
+                                <tr class="align-middle">
+                                    <td style="text-align: center;">{{x.username}}</td>
+                                    <td style="text-align: center;">{{x.email}}</td>
+                                    <td style="text-align: center;">
+                                        <button type="button" onClick="update({{x.id}})" class="btn btn-lg btn-outline-primary" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-primary-text-emphasis);">
+                                            <i class="bi bi-pencil-fill" ></i>
+                                        </button>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button type="button" onClick="deletes({{x.id}})" class="btn btn-lg btn-outline-danger" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-danger-text-emphasis);">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>    
                             </table>
                         </div>
-                            {% else %}  
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <h5>No Hay Registros</h5>
-                            </div>
-    
+                        {% else %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h5>No Hay Registros</h5>
+                        </div>
                         {% endif %}  
     
                     </div>
@@ -308,65 +295,9 @@
                 
             </div>
         </div>
-		  
-	</div>
+    </div> 
+            
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Variable para controlar si el enlace "Gestionar Productos" ya ha sido mostrado
-        let productLinkDisplayed = false;
-
-        // Seleccionar todos los enlaces "Gestionar Productos"
-        const productLinks = document.querySelectorAll('.product-link');
-
-        console.log(productLinks)
-        productLinks.forEach(link => {
-            // Si ya se ha mostrado, ocultamos este enlace
-            if (productLinkDisplayed) {
-                link.style.display = 'none';
-            } else {
-                // Marcamos que el enlace ha sido mostrado
-                productLinkDisplayed = true;
-            }
-        });
-    });
-</script>	
-
-<script>
-    // Genera un array de permisos en formato JavaScript a partir de los permisos del usuario
-    const userPermissions = []
-    {% for g in grup %}
-    {% for perm in g.permissions %}
-    userPermissions.push("{{ perm.codename }}") 
-    {% endfor %}
-    {% endfor %}
-    ;
-    // Función para ajustar las columnas según los permisos
-    function adjustTableColumns() {
-    // Si el usuario no tiene el permiso "change_categoria" (editar), ocultar la columna de "Editar"
-    if (userPermissions.indexOf('change_categoria') === -1) {
-    document.getElementById('editHeader').style.display = 'none'; // Ocultar cabecera de editar
-    const editCells = document.querySelectorAll('.editCell');
-    editCells.forEach(cell => {
-    cell.style.display = 'none'; // Ocultar celdas de editar
-    });
-    }
-
-    // Si el usuario no tiene el permiso "delete_categoria" (eliminar), ocultar la columna de "Eliminar"
-    if (userPermissions.indexOf('delete_categoria') === -1) {
-    document.getElementById('deleteHeader').style.display = 'none'; // Ocultar cabecera de eliminar
-    const deleteCells = document.querySelectorAll('.deleteCell');
-    deleteCells.forEach(cell => {
-    cell.style.display = 'none'; // Ocultar celdas de eliminar
-    });
-    }
-    }
-    // Llamar a la función al cargar la página
-    window.onload = adjustTableColumns;
-</script>
-    
-    
 {% if r2 %}
 <script>
     Swal.fire({
@@ -376,7 +307,7 @@
     background: back,
     color: text,
     'icon':'error'
-}).then(()=>{window.location.href = "/ShowGestionC";})
+})
 </script>
 {% endif %}
 
@@ -391,7 +322,7 @@
     background: back,
     color: text,
     showConfirmButton: false,
-    timer: 1500
+    timer: 3000
 })</script>
 {% endif %}
 <script>
@@ -399,7 +330,7 @@
     var b = document.getElementById("showEmail2");
     var e = document.getElementById("TheEmail");
     var t = localStorage.getItem('ShowEmail');
-    // console.log(t)
+    console.log(t)
         if (t==="true"){
             e.innerHTML = '{{correo}}';
             a.style.display = "block";
@@ -453,7 +384,7 @@
     toast: true,
     title: 'test',
     showConfirmButton: false,
-    timer: 1500
+    timer: 3000
 })}</script>
 <script>
     var element = document.body;

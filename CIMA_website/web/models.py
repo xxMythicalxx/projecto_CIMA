@@ -38,17 +38,13 @@ class Producto(models.Model):
     ("activo", "activo"),
     ("desactivo", "desactivo"),
     ]
-    razon_ingreso = [
-    ("comprado", "comprado"),
-    ("donado", "donado"),
-    ]
     nombre = models.CharField(max_length=200)
     descripcion = models.TextField()
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=0)
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    razon_ingreso = models.TextField(max_length=20, choices=razon_ingreso)
+    razon_ingreso = models.TextField()
     estado_producto = models.ForeignKey(Estado_Producto, on_delete=models.CASCADE)
     estado_habil = models.TextField(max_length=20, choices=estado_ha)
     fecha_ingreso = models.DateTimeField()
@@ -56,6 +52,12 @@ class Producto(models.Model):
     fecha_egreso = models.DateTimeField(null=True, blank=True)
     razon_egreso = models.TextField(max_length=100)
     rut_alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+
+    class Meta:
+        permissions = [
+            ("enable_producto", "Puede activar producto"),
+            ("disable_producto", "Puede desactivar producto"),
+        ]
 
     def __str__(self):
         return str(self.nombre)
@@ -82,15 +84,15 @@ class Movimiento(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.get_tipo_display()} - {self.cantidad}"
-class Usuario(models.Model):
-    correo = models.TextField(max_length=15)
-    password = models.TextField(max_length=20)
-    tipo = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-    create_alumno = models.BooleanField()
-    create_estado = models.BooleanField()
+# class Usuario(models.Model):
+#     correo = models.TextField(max_length=15)
+#     password = models.TextField(max_length=20)
+#     tipo = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+#     create_alumno = models.BooleanField()
+#     create_estado = models.BooleanField()
 
-    def __str__(self):
-        return str(self.correo)
+#     def __str__(self):
+#         return str(self.correo)
     
 class Historial_acciones(models.Model):
     usuario = models.TextField(max_length=20)

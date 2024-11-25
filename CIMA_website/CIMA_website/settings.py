@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -125,13 +124,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# Rutas para archivos estáticos
+STATIC_URL = '/static/'
+
+# Rutas donde los archivos estáticos serán recogidos
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Si tienes una carpeta `static` en la raíz del proyecto
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SESSION_COOKIE_SAMESITE = 'Lax'  # o 'Strict' dependiendo del comportamiento esperado
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
@@ -139,6 +148,18 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 #SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 10
 SESSION_TIMEOUT_REDIRECT = 'http://127.0.0.1:8000'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'  # MailHog corre en localhost
+EMAIL_PORT = 1025  # Puerto que MailHog usa para SMTP
+EMAIL_USE_TLS = False  # MailHog no requiere TLS
+EMAIL_HOST_USER = ''  # No es necesario un usuario
+EMAIL_HOST_PASSWORD = ''  # No se necesita contraseña
+DEFAULT_FROM_EMAIL = 'from@example.com'  # Correo de origen
+
+DOMAIN = 'miapp.com'
+SITE_NAME = 'Mi Aplicación'
 
 
 
