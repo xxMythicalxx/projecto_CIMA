@@ -82,17 +82,14 @@ class Movimiento(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     razon = models.CharField(max_length=100)  # razon de porque realizó el movimiento
 
+    class Meta:
+        permissions = [
+            ("print_report", "Puede imprimir reporte general"),
+        ]
+
     def __str__(self):
         return f"{self.producto.nombre} - {self.get_tipo_display()} - {self.cantidad}"
-# class Usuario(models.Model):
-#     correo = models.TextField(max_length=15)
-#     password = models.TextField(max_length=20)
-#     tipo = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-#     create_alumno = models.BooleanField()
-#     create_estado = models.BooleanField()
 
-#     def __str__(self):
-#         return str(self.correo)
     
 class Historial_acciones(models.Model):
     usuario = models.TextField(max_length=20)

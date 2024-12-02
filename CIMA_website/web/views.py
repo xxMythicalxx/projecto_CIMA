@@ -1,5 +1,3 @@
-import base64
-
 from django.shortcuts import render, redirect
 
 from web.models import Producto, Historial_acciones, Alumno, Categoria, Estado_Producto, Proveedor, Movimiento
@@ -27,6 +25,10 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
 from django.http import JsonResponse
+
+import requests
+
+from django.conf import settings
 # Create your views here.
 
 def test(request):
@@ -124,6 +126,9 @@ def test4(request):
         print('no puede change_proveedor')
     dato = {'p':p,'g':g,'u':u,'gu':gu,'use':use}
     return render(request, 'test.html',dato)
+
+def test5(request):
+    return render(request, 'password_reset_confirm.html')
 
 def showLogin(request):
     # send_mail(
@@ -2009,6 +2014,7 @@ def DeleteC2(request, id): # no se usa
 # Gestion Stock 
 def ShowGestionStock(request):
     categoria_permiso = []
+    categoria_permiso_id = []
     if request.user.is_authenticated:
         groups = request.user.groups.all()
         has_permission = False
@@ -2032,11 +2038,13 @@ def ShowGestionStock(request):
                 if 'view_producto' in perm.codename:
                     categoria_nombre = perm.codename.split('view_producto_')[1]  # Ejemplo de cómo podrías extraer el nombre de la categoría
                     categoria_permiso.append(categoria_nombre)
+                    categoria_id = Categoria.objects.get(nombre=categoria_nombre) # Ejemplo de cómo podrías extraer el nombre de la categoría
+                    categoria_permiso_id.append(categoria_id.id)
             grup.append({
                 'group_name': group.name,
                 'permissions': permissions
             })
-        s = Movimiento.objects.select_related('producto').all().order_by("-fecha")
+        s = Movimiento.objects.select_related('producto').filter(producto__categoria__in=categoria_permiso_id).order_by("-fecha")
         producto = Producto.objects.filter(categoria__nombre__in=categoria_permiso).order_by("nombre")
         try:
             check = request.session['error']

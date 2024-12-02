@@ -29,6 +29,7 @@ urlpatterns = [
     # path('test2', views.test2),
     # path('test3', views.test3),
     # path('test4', views.test4), 
+    # path('test5', views.test5), 
     path('admin/', admin.site.urls),
     # incio de session
     path('',views.showLogin, name='showlogin'),
@@ -53,28 +54,28 @@ urlpatterns = [
     path('rolUsuarioRegister',views.RolUsuarioRegister),
     #dashboard
     path('adminn', views.Showdashboard, name='showdashboard'),
-    #admin Categoria Producto
+    # Usuario Categoria Producto
     path('ShowGestionC', views.ShowCategoria, name='showcategoria'),
     path('RegistrarC', views.RegisterCategoria),
     path('RegistrarC2', views.RegisterCategoria2), # no se usa
     path('UpdateC', views.UpdateC),
     path('DeleteC/<int:id>', views.DeleteC),
     path('DeleteC2/<int:id>', views.DeleteC2), # no se usa
-    # admin Alumnos
+    # Usuario Alumnos
     path('ShowGestionA', views.ShowGestionAlumno, name='showalumno'),
     path('RegistrarA', views.RegisterAlumno),
     path('RegistrarA2', views.RegisterAlumno2), # no se usa
     path('UpdateA', views.UpdateA),
     path('DeleteA/<int:id>', views.DeleteA),
     path('DeleteA2/<int:id>', views.DeleteA2), # no se usa
-    # admin Proveedor
+    # Usuario Proveedor
     path('ShowGestionProveedor', views.ShowGestionProveedores, name='showproveedor'),
     path('RegistrarProveedor', views.RegisterProveedores),
     path('RegistrarProveedor2', views.RegisterProveedores2), # no se usa
     path('UpdateProveedor', views.UpdateProveedores),
     path('DeleteProveedor/<int:id>', views.DeleteProveedores),
     path('DeleteProveedor2/<int:id>', views.DeleteProveedores2), # no se usa
-    # admin Productos
+    # Usuario Productos
     path('ShowGestionP', views.ShowGestionProducto, name='showproducto'),
     path('RegistrarP', views.RegisterProducto),
     path('UpdateP', views.UpdateP),
@@ -83,14 +84,14 @@ urlpatterns = [
     path('PlusP', views.PlusProducto),
     path('MinusP', views.MinusProducto),
     path('DeleteP/<int:id>', views.DeleteP),
-    # admin Stock
+    # Usuario Stock
     path('ShowGestionS', views.ShowGestionStock,  name='showstock'),
     path('RegistrarS', views.RegisterStock),
-    #admin Estado Producto
+    # Usuario Estado Producto
     path('RegistrarE', views.RegisterEstado_Producto), # no se usa
     path('UpdateE', views.UpdateE), # no se usa
     path('DeleteE/<int:id>', views.DeleteE), # no se usa
-    #admin historial
+    # Usuario historial
     path('ShowHis', views.ShowHis),
 ]
 

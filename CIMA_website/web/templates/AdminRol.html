@@ -251,19 +251,27 @@
                                 <tr class="align-middle">
                                     <td style="text-align: center;">{{x.name}}</td>
                                     <td style="text-align: center;">
-                                        <button type="button" onClick="update({{x.id}})" class="btn btn-lg btn-outline-primary" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-primary-text-emphasis);">
-                                            <i class="bi bi-pencil-fill" ></i>
+                                        <button type="button" onClick="update({{x.id}})" class="btn btn-lg btn-outline-primary" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-primary-text-emphasis); display: inline-flex; align-items: center; padding: 0;">
+                                            <i class="bi bi-pencil-fill fs-5"></i>
                                         </button>
                                     </td>
                                     <td style="text-align: center;">
-                                        <button type="button" onClick="deletes({{x.id}})" class="btn btn-lg btn-outline-danger" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-danger-text-emphasis);">
-                                            <i class="bi bi-trash-fill"></i>
+                                        <button type="button" onClick="deletes({{x.id}})" class="btn btn-lg btn-outline-danger" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-danger-text-emphasis); display: inline-flex; align-items: center; padding: 0;">
+                                            <i class="bi bi-trash-fill fs-5"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>    
                             </table>
+
+                            <!-- Paginación -->
+                            <nav aria-label="Page navigation example" id="bbbb">
+                                <ul class="pagination justify-content-center" id="pagination-container">
+                                    <!-- Los botones de la paginación se agregarán aquí dinámicamente -->
+                                </ul>
+                            </nav>
+
                         </div>
                             {% else %}  
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -281,6 +289,102 @@
     </div> 
             
 </div>
+
+<script>
+    let currentPage = 1;
+    let rowsPerPage; // Número de filas por página, ajustado dinámicamente
+    let rows;
+    let totalPages;
+
+    // Función que ajusta el número de filas a mostrar según el tamaño de la pantalla
+    function adjustRowsPerPage() {
+        const windowWidth = window.innerWidth;
+
+        // Ajustar filas por página en función del ancho de la pantalla
+        if (windowWidth >= 1200) {  // Pantallas grandes (desktop)
+            rowsPerPage = 10;
+        } else if (windowWidth >= 768) {  // Pantallas medianas (tabletas)
+            rowsPerPage = 7;
+        } else {  // Pantallas pequeñas (móviles)
+            rowsPerPage = 5;
+        }
+
+        // Recalcular el número total de páginas
+        totalPages = Math.ceil(rows.length / rowsPerPage);
+        
+        // Muestra la página actual después de ajustar el número de filas
+        displayTablePage(currentPage);
+    }
+
+    // Mostrar solo las filas correspondientes a la página actual
+    function displayTablePage(page) {
+        const startIndex = (page - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            if (index >= startIndex && index < endIndex) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        currentPage = page;
+        updatePagination();
+    }
+
+    // Actualizar los botones de paginación (dinámicamente)
+    function updatePagination() {
+        const paginationContainer = document.getElementById("pagination-container");
+        paginationContainer.innerHTML = ""; // Limpiar los botones de paginación actuales
+
+        // Botón de "Anterior"
+        const prevButton = document.createElement("li");
+        prevButton.classList.add("page-item");
+        prevButton.classList.toggle("disabled", currentPage === 1);
+        prevButton.innerHTML = `<a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')"><span aria-hidden="true">&laquo;</span></a>`;
+        paginationContainer.appendChild(prevButton);
+
+        // Generar los botones de páginas
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("li");
+            pageButton.classList.add("page-item");
+            pageButton.classList.toggle("active", i === currentPage);
+            pageButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // Botón de "Siguiente"
+        const nextButton = document.createElement("li");
+        nextButton.classList.add("page-item");
+        nextButton.classList.toggle("disabled", currentPage === totalPages);
+        nextButton.innerHTML = `<a class="page-link" href="#" aria-label="Next" onclick="changePage('next')"><span aria-hidden="true">&raquo;</span></a>`;
+        paginationContainer.appendChild(nextButton);
+    }
+
+    // Cambiar de página
+    function changePage(page) {
+        if (page === "prev" && currentPage > 1) {
+            displayTablePage(currentPage - 1);
+        } else if (page === "next" && currentPage < totalPages) {
+            displayTablePage(currentPage + 1);
+        } else if (typeof page === "number") {
+            displayTablePage(page);
+        }
+    }
+
+    // Inicializar la tabla mostrando la primera página y los botones de paginación
+    document.addEventListener("DOMContentLoaded", function () {
+        rows = document.querySelectorAll("#myTable tr"); // Obtén todas las filas de la tabla
+        adjustRowsPerPage();  // Ajusta el número de filas y muestra la primera página
+    });
+
+    // Recalcular filas cuando el tamaño de la ventana cambia
+    window.addEventListener("resize", function() {
+        adjustRowsPerPage(); // Ajustar filas en función del nuevo tamaño de la ventana
+    });
+</script>
+
 {% if r2 %}
 <script>
     Swal.fire({
@@ -385,10 +489,12 @@
             document.getElementById("navbarcenter").style.color= '#FFFFFF';
             document.getElementById("navbarcenter").style.backgroundColor= '#791500';
             document.getElementById("navbarcenter").style.color= '#FFFFFF';
-            document.getElementById('head_table').setAttribute("class", "table-light");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-light");
+            } catch (error) {
+            }
             //console.log('b')
-        }
-        if(a==="false"){
+        }else{
             element.dataset.bsTheme = "light";
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
@@ -396,7 +502,10 @@
             document.getElementById("backgroundall").style.color= '#000000';
             document.getElementById("navbarcenter").style.backgroundColor = '#8a8a8a';
             document.getElementById("navbarcenter").style.color= '#000000';
-            document.getElementById('head_table').setAttribute("class", "table-dark");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-dark");
+            } catch (error) {
+            }
         }
         //console.log("c")
     </script>
@@ -415,7 +524,10 @@
             document.getElementById("navbarcenter").style.color= '#FFFFFF';
             document.getElementById("navbarcenter").style.backgroundColor= '#791500';
             document.getElementById("navbarcenter").style.color= '#FFFFFF';
-            document.getElementById('head_table').setAttribute("class", "table-light");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-light");
+            } catch (error) {
+            }
             back = "#2d2d2d"; text = "#ffffff";
         }
         else{
@@ -427,7 +539,10 @@
             document.getElementById("navbarcenter").style.backgroundColor = '#8a8a8a';
             document.getElementById("navbarcenter").style.color= '#000000';
             localStorage.setItem('isDarkMode', false);
-            document.getElementById('head_table').setAttribute("class", "table-dark");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-dark");
+            } catch (error) {
+            }
             back = "#fff"; text = "#545454";
         }
     }

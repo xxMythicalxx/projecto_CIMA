@@ -134,14 +134,14 @@
                                         </div>
                                         <div class="col-md-12">
                                             <label for="rol" class="col-form-label">Permisos</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-text">
+                                            <div class="input-group mb-12" style="width: 100%;">
+                                                <div class="input-group-text" style="width: 100%;">
                                                   <button id="selectAllBtn" class="btn btn-outline-secondary" type="button" aria-label="Checkbox for following text input">Seleccionar Todo</button>
-                                                <select id="permisos" name="permisos[]" multiple="multiple" style="padding: 10px;">
+                                                <select id="permisos" name="permisos[]" multiple="multiple" style="width: 100%;">
                                                     {% for category, permissions in pu.items %}
-                                                    <optgroup label="{{ category }}">
+                                                    <optgroup label="{{ category }}" style="width: 100%;">
                                                         {% for permission in permissions %}
-                                                            <option value="{{ permission.codename }}">{{ permission.name }}</option>
+                                                            <option value="{{ permission.codename }}" style="width: 100%;">{{ permission.name }}</option>
                                                         {% endfor %}
                                                     </optgroup>
                                                     {% endfor %}
@@ -171,7 +171,7 @@
                                 </div>
                             </div>               
                         {% if gu %}
-                        <div class="table-responsive" style="max-height: calc(100vh - 100px); padding-top: 48px;">
+                        <div class="table-responsive" >
                             <div class="input-group" >
                                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-filter-right"></i></span>
                                 <input class="form-control" id="myInput" type="text" placeholder="Busqueda..">
@@ -208,6 +208,14 @@
                                 {% endfor %}
                             </tbody>    
                             </table>
+
+                            <!-- Paginación -->
+                            <nav aria-label="Page navigation example" id="bbbb">
+                                <ul class="pagination justify-content-center" id="pagination-container">
+                                    <!-- Los botones de la paginación se agregarán aquí dinámicamente -->
+                                </ul>
+                            </nav>
+
                         </div>
                             {% else %}  
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -227,6 +235,151 @@
 </div>
 
 <style>
+    .table-responsive {
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    table {
+        width: 100%;
+        table-layout: auto;
+    }
+    table tr {
+        height: auto;
+    }
+</style>
+
+<script>
+    let currentPage = 1;
+    let rowsPerPage; // Número de filas por página, ajustado dinámicamente
+    let rows;
+    let totalPages;
+    let groupedRows = [];
+
+    function adjustRowsPerPage() {
+    rows = document.querySelectorAll("#myTable tr");  // Obtén todas las filas de la tabla
+    let rowDataLengths = [];
+    let rowsToDisplay = [];
+
+    // Contar los elementos <li> en cada celda <td> y sumarlos
+        rows.forEach(row => {
+        const permissionCell = row.cells[1]; // Segunda columna (Permisos)
+        if (permissionCell) {
+            const listItems = permissionCell.querySelectorAll("li");
+            let contentLength = 0;
+            
+            // Contar la longitud del texto de cada elemento <li>
+            listItems.forEach(item => {
+                contentLength += item.textContent.length;  // Sumar el largo del texto
+            });
+
+            rowDataLengths.push(contentLength);
+            rowsToDisplay.push(row);
+        }
+    });
+
+    // Filtrar las filas por el tamaño de contenido
+    
+    let singleRows = [];
+
+    // Definir un umbral para filas con muchos datos y agrupadas
+    const longRowThreshold = 500; // Umbral para filas largas (puedes ajustarlo)
+    let currentGroup = [];
+
+    rowsToDisplay.forEach((row, index) => {
+        const rowLength = rowDataLengths[index];
+
+        if (rowLength > longRowThreshold) {
+            // Si la fila tiene mucho contenido, se agrega por separado
+            if (currentGroup.length > 0) {
+                groupedRows.push(currentGroup);  // Agregar el grupo anterior
+            }
+            groupedRows.push([row]);  // Fila larga como grupo único
+            currentGroup = [];  // Reiniciar el grupo
+        } else {
+            // Si la fila tiene poco contenido, agruparla
+            currentGroup.push(row);
+        }
+    });
+
+    // Agregar el último grupo de filas
+    if (currentGroup.length > 0) {
+        groupedRows.push(currentGroup);
+    }
+
+    // Ahora ajustamos `rowsPerPage` en función del número de grupos y filas
+    rowsPerPage = Math.ceil(groupedRows.length / 5);  // 3 grupos por página
+    totalPages = Math.ceil(groupedRows.length / rowsPerPage);  // Total de páginas basado en los grupos
+    displayTablePage(currentPage, groupedRows);  // Mostrar la página actual con los grupos
+}
+
+    // Mostrar solo las filas correspondientes a la página actual
+    function displayTablePage(page, groupedRows) {
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    // Ocultar todas las filas
+    rows.forEach(row => row.style.display = "none");
+
+    // Mostrar solo los grupos correspondientes a la página actual
+    groupedRows.slice(startIndex, endIndex).forEach(group => {
+        group.forEach(row => {
+            row.style.display = "";
+        });
+    });
+
+    currentPage = page;
+    updatePagination();
+}
+
+    // Actualizar los botones de paginación (dinámicamente)
+    function updatePagination() {
+        const paginationContainer = document.getElementById("pagination-container");
+        paginationContainer.innerHTML = ""; // Limpiar los botones de paginación actuales
+
+        // Botón de "Anterior"
+        const prevButton = document.createElement("li");
+        prevButton.classList.add("page-item");
+        prevButton.classList.toggle("disabled", currentPage === 1);
+        prevButton.innerHTML = `<a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')"><span aria-hidden="true">&laquo;</span></a>`;
+        paginationContainer.appendChild(prevButton);
+
+        // Generar los botones de páginas
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("li");
+            pageButton.classList.add("page-item");
+            pageButton.classList.toggle("active", i === currentPage);
+            pageButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // Botón de "Siguiente"
+        const nextButton = document.createElement("li");
+        nextButton.classList.add("page-item");
+        nextButton.classList.toggle("disabled", currentPage === totalPages);
+        nextButton.innerHTML = `<a class="page-link" href="#" aria-label="Next" onclick="changePage('next')"><span aria-hidden="true">&raquo;</span></a>`;
+        paginationContainer.appendChild(nextButton);
+    }
+
+    // Cambiar de página
+    function changePage(page) {
+    if (page === "prev" && currentPage > 1) {
+        displayTablePage(currentPage - 1, groupedRows);
+    } else if (page === "next" && currentPage < totalPages) {
+        displayTablePage(currentPage + 1, groupedRows);
+    } else if (typeof page === "number") {
+        displayTablePage(page, groupedRows);
+    }
+}
+
+    // Inicializar la tabla mostrando la primera página y los botones de paginación
+    document.addEventListener("DOMContentLoaded", function () {
+        rows = document.querySelectorAll("#myTable tr"); // Obtén todas las filas de la tabla
+        adjustRowsPerPage();  // Ajusta el número de filas y muestra la primera página
+    });
+</script>
+
+
+<style>
     /* Cambiar el color del texto que se escribe en el campo de búsqueda */
     .select2-search__field {
         color: #000000; /* Cambia esto al color que desees */
@@ -239,7 +392,6 @@
             $('#permisos').select2({
                 templateResult: function(data) {
                 var $result = $('<span></span>');
-                console.log(data.text)
                 if (data.text != "Can view producto" && data.text != "Can change movimiento" && data.text != "Can add historial_acciones" && data.text != "Can change historial_acciones" && data.text != "Can delete historial_acciones"){
                     if (data.text.includes("Can add movimiento")){data.text = 'Puede agregar stock'}
                     if (data.text.includes("Can delete movimiento")){data.text = 'Puede reducir stock'}
@@ -251,13 +403,25 @@
                     $result.text(data.text.replace(/_/g, ' '));
                     $result.css('color', '#000000'); 
                     return $result;
+                } else {
+                    return null;  // No renderizar esta opción en la lista
                 }
+            },
+            templateSelection: function (data) {
+                var $selected = $('<span></span>');
+                $selected.text(data.text.replace(/_/g, ' '));
+                $selected.css('white-space', 'normal'); // Permitir que el texto largo se ajuste y haga saltos de línea
+                $selected.css('word-wrap', 'break-word'); // Asegura que el texto se divida correctamente
+                return $selected;
             },
             placeholder: "Selecciona tus permisos",
             allowClear: true,
             dropdownParent: $('#AsociarRolPermiso'),
-
+            width: 'resolve'
         });
+
+        $('#permisos').trigger('change'); 
+
         $('#selectAllBtn').on('click', function() {
                 var allValues = $('#permisos option').map(function() {
                     $('.select2-selection').css('color', '#000000');
@@ -394,7 +558,10 @@
         if (a==="true"){
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
-            document.getElementById('head_table').setAttribute("class", "table-light");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-light");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
             document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
             document.getElementById("backgroundall").style.backgroundColor= '#404040';
@@ -402,10 +569,12 @@
             document.getElementById("navbarcenter").style.backgroundColor= '#791500';
             document.getElementById("navbarcenter").style.color= '#FFFFFF';
             //console.log('b')
-        }
-        if(a==="false"){
+        }else{
             element.dataset.bsTheme = "light";
-            document.getElementById('head_table').setAttribute("class", "table-dark");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-dark");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
             document.getElementById("backgroundall").style.backgroundColor = '#c19284';
@@ -423,7 +592,10 @@
         if (darkcheck.checked){
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
-            document.getElementById('head_table').setAttribute("class", "table-light");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-light");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
             document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
             document.getElementById("backgroundall").style.backgroundColor= '#404040';
@@ -435,7 +607,10 @@
         else{
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
-            document.getElementById('head_table').setAttribute("class", "table-dark");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-dark");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
             document.getElementById("backgroundall").style.backgroundColor = '#c19284';

@@ -177,23 +177,33 @@
                                 </tr>
                             </thead>
                             {% for user in u %}
+                            
+                            <tbody id="myTable">
                             <tr>
-                                <td style="text-align: center;">{{ user.email }}</td>
-                                <td style="text-align: center;">
-                                    {% if user.groups.all %}
-                                            {% for group in user.groups.all %}
-                                                <li style="list-style-type:none;">{{ group.name }}</li>
-                                            {% empty %}
-                                                <li style="list-style-type:none;">No tiene roles asignados</li>
-                                            {% endfor %}
-                                    {% else %}
-                                        <p>No tiene roles asignados</p>
-                                    {% endif %}
-                                </td>
+                            <td style="text-align: center;">{{ user.email }}</td>
+                            <td style="text-align: center;">
+                                {% if user.groups.all %}
+                                        {% for group in user.groups.all %}
+                                            <li style="list-style-type:none;">{{ group.name }}</li>
+                                        {% empty %}
+                                            <li style="list-style-type:none;">No tiene roles asignados</li>
+                                        {% endfor %}
+                                {% else %}
+                                    <p>No tiene roles asignados</p>
+                                {% endif %}
+                            </td>
                             </tr>
                         {% endfor %}
                             </tbody>    
                             </table>
+
+                            <!-- Paginación -->
+                            <nav aria-label="Page navigation example" id="bbbb">
+                                <ul class="pagination justify-content-center" id="pagination-container">
+                                    <!-- Los botones de la paginación se agregarán aquí dinámicamente -->
+                                </ul>
+                            </nav>
+                            
                         </div>
                             {% else %}  
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -211,6 +221,136 @@
     </div> 
             
 </div>
+
+<script>
+    let currentPage = 1;
+    let rowsPerPage; // Número de filas por página, ajustado dinámicamente
+    let rows;
+    let totalPages;
+    let groupedRows = [];
+
+    function adjustRowsPerPage() {
+    rows = document.querySelectorAll("#myTable tr");  // Obtén todas las filas de la tabla
+    let rowDataLengths = [];
+    let rowsToDisplay = [];
+
+    // Contar los elementos <li> en cada celda <td> y sumarlos
+        rows.forEach(row => {
+        const permissionCell = row.cells[1]; // Segunda columna (Permisos)
+        if (permissionCell) {
+            const listItems = permissionCell.querySelectorAll("li");
+            let contentLength = 0;
+            
+            // Contar la longitud del texto de cada elemento <li>
+            listItems.forEach(item => {
+                contentLength += item.textContent.length;  // Sumar el largo del texto
+            });
+
+            rowDataLengths.push(contentLength);
+            rowsToDisplay.push(row);
+        }
+    });
+
+    // Filtrar las filas por el tamaño de contenido
+    
+    let singleRows = [];
+
+    // Definir un umbral para filas con muchos datos y agrupadas
+    const longRowThreshold = 82; // Umbral para filas largas (puedes ajustarlo)
+    let currentGroup = [];
+
+    rowsToDisplay.forEach((row, index) => {
+        const rowLength = rowDataLengths[index];
+
+        if (rowLength > longRowThreshold) {
+            // Si la fila tiene mucho contenido, se agrega por separado
+            if (currentGroup.length > 0) {
+                groupedRows.push(currentGroup);  // Agregar el grupo anterior
+            }
+            groupedRows.push([row]);  // Fila larga como grupo único
+            currentGroup = [];  // Reiniciar el grupo
+        } else {
+            // Si la fila tiene poco contenido, agruparla
+            currentGroup.push(row);
+        }
+    });
+
+    // Agregar el último grupo de filas
+    if (currentGroup.length > 0) {
+        groupedRows.push(currentGroup);
+    }
+
+    // Ahora ajustamos `rowsPerPage` en función del número de grupos y filas
+    rowsPerPage = Math.ceil(groupedRows.length / 5);  // 3 grupos por página
+    totalPages = Math.ceil(groupedRows.length / rowsPerPage);  // Total de páginas basado en los grupos
+    displayTablePage(currentPage, groupedRows);  // Mostrar la página actual con los grupos
+}
+
+    // Mostrar solo las filas correspondientes a la página actual
+    function displayTablePage(page, groupedRows) {
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    // Ocultar todas las filas
+    rows.forEach(row => row.style.display = "none");
+
+    // Mostrar solo los grupos correspondientes a la página actual
+    groupedRows.slice(startIndex, endIndex).forEach(group => {
+        group.forEach(row => {
+            row.style.display = "";
+        });
+    });
+
+    currentPage = page;
+    updatePagination();
+}
+
+    // Actualizar los botones de paginación (dinámicamente)
+    function updatePagination() {
+        const paginationContainer = document.getElementById("pagination-container");
+        paginationContainer.innerHTML = ""; // Limpiar los botones de paginación actuales
+
+        // Botón de "Anterior"
+        const prevButton = document.createElement("li");
+        prevButton.classList.add("page-item");
+        prevButton.classList.toggle("disabled", currentPage === 1);
+        prevButton.innerHTML = `<a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')"><span aria-hidden="true">&laquo;</span></a>`;
+        paginationContainer.appendChild(prevButton);
+
+        // Generar los botones de páginas
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("li");
+            pageButton.classList.add("page-item");
+            pageButton.classList.toggle("active", i === currentPage);
+            pageButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // Botón de "Siguiente"
+        const nextButton = document.createElement("li");
+        nextButton.classList.add("page-item");
+        nextButton.classList.toggle("disabled", currentPage === totalPages);
+        nextButton.innerHTML = `<a class="page-link" href="#" aria-label="Next" onclick="changePage('next')"><span aria-hidden="true">&raquo;</span></a>`;
+        paginationContainer.appendChild(nextButton);
+    }
+
+    // Cambiar de página
+    function changePage(page) {
+    if (page === "prev" && currentPage > 1) {
+        displayTablePage(currentPage - 1, groupedRows);
+    } else if (page === "next" && currentPage < totalPages) {
+        displayTablePage(currentPage + 1, groupedRows);
+    } else if (typeof page === "number") {
+        displayTablePage(page, groupedRows);
+    }
+}
+
+    // Inicializar la tabla mostrando la primera página y los botones de paginación
+    document.addEventListener("DOMContentLoaded", function () {
+        rows = document.querySelectorAll("#myTable tr"); // Obtén todas las filas de la tabla
+        adjustRowsPerPage();  // Ajusta el número de filas y muestra la primera página
+    });
+</script>
 
 
 <script>
@@ -363,7 +503,10 @@
         if (a==="true"){
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
-            document.getElementById('head_table').setAttribute("class", "table-light");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-light");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
             document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
             document.getElementById("backgroundall").style.backgroundColor= '#404040';
@@ -371,10 +514,12 @@
             document.getElementById("navbarcenter").style.backgroundColor= '#791500';
             document.getElementById("navbarcenter").style.color= '#FFFFFF';
             //console.log('b')
-        }
-        if(a==="false"){
+        }else{
             element.dataset.bsTheme = "light";
-            document.getElementById('head_table').setAttribute("class", "table-dark");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-dark");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
             document.getElementById("backgroundall").style.backgroundColor = '#c19284';
@@ -392,7 +537,10 @@
         if (darkcheck.checked){
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
-            document.getElementById('head_table').setAttribute("class", "table-light");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-light");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor= '#791500';
             document.getElementById("offcanvasNavbar").style.color= '#FFFFFF';
             document.getElementById("backgroundall").style.backgroundColor= '#404040';
@@ -404,7 +552,10 @@
         else{
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
-            document.getElementById('head_table').setAttribute("class", "table-dark");
+            try {
+                document.getElementById('head_table').setAttribute("class", "table-dark");
+            } catch (error) {
+            }
             document.getElementById("offcanvasNavbar").style.backgroundColor = '#c19284';
             document.getElementById("offcanvasNavbar").style.color= '#000000';
             document.getElementById("backgroundall").style.backgroundColor = '#c19284';
