@@ -93,6 +93,9 @@ urlpatterns = [
     path('DeleteE/<int:id>', views.DeleteE), # no se usa
     # Usuario historial
     path('ShowHis', views.ShowHis),
+    # Usuario historial
+    path('changeusu', views.CorreoAndUsername),
+    path('passchangeusu', views.PasswordChangeUser),
 ]
 
 

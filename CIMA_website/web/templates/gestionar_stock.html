@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+        {% load static %}
         <meta charset="UTF-8"/>
-		<title>Admin-Mode</title>
+		<title>Gestionar Stock</title>
+        <link rel="icon" href="{% static 'img/insignia_CIMA3.png' %}" type="image/x-icon">
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 		<script> var a = localStorage.getItem('isDarkMode'); var back = ''; var text = ''; if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}</script>
 		<script >
             const logout = () => {
@@ -27,6 +31,7 @@
                     })
             }
         </script>
+
         {% csrf_token %} 
         <script>
         const update = (nombre) => {
@@ -183,6 +188,7 @@
             });
         }
         </script>
+
         <script>
             const deletes = (id) => {
                 Swal.fire({
@@ -204,6 +210,322 @@
                     })
             }
         </script>
+
+        <script>
+        const UserConfi = () => {
+            Swal.fire({
+                title: "Información de la cuenta",
+                toast: true,
+                background: back,
+                color: text,
+                showCancelButton: true,
+                confirmButtonText: 'Modificar datos',
+                cancelButtonText: 'Cancelar',
+                html: `
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control rounded-3" id="floatingInput" value='{{request.user.username}}' disabled>
+                        <label for="floatingInput">Usuario</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control rounded-3" id="floatingInput" value='{{request.user.email}}' disabled>
+                        <label for="floatingInput">Correo</label>
+                    </div>
+                </div>
+                `,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Modificar Usuario y Correo
+                    Swal.fire({
+                        title: "Modificando la cuenta...",
+                        toast: true,
+                        background: back,
+                        color: text,
+                        showCancelButton: true,
+                        showDenyButton: true,
+                        confirmButtonText: 'Modificar información',
+                        cancelButtonText: 'Volver',
+                        denyButtonText: 'Cambiar Contraseña', 
+                        html: `
+                        <div class="modal-body">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-3" id="UserName" value='{{request.user.username}}' required>
+                                <label for="UserName">Usuario</label>
+                                <div id="userError" class="error-message text-danger" style="display: none;"></div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control rounded-3" id="Correo" value='{{request.user.email}}' required>
+                                <label for="Correo">Correo</label>
+                                <div id="correoError" class="error-message text-danger" style="display: none;"></div>
+                            </div>
+                        </div>
+                        `,
+                        preConfirm: () => {
+                            let isValid = true;
+        
+                            // Limpiar errores previos
+                            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+        
+                            // Validación de los campos de Usuario y Correo
+                            const use = document.getElementById("UserName").value;
+                            const cor = document.getElementById("Correo").value;
+        
+                            // Validación del Usuario
+                            const userError = document.getElementById("userError");
+                            if (!use) {
+                                isValid = false;
+                                userError.textContent = 'El usuario no puede estar vacío.';
+                                userError.style.display = 'block';
+                            }
+        
+                            // Validación del Correo
+                            const correoError = document.getElementById("correoError");
+                            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                            if (!cor.match(emailPattern)) {
+                                isValid = false;
+                                correoError.textContent = 'Por favor, ingrese un correo válido.';
+                                correoError.style.display = 'block';
+                            }
+        
+                            if (!isValid) {
+                                return false; // Evita que el formulario se envíe si hay errores
+                            }
+        
+                            var id = '{{request.user.id}}';
+                            fetch('http://127.0.0.1:8000/changeusu', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                                },
+                                body: JSON.stringify({
+                                    id_: id,
+                                    use_: use,
+                                    cor_: cor
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                Swal.fire({
+                                    position: 'top',
+                                    icon: 'success',
+                                    title: data.message,
+                                    toast: true,
+                                    background: back,
+                                    color: text,
+                                }).then(() => {
+                                    window.location.href = "";
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    position: 'top',
+                                    icon: 'error',
+                                    title: 'Hubo un problema con la solicitud: ' + error.message,
+                                    toast: true,
+                                    background: back,
+                                    color: text,
+                                    showCancelButton: false,
+                                    confirmButtonText: 'Cerrar'
+                                }).then(() => {
+                                    UserConfi(); // Permite intentar de nuevo
+                                });
+                            });
+                        },
+                    didOpen: () => {
+                    // Agregar manejadores de evento `input` para cada campo
+                    document.getElementById('UserName').addEventListener('input', () => {
+                        const UserName = document.getElementById('userError');
+                        if (UserName.style.display === 'block') {
+                        UserName.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                        }
+                    });
+        
+                    document.getElementById('Correo').addEventListener('input', () => {
+                        const correoError = document.getElementById('correoError');
+                        if (correoError.style.display === 'block') {
+                        correoError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                        }
+                    });
+                    }
+                    }).then((result2) => {
+                        if (result2.isDismissed) {
+                            UserConfi(); // Si se descarta el cambio de datos, volver a la función original
+                        } else if (result2.isDenied) {
+                            // Cambiar Contraseña
+                            Swal.fire({
+                                title: "Modificando la Contraseña...",
+                                toast: true,
+                                background: back,
+                                color: text,
+                                showCancelButton: true,
+                                confirmButtonText: 'Modificar contraseña',
+                                cancelButtonText: 'Volver',
+                                html: `
+                                <div class="text-danger">Debes iniciar sesión nuevamente </div>
+                                <div class="modal-body">
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control rounded-3" id="Npassword" placeholder="" required>
+                                        <label for="Npassword">Contraseña actual</label>
+                                        <div id="npasError" class="error-message text-danger" style="display: none;"></div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control rounded-3" id="password" placeholder="" required>
+                                        <label for="password">Nueva contraseña</label>
+                                        <div id="pasError" class="error-message text-danger" style="display: none;"></div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control rounded-3" id="password2" placeholder="" required>
+                                        <label for="password2">Repetir Contraseña Nueva</label>
+                                        <div id="pas2Error" class="error-message text-danger" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                `,
+                                preConfirm: () => {
+                                    var npas = document.getElementById("Npassword").value;
+                                    var pas = document.getElementById("password").value;
+                                    var pas2 = document.getElementById("password2").value;
+        
+                                    // Limpiar errores previos
+                                    document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+        
+                                    let isValid = true;
+        
+                                    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        
+                                    // Validación Contraseña Actual
+                                    const npasError = document.getElementById('npasError');
+                                    if (!npas.trim()) {
+                                        isValid = false;
+                                        npasError.textContent = 'La contraseña actual es obligatoria.';
+                                        npasError.style.display = 'block';
+                                    }
+        
+                                    // Validación Nueva Contraseña
+                                    const pasError = document.getElementById('pasError');
+                                    if (!pas.trim()) {
+                                        isValid = false;
+                                        pasError.textContent = 'La nueva contraseña es obligatoria.';
+                                        pasError.style.display = 'block';
+                                    } else if (!passwordPattern.test(pas)) {
+                                        isValid = false;
+                                        pasError.textContent = 'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.';
+                                        pasError.style.display = 'block';
+                                    }
+        
+                                    // Validación Repetir Nueva Contraseña
+                                    const pas2Error = document.getElementById('pas2Error');
+                                    if (pas !== pas2) {
+                                        isValid = false;
+                                        pas2Error.textContent = 'Las contraseñas no coinciden.';
+                                        pas2Error.style.display = 'block';
+                                    } else if (!pas2.trim()) {
+                                        isValid = false;
+                                        pas2Error.textContent = 'Repetir la nueva contraseña es obligatorio.';
+                                        pas2Error.style.display = 'block';
+                                    }
+        
+                                    if (!isValid) {
+                                        return false; // Evita el envío si hay errores
+                                    }
+        
+                                    var id = '{{request.user.id}}';
+                                    fetch('http://127.0.0.1:8000/passchangeusu', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': '{{ csrf_token }}'
+                                        },
+                                        body: JSON.stringify({
+                                            id_: id,
+                                            npas_: npas,
+                                            pas_: pas,
+                                            pas2_: pas2,
+                                        })
+                                    })
+                                    .then(response => {
+                                    // Verificamos si la respuesta fue exitosa (status 200-299)
+                                    if (!response.ok) {
+                                        return response.json().then(error => {
+                                        Swal.fire({
+                                        position: 'top',
+                                        icon: 'error',
+                                        title: error.error,
+                                        toast: true,
+                                        background: back,
+                                        color: text,
+                                        confirmButtonText: 'Volver'
+                                    }).then((result3) => {
+                                        if (result3.isConfirmed) {
+                                        window.location.href = "";
+                                        }
+                                    });
+                                        });
+                                    }
+                                    return response.json(); // Parseamos la respuesta como JSON
+                                    })
+                                    .then(data => {
+                                        Swal.fire({
+                                            position: 'top',
+                                            icon: 'success',
+                                            title: data.message,
+                                            toast: true,
+                                            background: back,
+                                            color: text,
+                                        }).then(() => {
+                                            window.location.href = "/";
+                                        });
+                                    })
+                                    .catch(error3 => {
+                                        Swal.fire({
+                                            position: 'top',
+                                            icon: 'error',
+                                            title: error3.response.data,
+                                            toast: true,
+                                            background: back,
+                                            color: text,
+                                            showCancelButton: false,
+                                            confirmButtonText: 'Volver'
+                                        }).then(() => {
+                                            UserConfi(); // Permite intentar de nuevo
+                                        });
+                                    });
+                                },
+                                didOpen: () => {
+                                // Agregar manejadores de evento `input` para cada campo
+                                document.getElementById('Npassword').addEventListener('input', () => {
+                                    const npasError = document.getElementById('npasError');
+                                    if (npasError.style.display === 'block') {
+                                    npasError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                                    }
+                                });
+        
+                                document.getElementById('password').addEventListener('input', () => {
+                                    const pasError = document.getElementById('pasError');
+                                    if (pasError.style.display === 'block') {
+                                    pasError.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                                    }
+                                });
+        
+                                document.getElementById('password2').addEventListener('input', () => {
+                                    const pas2Error = document.getElementById('pas2Error');
+                                    if (pas2Error.style.display === 'block') {
+                                    pas2Error.style.display = 'none'; // Ocultar error cuando el usuario escribe
+                                    }
+                                });
+                                }
+                            }).then((result2) => {
+                        if (result2.isDismissed) {
+                            UserConfi(); // Si se descarta el cambio de datos, volver a la función original
+                        }
+                    })
+                        }
+                    });
+                }
+            });
+        }
+        </script>
+
         <script>
         let count = 3599;
         const timer = setInterval(function() {
@@ -235,7 +557,6 @@
 
     </head>
     <body>
-        {% load static %}
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <div  class="vh-100 d-flex justify-content-center ">
             <div class="container-fluid" id="backgroundall">		
@@ -250,46 +571,77 @@
                                     <img src="{% static 'img/insignia_CIMA3.png' %}" alt="Imagen de ejemplo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;display: block;margin-left: auto;margin-right: auto;" >
                                     <button type="button" class="btn-close position-fixed" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                   </div>
-                                <a class="btn btn-outline-secondary nav-link text-center" href="/adminn">Dashboard</a>
-                                {% for g in grup %} 
-                                {% for perm in g.permissions %}
-                                {% if perm.codename == 'view_categoria' %}
-                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionC">Gestionar Categoria</a>
-                                {% endif %}
-                                {% if perm.codename == 'view_alumno' %}
-                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionA">Gestionar Alumnos</a>
-                                {% endif %}
-                                {% if perm.codename == 'view_proveedor' %}
-                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionProveedor">Gestionar Proveedores</a>
-                                {% endif %}
-                                {% if "view_producto" in perm.codename %}
-                                <a class="btn btn-outline-secondary nav-link text-center product-link" href="/ShowGestionP">Gestionar Productos</a>
-                                {% endif %}
-                                {% if perm.codename == 'view_movimiento' %}
-                                <a class="btn btn-outline-secondary active nav-link text-center" href="/ShowGestionS">Gestionar Stock</a>
-                                {% endif %}
-                                {% if perm.codename == 'view_historial_acciones' %}
-                                <a class="btn btn-outline-secondary nav-link text-center" href="/ShowHis">Ver Historial de acciones</a>
-                                {% endif %}
-                                {% endfor %}
-                                {% endfor %}
-                                <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">Cerrar Sesión</a>	
-                                <a class="nav-link" style="margin: 0 auto;float: none;" ><div class="form-check form-switch" style="margin: 0 auto;float: none;">
-                                    <input
-                                    class="form-check-input p-2"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="2"
-                                    onclick="myFunction()"
-                                    />
-                                </div></a>		
+                                  <a class="btn btn-outline-secondary nav-link text-center" href="/adminn">
+                                    <i class="bi bi-house-door-fill" style="font-size: 24px;"></i> Menu Principal
+                                  </a>
+                                  
+                                  {% for g in grup %}
+                                    {% for perm in g.permissions %}
+                                      {% if perm.codename == 'view_categoria' %}
+                                        <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionC">
+                                          <i class="bi bi-folder-fill" style="font-size: 24px;"></i> Gestionar Categoria
+                                        </a>
+                                      {% endif %}
+                                      {% if perm.codename == 'view_alumno' %}
+                                        <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionA">
+                                          <i class="bi bi-person-fill" style="font-size: 24px;"></i> Gestionar Alumnos
+                                        </a>
+                                      {% endif %}
+                                      {% if perm.codename == 'view_proveedor' %}
+                                        <a class="btn btn-outline-secondary nav-link text-center" href="/ShowGestionProveedor">
+                                          <i class="bi bi-people-fill" style="font-size: 24px;"></i> Gestionar Proveedores
+                                        </a>
+                                      {% endif %}
+                                      {% if "view_producto" in perm.codename %}
+                                        <a class="btn btn-outline-secondary nav-link text-center product-link" href="/ShowGestionP">
+                                          <i class="bi bi-box-fill" style="font-size: 24px;"></i> Gestionar Productos
+                                        </a>
+                                      {% endif %}
+                                      {% if perm.codename == 'view_movimiento' %}
+                                        <a class="btn btn-outline-secondary active nav-link text-center" href="/ShowGestionS">
+                                          <i class="bi bi-arrow-down-up" style="font-size: 24px;"></i> Gestionar Stock
+                                        </a>
+                                      {% endif %}
+                                      {% if perm.codename == 'view_historial_acciones' %}
+                                        <a class="btn btn-outline-secondary nav-link text-center" href="/ShowHis">
+                                          <i class="bi bi-clock-fill" style="font-size: 24px;"></i> Ver Historial de Acciones
+                                        </a>
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% endfor %}
+                                  <a class="btn btn-outline-danger nav-link text-center" onClick="logout()">
+                                    <i class="fas fa-sign-out-alt" style="font-size: 24px;"></i> Cerrar Sesión
+                                  </a>
+
+                                  <a class="nav-link" style="margin: 0 auto; float: none;">
+                                    <div class="form-check form-switch" style="margin: 0 auto; float: none; position: relative; width: 60px; height: 30px;">
+                                        <!-- Ocultamos el input checkbox para que solo se vea el switch -->
+                                        <input class="form-check-input p-2 position-absolute start-0" type="checkbox" role="switch" id="2" onclick="myFunction()" style="opacity: 0; z-index: -1;" />
+                                        
+                                        <label class="form-check-label position-absolute start-0" for="2" style="width: 80%; height: 80%; cursor: pointer; padding: 0; display: flex; justify-content: center; align-items: center;">
+                                            <!-- Contenedor del Switch -->
+                                            <div class="switch-container" style="position: relative; width: 80%; height: 80%; border-radius: 50px; background-color: #000; transition: background-color 0.3s ease;">
+                                                <!-- Icono de Luna -->
+                                                <i class="fas fa-moon" id="moonIcon" style="color: #3b3eff;position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-size: 18px; opacity: 1; transition: opacity 0.3s ease;"></i>
+                                                <!-- Icono de Sol -->
+                                                <i class="fas fa-sun" id="sunIcon" style="color: #ffee00; position: absolute; left: 2px; top: 50%; transform: translateY(-50%); font-size: 18px; opacity: 0; transition: opacity 0.3s ease;"></i>
+                                                <!-- Circulito del switch -->
+                                                <div class="switch-circle" style="position: absolute; top: 50%; left: 2px; transform: translateY(-30%); width: 15px; height: 15px; border-radius: 50%; background-color: #646464; transition: transform 0.3s ease;"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </a>
+
                             </div>
-                            <div class="" style="height: 100%;">
+                            <div class="" style="height: 100%;" >
+                                <button type="button" onClick="UserConfi()" class="btn btn-lg btn-outline-secondary position-absolute bottom-0 start-0" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-secondary-text-emphasis); display: inline-flex;" data-bs-dismiss="offcanvas">
+                                  <i class="bi bi-gear-fill fs-5"></i>
+                                </button> 
                                 <h5 id="TheEmail" class="position-absolute bottom-0 start-50 translate-middle-x">{{correo}}</h5>
-                                <button id="showEmail2" style="display: none;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                <button id="showEmail2" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-secondary-text-emphasis); display: inline-flex;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg btn-outline-secondary position-absolute bottom-0 end-0">
                                     <i class="bi bi-eye-slash"></i>
                                 </button>
-                                <button id="showEmail" style="display: block;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg position-absolute bottom-0 end-0">
+                                <button id="showEmail" style="border: none; outline: 0; text-decoration: none; background-color:transparent;--bs-btn-hover-color: var(--bs-secondary-text-emphasis); display: inline-flex;" type="button" onClick="ChangeShowEmail()" class="btn btn-lg btn-outline-secondary position-absolute bottom-0 end-0">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
@@ -725,18 +1077,15 @@
         var b = document.getElementById("showEmail2");
         var e = document.getElementById("TheEmail");
         var t = localStorage.getItem('ShowEmail');
-        if (t==="true"){
-        e.innerHTML = '{{correo}}';
-        a.style.display = "block";
-        b.style.display = "none";
-        //console.log('b')
-        }
         if(t==="false"){
-        e.innerHTML = '***';
-        a.style.display = "none";
-        b.style.display = "block";
+            e.innerHTML = '***';
+            a.style.display = "none";
+            b.style.display = "block";
+        }else{
+            e.innerHTML = '{{correo}}';
+            a.style.display = "block";
+            b.style.display = "none";
         }
-        //console.log("c")
         </script>
         
         <script>
@@ -776,6 +1125,10 @@
 <script>
     var element = document.body;
     var a = localStorage.getItem('isDarkMode');
+    var switchContainer = document.querySelector(".switch-container");
+    var moonIcon = document.getElementById("moonIcon");
+    var sunIcon = document.getElementById("sunIcon");
+    var switchCircle = document.querySelector(".switch-circle");
     var back = '';
     var text = '';
     if(a=='true'){window.back = "#2d2d2d";window.text = "#ffffff"; }else{window.back = "#fff"; window.text = "#545454";}  
@@ -783,6 +1136,11 @@
         if (a==="true"){
             element.dataset.bsTheme = "dark"
             document.getElementById("2").checked = true;
+            switchContainer.style.backgroundColor = "#ccc"; // Fondo gris (luna)
+            switchCircle.style.transform = "translate(2px, -50%)"; // Mover el círculo a la izquierda
+            switchCircle.style.backgroundColor = "#000"; // Mover el círculo a la izquierda
+            moonIcon.style.opacity = "1"; // Mostrar luna
+            sunIcon.style.opacity = "0"; // Ocultar sol
             try {
                 document.getElementById('head_table').setAttribute("class", "table-light");
             } catch (error) {
@@ -797,6 +1155,11 @@
         }
         else{
             element.dataset.bsTheme = "light";
+            switchContainer.style.backgroundColor = "#505050"; // Cambiar el fondo a amarillo (sol)
+            switchCircle.style.transform = "translate(20px, -50%)"; // Mover el círculo a la derecha
+            switchCircle.style.backgroundColor = "#fff"; // Mover el círculo a la izquierda
+            moonIcon.style.opacity = "0"; // Ocultar luna
+            sunIcon.style.opacity = "1"; // Mostrar sol
             try {
                 document.getElementById('head_table').setAttribute("class", "table-dark");
             } catch (error) {
@@ -813,11 +1176,19 @@
 <script>
     function myFunction() {
         var element = document.body;
-        var darkcheck = document.getElementById("2");
+        var darkcheck = document.getElementById("2");		
+        var switchContainer = document.querySelector(".switch-container");
+        var moonIcon = document.getElementById("moonIcon");
+        var sunIcon = document.getElementById("sunIcon");
+        var switchCircle = document.querySelector(".switch-circle");
         //console.log(darkcheck)
         if (darkcheck.checked){
             element.dataset.bsTheme = "dark"
             localStorage.setItem('isDarkMode', true);
+            switchContainer.style.backgroundColor = "#ccc"; // Fondo gris (luna)
+            switchCircle.style.transform = "translate(2px, -50%)"; // Mover el círculo a la izquierda
+            switchCircle.style.backgroundColor = "#000"; // Mover el círculo a la izquierda
+            moonIcon.style.opacity = "1"; // Mostrar luna
             try {
                 document.getElementById('head_table').setAttribute("class", "table-light");
             } catch (error) {
@@ -833,6 +1204,11 @@
         else{
             element.dataset.bsTheme = "light"
             localStorage.setItem('isDarkMode', false);
+            switchContainer.style.backgroundColor = "#505050"; // Cambiar el fondo a amarillo (sol)
+            switchCircle.style.transform = "translate(20px, -50%)"; // Mover el círculo a la derecha
+            switchCircle.style.backgroundColor = "#fff"; // Mover el círculo a la izquierda
+            moonIcon.style.opacity = "0"; // Ocultar luna
+            sunIcon.style.opacity = "1"; // Mostrar sol
             try {
                 document.getElementById('head_table').setAttribute("class", "table-dark");
             } catch (error) {

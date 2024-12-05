@@ -2373,4 +2373,69 @@ def ShowHis(request):
     else:
         request.session['error'] = 'Debe estar logueado para acceder'
         return redirect('showlogin')
-    
+
+# Modificacion info Usuarios    
+def CorreoAndUsername(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            try:
+                data = json.loads(request.body) 
+                username = data.get("use_")
+                email = data.get("cor_")
+                id_ = data.get("id_")
+                user = User.objects.get(id=id_)
+                # Validar si el nombre de usuario ya existe
+                if username and User.objects.filter(username=username).exclude(id=user.id).exists():
+                    return JsonResponse({'error': 'Este nombre de usuario ya está en uso.', 'status': 'error'}, status=400)
+
+                # Validar si el correo electrónico ya existe
+                if email and User.objects.filter(email=email).exclude(id=user.id).exists():
+                    return JsonResponse({'error': 'Este correo electrónico ya está en uso.', 'status': 'error'}, status=400)
+                # Actualizar el nombre de usuario y el correo electrónico
+                if username:
+                    user.username = username
+                if email:
+                    user.email = email
+                user.save()
+                return JsonResponse({'message': 'Los datos se han actualizado correctamente', 'status': 'success'}, status=200)
+                
+            except:
+                request.session['error'] = "No deberia pasa [CorreoAndUsername]"
+                return redirect('showlogin')
+                
+        else:
+            request.session['error'] = 'No puedes acceder Por url'
+            return redirect('showlogin')
+    else:
+        request.session['error'] = 'Sesion Expirada'
+        return redirect('showlogin')   
+
+def PasswordChangeUser(request):
+        if request.user.is_authenticated:
+            if request.method == 'POST':
+                try:
+                    data = json.loads(request.body) 
+                    npas = data.get("npas_")
+                    pas = data.get("pas_")
+                    pas2 = data.get("pas2_")
+                    id = data.get("id_")
+                    u = User.objects.get(id=id)
+                    if u.check_password(npas):
+
+                        u.set_password(pas)
+                        u.save()
+                        return JsonResponse({'message': 'Los datos se han actualizado correctamente', 'status': 'success'}, status=200)
+                    
+                    else:
+                        return JsonResponse({'error': 'La contraseña actual no es válida. Verifica e ingresa nuevamente.', 'status': 'error'}, status=400)
+
+                except:
+                    request.session['error'] = "No deberia pasa [PasswordChangeUser]"
+                    return redirect('showlogin')
+                    
+            else:
+                request.session['error'] = 'No puedes acceder Por url'
+                return redirect('showlogin')
+        else:
+            request.session['error'] = 'Sesion Expirada'
+            return redirect('showlogin')   
